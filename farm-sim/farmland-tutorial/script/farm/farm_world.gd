@@ -8,16 +8,19 @@ extends Node2D
 ##
 ## Controls
 ##   WASD / arrows   walk
-##   E               context action - plant on bare soil, water a growing crop,
-##                   harvest a ripe one
+##   E               do the sensible thing for this plot - open the seed
+##                   picker on bare soil, water a growing crop, reap a ripe one
+##   H               harvest (explicit, for when E would water instead)
 ##   T               treat a pest outbreak
-##   1 / 2           choose maize or beans
 ##   Q               cycle season
 ##   Space           end the day
 ##
-## Demo shortcuts, also on screen as buttons:
-##   F               ripen the nearest crop instantly (skips the simulation)
-##   R               run ten real days at once (does not skip anything)
+## W is deliberately NOT the water key: W walks north, and binding it to water
+## would irrigate every time the player moved up.
+##
+## Demo shortcuts, on function keys so they do not squat on gameplay letters:
+##   F1              ripen the nearest crop instantly (skips the simulation)
+##   F2              run ten real days at once (does not skip anything)
 ##
 ## The interaction is contextual on purpose. A toolbar of modes means the
 ## player must first tell the game what they intend and then where; walking up
@@ -39,6 +42,7 @@ const PLAIN_CELL := Rect2(16, 16, 16, 16)
 
 var _library := CropLibrary.new()
 var _weather := WeatherSystem.new(2026)
+var _prices := PriceList.new()
 
 var _tiles: Array = []
 var _soil_sprites: Array = []
@@ -51,8 +55,14 @@ var _day: int = 0
 var _harvest_total: float = 0.0
 var _nearest_plot: int = -1
 
+var _balance: float = 0.0
+var _pending_plot: int = -1
+var _picker_crop_ids: Array = []
+
 var _status_label: Label
 var _message_label: RichTextLabel
+var _picker: Control
+var _picker_list: VBoxContainer
 var _plant_sheet: Texture2D
 
 
@@ -63,7 +73,11 @@ func _ready() -> void:
 	if not _weather.load_from():
 		push_error(_weather.load_error)
 		return
+	if not _prices.load_from():
+		push_error(_prices.load_error)
+		return
 
+	_balance = _prices.starting_balance
 	_plant_sheet = load(_library.sprite_sheet_path())
 	_weather.set_season("summer")
 	_weather.advance()
@@ -73,7 +87,7 @@ func _ready() -> void:
 	_spawn_player()
 	_build_hud()
 
-	_say("Walk up to a plot and press [b]E[/b] to plant. [b]Space[/b] ends the day.")
+	_say("Walk to a plot and press [b]E[/b] to plant, water, or harvest.  [b]H[/b] harvest  [b]T[/b] treat pests  [b]Q[/b] season  [b]Space[/b] end day")
 	_refresh()
 
 
@@ -182,8 +196,115 @@ func _build_hud() -> void:
 	demo_bar.position = Vector2(470, 2)
 	panel.add_child(demo_bar)
 
-	demo_bar.add_child(_demo_button("Ripen (F)", _ripen_nearest))
-	demo_bar.add_child(_demo_button("+10 Days (R)", _skip_days.bind(10)))
+	demo_bar.add_child(_demo_button("Ripen (F1)", _ripen_nearest))
+	demo_bar.add_child(_demo_button("+10 Days (F2)", _skip_days.bind(10)))
+
+	_build_crop_picker(panel)
+
+
+func _build_crop_picker(parent: Control) -> void:
+	_picker = Control.new()
+	_picker.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_picker.visible = false
+	parent.add_child(_picker)
+
+	# Dim the farm behind, so it is obvious the world is waiting on a decision.
+	var dim := ColorRect.new()
+	dim.color = Color(0.03, 0.05, 0.03, 0.72)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_picker.add_child(dim)
+
+	_picker_list = VBoxContainer.new()
+	_picker_list.position = Vector2(140, 96)
+	_picker_list.add_theme_constant_override("separation", 6)
+	_picker.add_child(_picker_list)
+
+
+## The crop-selection screen the GDD asks for: "a simple crop selection wheel
+## showing seed cost, growth duration, and expected payout".
+##
+## Built as a panel of cards rather than a literal radial wheel. At 640x360
+## with two crops a wheel is harder to read and harder to label, and the three
+## numbers the GDD actually cares about are what matter. Easy to change back if
+## the team prefers the wheel.
+##
+## Rebuilt every time it opens, because affordability and season suitability
+## both change between one planting and the next.
+func _open_crop_picker(plot_index: int) -> void:
+	_pending_plot = plot_index
+	_picker_crop_ids.clear()
+
+	for child in _picker_list.get_children():
+		child.queue_free()
+
+	var heading := Label.new()
+	heading.text = "Choose a seed for plot %d          Balance: %s" % [
+		plot_index + 1, _prices.format_money(_balance)
+	]
+	heading.add_theme_font_size_override("font_size", 12)
+	_picker_list.add_child(heading)
+
+	var number := 1
+	for crop_id in _library.crop_ids():
+		_picker_list.add_child(_crop_card(crop_id, number))
+		_picker_crop_ids.append(crop_id)
+		number += 1
+
+	var hint := Label.new()
+	hint.text = "Press 1-%d to plant, or Esc to cancel." % _picker_crop_ids.size()
+	hint.add_theme_font_size_override("font_size", 9)
+	hint.add_theme_color_override("font_color", Color(0.75, 0.78, 0.72))
+	_picker_list.add_child(hint)
+
+	_picker.visible = true
+
+
+func _crop_card(crop_id: String, number: int) -> Control:
+	var definition := _library.get_definition(crop_id)
+	var base_yield: float = float(definition.get("base_yield_kg", 0.0))
+	var cost := _prices.seed_cost(crop_id)
+	var affordable := _balance >= cost
+	var suits := _weather.season_suits_crop(crop_id)
+
+	var card := Button.new()
+	card.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	card.focus_mode = Control.FOCUS_NONE
+	card.custom_minimum_size = Vector2(360, 40)
+	card.disabled = not affordable
+	card.pressed.connect(_choose_crop.bind(crop_id))
+
+	var text := "  %d.  %-7s   seed %-5s   %2d days   pays up to %s" % [
+		number,
+		definition.get("display_name", crop_id),
+		_prices.format_money(cost),
+		_library.days_to_maturity(crop_id),
+		_prices.format_money(_prices.expected_payout(crop_id, base_yield)),
+	]
+	text += "\n     best-case profit %s" % _prices.format_money(
+		_prices.expected_profit(crop_id, base_yield)
+	)
+
+	# "Pays up to" is the best case on purpose. The gap between that number and
+	# what the player actually earns is the whole point of the harvest summary.
+	if not affordable:
+		text += "   -   cannot afford this"
+	elif not suits:
+		text += "   -   wrong season for it"
+
+	card.text = text
+	card.add_theme_font_size_override("font_size", 10)
+	return card
+
+
+func _choose_crop(crop_id: String) -> void:
+	_selected_crop = crop_id
+	_close_crop_picker()
+	_plant_at(_pending_plot)
+	_refresh()
+
+
+func _close_crop_picker() -> void:
+	_picker.visible = false
 
 
 func _add_backing(parent: Node, area: Rect2) -> void:
@@ -220,30 +341,48 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
 		return
 
+	# While the seed picker is open it owns the keyboard. Letting the world keep
+	# reading keys underneath a modal is how you end up planting twice.
+	if _picker != null and _picker.visible:
+		_picker_key(event.keycode)
+		get_viewport().set_input_as_handled()
+		return
+
 	match event.keycode:
 		KEY_E:
 			_context_action()
+		KEY_H:
+			_harvest_nearest()
 		KEY_T:
 			_treat_nearest()
-		KEY_1:
-			_selected_crop = "maize"
-			_say("Selected [b]Maize[/b]. Walk to bare soil and press E to plant.")
-		KEY_2:
-			_selected_crop = "beans"
-			_say("Selected [b]Beans[/b]. Walk to bare soil and press E to plant.")
 		KEY_Q:
 			_cycle_season()
 		KEY_SPACE:
 			_end_day()
-		KEY_F:
+		KEY_F1:
 			_ripen_nearest()
-		KEY_R:
+		KEY_F2:
 			_skip_days(10)
 		_:
 			return
 
 	get_viewport().set_input_as_handled()
 	_refresh()
+
+
+func _picker_key(keycode: int) -> void:
+	if keycode == KEY_ESCAPE:
+		_close_crop_picker()
+		_say("Planting cancelled.")
+		return
+
+	var choice := keycode - KEY_1
+	if choice >= 0 and choice < _picker_crop_ids.size():
+		var crop_id: String = _picker_crop_ids[choice]
+		if _balance < _prices.seed_cost(crop_id):
+			_say("[color=#e88]Not enough money for %s seed.[/color]" % crop_id.capitalize())
+			return
+		_choose_crop(crop_id)
 
 
 ## One key does the sensible thing for whatever the player is standing next to.
@@ -257,17 +396,48 @@ func _context_action() -> void:
 
 	match crop.state:
 		Crop.State.EMPTY, Crop.State.HARVESTED:
-			_plant_at(_nearest_plot)
+			_open_crop_picker(_nearest_plot)
 		Crop.State.GROWING:
-			crop.water(0.35)
-			_say("%s watered - soil now %d%%." % [label, int(crop.moisture * 100.0)])
+			_water_nearest()
 		Crop.State.MATURE:
-			var summary := crop.harvest()
-			_harvest_total += float(summary["yield_kg"])
-			_show_harvest(label, summary)
+			_harvest_nearest()
 		Crop.State.DEAD:
 			_tiles[_nearest_plot] = Crop.new(_library, 1000 + _nearest_plot)
 			_say("%s cleared. Press E again to replant." % label)
+
+
+func _water_nearest() -> void:
+	if _nearest_plot < 0:
+		_say("Walk closer to a plot first.")
+		return
+	var crop: Crop = _tiles[_nearest_plot]
+	if crop.water(0.35):
+		_say("Plot %d watered - soil now %d%%." % [_nearest_plot + 1, int(crop.moisture * 100.0)])
+	else:
+		_say("Plot %d has nothing growing to water." % (_nearest_plot + 1))
+
+
+func _harvest_nearest() -> void:
+	if _nearest_plot < 0:
+		_say("Walk closer to a plot first.")
+		return
+
+	var crop: Crop = _tiles[_nearest_plot]
+	if not crop.is_ready_to_harvest():
+		if crop.state == Crop.State.GROWING:
+			_say("Plot %d is not ready - %s, %d%% grown." % [
+				_nearest_plot + 1, crop.current_stage_name(), int(crop.growth_progress() * 100.0)
+			])
+		else:
+			_say("Nothing to harvest on plot %d." % (_nearest_plot + 1))
+		return
+
+	var summary := crop.harvest()
+	_harvest_total += float(summary["yield_kg"])
+	# Placeholder economics - see PriceList. The Economy developer owns DEL-05.
+	var earned := float(summary["yield_kg"]) * _prices.price_per_kg(crop.crop_id)
+	_balance += earned
+	_show_harvest("Plot %d" % (_nearest_plot + 1), summary, earned)
 
 
 func _plant_at(index: int) -> void:
@@ -276,10 +446,19 @@ func _plant_at(index: int) -> void:
 		_tiles[index] = Crop.new(_library, 1000 + index)
 		crop = _tiles[index]
 
+	var cost := _prices.seed_cost(_selected_crop)
+	if _balance < cost:
+		_say("[color=#e88]Not enough money for %s seed.[/color]" % _selected_crop.capitalize())
+		return
+
 	if not crop.plant(_selected_crop, 0.55):
 		return
 
-	var line := "Planted [b]%s[/b] on plot %d." % [crop.display_name, index + 1]
+	_balance -= cost
+	var line := "Planted [b]%s[/b] on plot %d for %s. Balance %s." % [
+		crop.display_name, index + 1,
+		_prices.format_money(cost), _prices.format_money(_balance),
+	]
 	# The game warns but does not refuse. Being allowed to make the mistake and
 	# then watching it cost you the harvest teaches more than a blocked button.
 	if not _weather.season_suits_crop(_selected_crop):
@@ -408,12 +587,12 @@ func _update_nearest_plot() -> void:
 
 
 func _refresh() -> void:
-	_status_label.text = "Day %d    %s  %.0fC    %s    Seed: %s    Harvested: %.0f kg" % [
+	_status_label.text = "Day %d    %s %.0fC    %s    %s    Harvested: %.0f kg" % [
 		_day,
 		_weather.display_name(),
 		_weather.temperature_c(),
 		_weather.season().get("display_name", ""),
-		_selected_crop.capitalize(),
+		_prices.format_money(_balance),
 		_harvest_total,
 	]
 
@@ -454,11 +633,12 @@ func _refresh_plot(index: int) -> void:
 		plant.modulate = Color(1.0, 0.80, 0.55).lerp(Color.WHITE, health_ratio)
 
 
-func _show_harvest(label: String, summary: Dictionary) -> void:
+func _show_harvest(label: String, summary: Dictionary, earned: float = 0.0) -> void:
 	var lines: Array = []
-	lines.append("[b]%s harvested - %.1f kg of %s[/b] (%.0f%% lost over %d days)." % [
+	lines.append("[b]%s harvested - %.1f kg of %s[/b] (%.0f%% lost over %d days). Earned [b]%s[/b], balance %s." % [
 		label, summary["yield_kg"], summary["display_name"],
 		summary["yield_lost_percent"], summary["days_taken"],
+		_prices.format_money(earned), _prices.format_money(_balance),
 	])
 	lines.append(str(summary["headline"]))
 
