@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://1mk28ou0lli1"
-path="res://.godot/imported/placeholder_pest.png-7ee82cf6616c4f640b20dca0ff3d1595.ctex"
+uid="uid://kcegncfbj3ut"
+path="res://.godot/imported/pest_caterpillar.png-5ce8e61d56762f667c431f71b44d86fa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/objects/placeholder_pest.png"
-dest_files=["res://.godot/imported/placeholder_pest.png-7ee82cf6616c4f640b20dca0ff3d1595.ctex"]
+source_file="res://game/objects/pest_caterpillar.png"
+dest_files=["res://.godot/imported/pest_caterpillar.png-5ce8e61d56762f667c431f71b44d86fa.ctex"]
 
 [params]
 

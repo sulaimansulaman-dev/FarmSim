@@ -47,7 +47,7 @@ const PLAIN_CELL := Rect2(16, 16, 16, 16)
 ## Overlays that tell the player what a plot needs without opening anything
 ## (FR-003). A pest is a bug sitting on the crop; a ripe crop gets a tool
 ## planted at its root.
-const PEST_SPRITE := "res://game/objects/placeholder_pest.png"
+const PEST_SPRITE := "res://game/objects/pest_caterpillar.png"
 const TOOL_SHEET := "res://game/objects/basic_tools_and_meterials.png"
 const TOOL_CELL := Rect2(32, 0, 16, 16)
 
@@ -118,7 +118,7 @@ func _animate_markers() -> void:
 	for i in range(_pest_sprites.size()):
 		var pest: Sprite2D = _pest_sprites[i]
 		if pest.visible:
-			pest.position.y = _plot_positions[i].y - 8.0 + bob
+			pest.position.y = _plot_positions[i].y - 7.0 + bob
 
 
 # --- construction -----------------------------------------------------------
@@ -164,8 +164,8 @@ func _build_plots() -> void:
 		# the growth stage underneath it.
 		var pest := Sprite2D.new()
 		pest.texture = load(PEST_SPRITE)
-		pest.position = pos + Vector2(5, -8)
-		pest.scale = Vector2(0.7, 0.7) * PLOT_SCALE
+		pest.position = pos + Vector2(2, -7)
+		pest.scale = Vector2(0.62, 0.62) * PLOT_SCALE
 		pest.z_index = 2
 		pest.visible = false
 		add_child(pest)

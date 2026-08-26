@@ -45,12 +45,26 @@ distributing our project rather than redistributing the pack. Two things follow:
 
 ---
 
+---
+
+## Original art by the FarmSim team
+
+Work drawn by the team is ours. It carries no third-party licence and needs
+no external credit, but it is listed here so the distinction between what we
+made and what we borrowed stays clear.
+
+| Path | Author | Notes |
+|---|---|---|
+| `game/objects/pest_caterpillar.png` | Marne Vermaak | Drawn in Libresprite for the pest indicator. Replaced a generated placeholder. |
+
+---
+
 ## Asset register
 
 | Path | Source | Licence | Verified by | Date |
 |---|---|---|---|---|
 | `game/characters/*` | Sprout Lands, Cup Nooble | See above — credit required | *unverified* | — |
-| `game/objects/*` | Sprout Lands, Cup Nooble | See above — credit required | *unverified* | — |
+| `game/objects/*` (except originals above) | Sprout Lands, Cup Nooble | See above — credit required | *unverified* | — |
 | `game/tilesets/*` | Sprout Lands, Cup Nooble | See above — credit required | *unverified* | — |
 
 **These rows are marked unverified deliberately.** The attribution above is
