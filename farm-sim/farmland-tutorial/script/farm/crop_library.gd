@@ -10,6 +10,7 @@ extends RefCounted
 const DATA_PATH := "res://data/crops.json"
 
 var simulation: Dictionary = {}
+var sprites: Dictionary = {}
 var _crops: Dictionary = {}
 
 
@@ -22,6 +23,7 @@ func load_from(path: String = DATA_PATH) -> bool:
 	load_error = ""
 	_crops.clear()
 	simulation.clear()
+	sprites.clear()
 
 	if not FileAccess.file_exists(path):
 		load_error = "Crop data file not found at %s" % path
@@ -39,6 +41,7 @@ func load_from(path: String = DATA_PATH) -> bool:
 		return false
 
 	simulation = parsed.get("simulation", {})
+	sprites = parsed.get("_sprites", {})
 
 	for entry in parsed["crops"]:
 		var problem := _validate_crop(entry)
@@ -80,6 +83,30 @@ func days_to_maturity(crop_id: String) -> int:
 
 func tuning(key: String, fallback: float) -> float:
 	return float(simulation.get(key, fallback))
+
+
+# --- art lookup -------------------------------------------------------------
+# Which cell of the spritesheet a crop shows at a given stage is data, not code.
+# When the real art pack replaces the placeholder, only crops.json changes.
+
+func sprite_sheet_path() -> String:
+	return str(sprites.get("sheet", "res://game/objects/basic_plants.png"))
+
+
+func sprite_cell_size() -> int:
+	return int(sprites.get("cell_size", 16))
+
+
+## The region of the spritesheet to draw for this crop at its current stage.
+func stage_sprite_region(crop: Crop) -> Rect2:
+	var definition := get_definition(crop.crop_id)
+	if definition.is_empty():
+		return Rect2()
+
+	var size := sprite_cell_size()
+	var row := int(definition.get("sprite_row", 0))
+	var column := int(crop.current_stage().get("sprite_col", 1))
+	return Rect2(column * size, row * size, size, size)
 
 
 # --- validation -------------------------------------------------------------

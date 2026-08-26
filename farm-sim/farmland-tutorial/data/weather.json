@@ -5,6 +5,7 @@
   "weather_types": [
     {
       "id": "clear",
+      "temperature_offset_c": 0.0,
       "display_name": "Clear",
       "icon_hint": "sun",
       "evaporation_multiplier": 1.0,
@@ -14,6 +15,7 @@
     },
     {
       "id": "hot",
+      "temperature_offset_c": 5.0,
       "display_name": "Hot",
       "icon_hint": "sun_hot",
       "evaporation_multiplier": 1.8,
@@ -23,6 +25,7 @@
     },
     {
       "id": "overcast",
+      "temperature_offset_c": -2.0,
       "display_name": "Overcast",
       "icon_hint": "cloud",
       "evaporation_multiplier": 0.7,
@@ -32,6 +35,7 @@
     },
     {
       "id": "rain",
+      "temperature_offset_c": -3.0,
       "display_name": "Rain",
       "icon_hint": "rain",
       "evaporation_multiplier": 0.4,
@@ -41,6 +45,7 @@
     },
     {
       "id": "storm",
+      "temperature_offset_c": -4.0,
       "display_name": "Storm",
       "icon_hint": "storm",
       "evaporation_multiplier": 0.3,
@@ -50,6 +55,7 @@
     },
     {
       "id": "drought",
+      "temperature_offset_c": 6.0,
       "display_name": "Drought",
       "icon_hint": "drought",
       "evaporation_multiplier": 2.6,
@@ -64,6 +70,7 @@
   "seasons": [
     {
       "id": "summer",
+      "temperature_c": 25,
       "display_name": "Summer",
       "suits_crops": ["maize"],
       "teaching_note": "Maize is a summer crop in South Africa, planted with the summer rains from about October to December.",
@@ -78,6 +85,7 @@
     },
     {
       "id": "autumn",
+      "temperature_c": 17,
       "display_name": "Autumn",
       "suits_crops": ["beans"],
       "teaching_note": "Cooler, drier weather suits beans and makes them easier to dry down for storage.",
@@ -92,6 +100,7 @@
     },
     {
       "id": "winter",
+      "temperature_c": 11,
       "display_name": "Winter",
       "suits_crops": [],
       "teaching_note": "Most of South Africa's summer-rainfall region grows little in winter without irrigation. Planting maize now is a costly mistake.",
@@ -106,6 +115,7 @@
     },
     {
       "id": "spring",
+      "temperature_c": 21,
       "display_name": "Spring",
       "suits_crops": ["maize", "beans"],
       "teaching_note": "Spring is planting season. Getting seed in the ground before the rains arrive is the single biggest decision of the year.",

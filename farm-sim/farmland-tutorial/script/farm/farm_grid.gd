@@ -16,7 +16,7 @@ extends Control
 
 const GRID_COLUMNS := 4
 const GRID_ROWS := 3
-const TILE_SIZE := Vector2(74, 62)
+const TILE_SIZE := Vector2(74, 56)
 
 enum Action { PLANT_MAIZE, PLANT_BEANS, WATER, TREAT, HARVEST }
 
@@ -30,9 +30,11 @@ var _harvest_total: float = 0.0
 
 var _day_label: Label
 var _weather_label: Label
+var _season_label: Label
 var _forecast_label: Label
 var _message_label: RichTextLabel
 var _action_buttons: Dictionary = {}
+var _season_buttons: Dictionary = {}
 
 
 func _ready() -> void:
@@ -78,6 +80,9 @@ func _build_ui() -> void:
 	_weather_label = _make_label("", 11)
 	status.add_child(_weather_label)
 
+	_season_label = _make_label("", 11)
+	status.add_child(_season_label)
+
 	_forecast_label = _make_label("", 9)
 	_forecast_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_forecast_label.custom_minimum_size.y = 22
@@ -120,12 +125,35 @@ func _build_ui() -> void:
 	next_day.pressed.connect(_on_end_day)
 	actions.add_child(next_day)
 
+	# Clicking "End Day" twenty-six times to see one crop cycle is fine when you
+	# are testing and unbearable when you are demonstrating.
+	var skip := Button.new()
+	skip.text = "Skip 5"
+	skip.add_theme_font_size_override("font_size", 9)
+	skip.pressed.connect(_on_skip_days.bind(5))
+	actions.add_child(skip)
+
+	# --- season selector
+	var seasons := HBoxContainer.new()
+	seasons.add_theme_constant_override("separation", 3)
+	root.add_child(seasons)
+
+	seasons.add_child(_make_label("Season:", 9))
+	for id in _weather.season_ids():
+		var button := Button.new()
+		button.text = id.capitalize()
+		button.toggle_mode = true
+		button.add_theme_font_size_override("font_size", 9)
+		button.pressed.connect(_on_season_selected.bind(id))
+		seasons.add_child(button)
+		_season_buttons[id] = button
+
 	# --- message area
 	_message_label = RichTextLabel.new()
 	_message_label.bbcode_enabled = true
 	_message_label.fit_content = false
 	_message_label.scroll_active = true
-	_message_label.custom_minimum_size.y = 74
+	_message_label.custom_minimum_size.y = 64
 	_message_label.add_theme_font_size_override("normal_font_size", 8)
 	_message_label.add_theme_font_size_override("bold_font_size", 8)
 	root.add_child(_message_label)
@@ -156,6 +184,36 @@ func _on_action_selected(action: int) -> void:
 	_selected_action = action
 	for key in _action_buttons:
 		_action_buttons[key].button_pressed = (key == action)
+
+
+## Switching season is Level 3 / Conditional scope. It is wired up now because
+## the season lesson - that maize planted in winter fails - is the clearest
+## thing this simulation teaches, and it costs one line to show it.
+func _on_season_selected(season_id: String) -> void:
+	if not _weather.set_season(season_id):
+		return
+	_weather.advance()
+
+	var season := _weather.season()
+	var suits: Array = season.get("suits_crops", [])
+	var suits_text := "Nothing grows well now."
+	if not suits.is_empty():
+		var names: Array = []
+		for id in suits:
+			names.append(str(id).capitalize())
+		suits_text = "Suits: %s." % ", ".join(names)
+
+	_say("[b]%s.[/b] %s %s" % [
+		season.get("display_name", season_id),
+		suits_text,
+		season.get("teaching_note", ""),
+	])
+	_refresh()
+
+
+func _on_skip_days(count: int) -> void:
+	for i in range(count):
+		_on_end_day()
 
 
 func _on_tile_pressed(index: int) -> void:
@@ -192,11 +250,17 @@ func _try_plant(crop: Crop, crop_id: String, index: int) -> void:
 		crop = _tiles[index]
 
 	if crop.plant(crop_id, 0.55):
-		var suits := _weather.season_suits_crop(crop_id)
-		var note := ""
-		if not suits:
-			note = " [color=#c88]This is not the right season for %s.[/color]" % crop.display_name
-		_say("Planted %s on tile %d.%s" % [crop.display_name, index + 1, note])
+		var line := "Planted %s on tile %d." % [crop.display_name, index + 1]
+		# The game warns rather than refuses. Being allowed to make the mistake
+		# and then watching it cost you the harvest teaches far more than a
+		# blocked button ever will.
+		if not _weather.season_suits_crop(crop_id):
+			line += "\n[color=#d88]%s is the wrong crop for %s.[/color] %s" % [
+				crop.display_name,
+				_weather.season().get("display_name", "this season"),
+				_weather.season().get("teaching_note", ""),
+			]
+		_say(line)
 
 
 func _try_harvest(crop: Crop, index: int) -> void:
@@ -234,7 +298,11 @@ func _on_end_day() -> void:
 		var had_pest := crop.pest_active
 		var was_growing := crop.state == Crop.State.GROWING
 
-		crop.advance_day(_weather.evaporation_multiplier(), _weather.pest_chance())
+		crop.advance_day(
+			_weather.evaporation_multiplier(),
+			_weather.pest_chance(),
+			_weather.temperature_c()
+		)
 
 		if crop.pest_active and not had_pest:
 			events.append("[color=#d88]Pests on tile %d.[/color]" % (i + 1))
@@ -243,7 +311,9 @@ func _on_end_day() -> void:
 		elif crop.state == Crop.State.MATURE and was_growing:
 			events.append("[color=#8d8]Tile %d is ready to harvest.[/color]" % (i + 1))
 
-	var line := "[b]Day %d - %s.[/b] %s" % [_day, _weather.display_name(), _weather.forecast_text()]
+	var line := "[b]Day %d - %s, %.0fC.[/b] %s" % [
+		_day, _weather.display_name(), _weather.temperature_c(), _weather.forecast_text()
+	]
 	if not events.is_empty():
 		line += "\n" + "  ".join(events)
 	_say(line)
@@ -254,8 +324,12 @@ func _on_end_day() -> void:
 
 func _refresh() -> void:
 	_day_label.text = "Day %d" % _day
-	_weather_label.text = "Weather: %s" % _weather.display_name()
+	_weather_label.text = "Weather: %s  %.0fC" % [_weather.display_name(), _weather.temperature_c()]
+	_season_label.text = "Season: %s" % _weather.season().get("display_name", "-")
 	_forecast_label.text = _weather.forecast_text()
+
+	for id in _season_buttons:
+		_season_buttons[id].button_pressed = (id == _weather.season_id)
 
 	for i in range(_tiles.size()):
 		var crop: Crop = _tiles[i]

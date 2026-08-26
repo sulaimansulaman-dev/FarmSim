@@ -108,6 +108,13 @@ func pest_chance() -> float:
 	return float(current.get("pest_chance", 0.0))
 
 
+## Today's temperature: the season's baseline shifted by today's weather.
+## This is what decides whether a crop develops or just sits in cold ground.
+func temperature_c() -> float:
+	var base: float = float(season().get("temperature_c", 22.0))
+	return base + float(current.get("temperature_offset_c", 0.0))
+
+
 func forecast_text() -> String:
 	return str(current.get("forecast_text", ""))
 

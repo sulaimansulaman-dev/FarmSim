@@ -29,6 +29,10 @@ enum State { EMPTY, GROWING, MATURE, DEAD, HARVESTED }
 
 const MAX_HEALTH := 100.0
 
+## Passed as the temperature when the caller is not modelling it at all, in
+## which case the crop grows at full rate. Keeps the older callers working.
+const NO_TEMPERATURE := -999.0
+
 # --- identity ---------------------------------------------------------------
 var crop_id: String = ""
 var display_name: String = ""
@@ -39,7 +43,9 @@ var health: float = MAX_HEALTH
 var moisture: float = 0.5
 var day: int = 0
 var stage_index: int = 0
-var days_in_stage: int = 0
+## Fractional, because a cold day advances the crop by less than a full day of
+## development. This is what makes planting out of season cost you.
+var days_in_stage: float = 0.0
 var pest_active: bool = false
 var pest_days_untreated: int = 0
 
@@ -80,7 +86,7 @@ func plant(new_crop_id: String, starting_moisture: float = 0.5) -> bool:
 	moisture = clampf(starting_moisture, 0.0, 1.0)
 	day = 0
 	stage_index = 0
-	days_in_stage = 0
+	days_in_stage = 0.0
 	pest_active = false
 	pest_days_untreated = 0
 	yield_penalties.clear()
@@ -127,9 +133,15 @@ func harvest() -> Dictionary:
 # --- daily simulation -------------------------------------------------------
 
 ## Advances the simulation by one day.
-## evaporation_multiplier lets weather scale water loss: 1.0 normal, higher in
-## a heatwave or drought. Owned by the weather system.
-func advance_day(evaporation_multiplier: float = 1.0, pest_chance: float = 0.0) -> void:
+##
+## evaporation_multiplier scales water loss: 1.0 normal, higher in a heatwave
+## or drought. temperature_c drives how much the crop actually develops today.
+## Both are owned by the weather system.
+func advance_day(
+	evaporation_multiplier: float = 1.0,
+	pest_chance: float = 0.0,
+	temperature_c: float = NO_TEMPERATURE
+) -> void:
 	if state != State.GROWING and state != State.MATURE:
 		return
 
@@ -138,6 +150,7 @@ func advance_day(evaporation_multiplier: float = 1.0, pest_chance: float = 0.0) 
 	_apply_water_loss(evaporation_multiplier)
 	_apply_water_stress()
 	_apply_waterlogging()
+	_apply_cold_damage(temperature_c)
 	_maybe_start_pest(pest_chance)
 	_apply_pest_damage()
 
@@ -148,8 +161,49 @@ func advance_day(evaporation_multiplier: float = 1.0, pest_chance: float = 0.0) 
 		died.emit()
 		return
 
-	_advance_growth()
+	_advance_growth(growth_rate_at(temperature_c))
 	health_changed.emit(health)
+
+
+## How much development one day buys at this temperature, as a 0..1 fraction.
+##
+## Below the crop's minimum growth temperature it is zero: the plant simply
+## stops developing. This is the mechanism behind the whole season lesson.
+## Without it, weather only changes how often you water, and a diligent player
+## cancels the season out entirely - which is exactly backwards.
+func growth_rate_at(temperature_c: float) -> float:
+	if temperature_c == NO_TEMPERATURE or _definition.is_empty():
+		return 1.0
+
+	var minimum: float = float(_definition.get("min_growth_temp_c", -999.0))
+	var optimal: float = float(_definition.get("optimal_temp_c", 25.0))
+	if temperature_c <= minimum:
+		return 0.0
+
+	var floor_rate: float = _library.tuning("min_growth_rate", 0.3)
+	var ramp: float = clampf((temperature_c - minimum) / maxf(optimal - minimum, 0.001), 0.0, 1.0)
+	return floor_rate + (1.0 - floor_rate) * ramp
+
+
+func _apply_cold_damage(temperature_c: float) -> void:
+	if temperature_c == NO_TEMPERATURE:
+		return
+	var minimum: float = float(_definition.get("min_growth_temp_c", -999.0))
+	if temperature_c > minimum:
+		return
+
+	var damage: float = float(_definition.get("cold_damage_per_day", 0.0))
+	if damage <= 0.0:
+		return
+
+	_damage_health(damage)
+	_record_penalty(
+		"cold",
+		damage,
+		"Day %d, %s: %.0f degrees is below the %.0f degrees %s needs to grow. The crop is not developing at all." % [
+			day, current_stage()["display_name"], temperature_c, minimum, display_name
+		]
+	)
 
 
 func _apply_water_loss(evaporation_multiplier: float) -> void:
@@ -228,20 +282,22 @@ func _apply_pest_damage() -> void:
 	)
 
 
-func _advance_growth() -> void:
+func _advance_growth(growth_rate: float = 1.0) -> void:
 	# A badly stressed plant stops developing rather than growing on schedule.
 	if health < _library.tuning("growth_stall_health", 25.0):
 		return
 	if state == State.MATURE:
 		return
+	if growth_rate <= 0.0:
+		return
 
-	days_in_stage += 1
+	days_in_stage += growth_rate
 	var stage := current_stage()
 
-	if days_in_stage >= int(stage["days"]):
+	if days_in_stage >= float(stage["days"]):
 		if stage_index < _definition["stages"].size() - 1:
 			stage_index += 1
-			days_in_stage = 0
+			days_in_stage = 0.0
 			stage_changed.emit(current_stage_id(), current_stage_name())
 		else:
 			state = State.MATURE
@@ -276,11 +332,11 @@ func growth_progress() -> float:
 	var total := _library.days_to_maturity(crop_id)
 	if total <= 0:
 		return 0.0
-	var elapsed := 0
+	var elapsed := 0.0
 	for i in range(stage_index):
-		elapsed += int(_definition["stages"][i]["days"])
+		elapsed += float(_definition["stages"][i]["days"])
 	elapsed += days_in_stage
-	return clampf(float(elapsed) / float(total), 0.0, 1.0)
+	return clampf(elapsed / float(total), 0.0, 1.0)
 
 
 ## Total percentage of potential yield lost, 0..100.
@@ -379,6 +435,7 @@ func _cause_label(cause: String) -> String:
 		"water_stress": return "water stress"
 		"waterlogged": return "over-watering"
 		"pest": return "pest damage"
+		"cold": return "cold - the wrong season for this crop"
 		_: return cause
 
 
