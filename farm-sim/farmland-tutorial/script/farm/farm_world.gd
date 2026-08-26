@@ -14,6 +14,8 @@ extends Node2D
 ##   T               treat a pest outbreak
 ##   Q               cycle season
 ##   Space           end the day
+##   N               start a new season, but only once you are out of money
+##                   with nothing left growing
 ##
 ## W is deliberately NOT the water key: W walks north, and binding it to water
 ## would irrigate every time the player moved up.
@@ -250,8 +252,20 @@ func _open_crop_picker(plot_index: int) -> void:
 		_picker_crop_ids.append(crop_id)
 		number += 1
 
+	var cancel := Button.new()
+	cancel.text = "Cancel  (Esc)"
+	cancel.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cancel.focus_mode = Control.FOCUS_NONE
+	cancel.custom_minimum_size = Vector2(360, 22)
+	cancel.add_theme_font_size_override("font_size", 10)
+	cancel.pressed.connect(func():
+		_close_crop_picker()
+		_say("Planting cancelled.")
+	)
+	_picker_list.add_child(cancel)
+
 	var hint := Label.new()
-	hint.text = "Press 1-%d to plant, or Esc to cancel." % _picker_crop_ids.size()
+	hint.text = "Press 1-%d to plant." % _picker_crop_ids.size()
 	hint.add_theme_font_size_override("font_size", 9)
 	hint.add_theme_color_override("font_color", Color(0.75, 0.78, 0.72))
 	_picker_list.add_child(hint)
@@ -294,6 +308,76 @@ func _crop_card(crop_id: String, number: int) -> Control:
 	card.text = text
 	card.add_theme_font_size_override("font_size", 10)
 	return card
+
+
+## --- running out of money -------------------------------------------------
+##
+## The player can spend everything and be left unable to plant. That is a real
+## outcome and worth keeping - going broke is what happens to a farmer who
+## plants more than they can look after. What is NOT acceptable is the game
+## going quiet about it, which is what it did: the seed picker would open,
+## every option was unaffordable, and there was no way forward.
+##
+## So: never open the picker when nothing can be bought, say plainly what has
+## happened, and always offer a way to carry on.
+
+func _cheapest_seed_cost() -> float:
+	var cheapest := INF
+	for crop_id in _library.crop_ids():
+		cheapest = minf(cheapest, _prices.seed_cost(crop_id))
+	return 0.0 if cheapest == INF else cheapest
+
+
+func _can_afford_any_seed() -> bool:
+	return _balance >= _cheapest_seed_cost()
+
+
+func _has_crops_in_the_ground() -> bool:
+	for crop in _tiles:
+		if crop.state == Crop.State.GROWING or crop.state == Crop.State.MATURE:
+			return true
+	return false
+
+
+## True when the player can neither buy seed nor wait for anything to ripen.
+func _is_stuck() -> bool:
+	return not _can_afford_any_seed() and not _has_crops_in_the_ground()
+
+
+func _report_cannot_afford() -> void:
+	if _is_stuck():
+		_say("[color=#e88][b]You have run out of money.[/b][/color] %s left, and the cheapest seed costs %s. Nothing is growing, so there is no harvest coming.\nThat is what happens when a season goes badly - press [b]N[/b] to start a new season with %s." % [
+			_prices.format_money(_balance),
+			_prices.format_money(_cheapest_seed_cost()),
+			_prices.format_money(_prices.starting_balance),
+		])
+	else:
+		_say("[color=#e88]Not enough money for seed.[/color] %s left, cheapest seed is %s. Harvest what is still in the ground first." % [
+			_prices.format_money(_balance), _prices.format_money(_cheapest_seed_cost())
+		])
+
+
+## Starts the player over with a fresh balance and a clear field. Deliberately
+## manual rather than automatic - the player should have to notice they went
+## broke and choose to go again.
+## N only works when the player is genuinely out of options. Otherwise it is a
+## free reset button, and a free reset button removes every consequence the
+## game is trying to teach.
+func _new_season_if_stuck() -> void:
+	if _is_stuck():
+		_new_season()
+	else:
+		_say("You can still plant or harvest - no need to start over yet.")
+
+
+func _new_season() -> void:
+	_balance = _prices.starting_balance
+	_harvest_total = 0.0
+	_day = 0
+	for i in range(_tiles.size()):
+		_tiles[i] = Crop.new(_library, 1000 + i)
+	_weather.advance()
+	_say("[b]New season.[/b] Field cleared, balance back to %s. Plant less than you can water, and treat pests the day they appear." % _prices.format_money(_balance))
 
 
 func _choose_crop(crop_id: String) -> void:
@@ -359,6 +443,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			_cycle_season()
 		KEY_SPACE:
 			_end_day()
+		KEY_N:
+			_new_season_if_stuck()
 		KEY_F1:
 			_ripen_nearest()
 		KEY_F2:
@@ -396,7 +482,10 @@ func _context_action() -> void:
 
 	match crop.state:
 		Crop.State.EMPTY, Crop.State.HARVESTED:
-			_open_crop_picker(_nearest_plot)
+			if _can_afford_any_seed():
+				_open_crop_picker(_nearest_plot)
+			else:
+				_report_cannot_afford()
 		Crop.State.GROWING:
 			_water_nearest()
 		Crop.State.MATURE:
