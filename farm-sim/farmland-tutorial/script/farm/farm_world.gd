@@ -15,6 +15,10 @@ extends Node2D
 ##   Q               cycle season
 ##   Space           end the day
 ##
+## Demo shortcuts, also on screen as buttons:
+##   F               ripen the nearest crop instantly (skips the simulation)
+##   R               run ten real days at once (does not skip anything)
+##
 ## The interaction is contextual on purpose. A toolbar of modes means the
 ## player must first tell the game what they intend and then where; walking up
 ## to a plot and pressing one key is how the real action feels.
@@ -165,6 +169,29 @@ func _build_hud() -> void:
 	_message_label.add_theme_constant_override("outline_size", 4)
 	panel.add_child(_message_label)
 
+	# Demo controls, top right. Clickable for when the keyboard is busy driving
+	# the character, and labelled DEMO so nobody watching mistakes them for
+	# gameplay. Delete this row when the prototype stops being demonstrated.
+	var demo_bar := HBoxContainer.new()
+	demo_bar.add_theme_constant_override("separation", 4)
+	demo_bar.position = Vector2(470, 2)
+	panel.add_child(demo_bar)
+
+	demo_bar.add_child(_demo_button("Ripen (F)", _ripen_nearest))
+	demo_bar.add_child(_demo_button("+10 Days (R)", _skip_days.bind(10)))
+
+
+func _demo_button(text: String, action: Callable) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.focus_mode = Control.FOCUS_NONE  # keep WASD working after a click
+	button.add_theme_font_size_override("font_size", 8)
+	button.pressed.connect(func():
+		action.call()
+		_refresh()
+	)
+	return button
+
 
 func _atlas(sheet_path: String, region: Rect2) -> AtlasTexture:
 	var texture := AtlasTexture.new()
@@ -194,6 +221,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			_cycle_season()
 		KEY_SPACE:
 			_end_day()
+		KEY_F:
+			_ripen_nearest()
+		KEY_R:
+			_skip_days(10)
 		_:
 			return
 
@@ -244,6 +275,31 @@ func _plant_at(index: int) -> void:
 			_weather.season().get("teaching_note", ""),
 		]
 	_say(line)
+
+
+## Demo shortcuts. Both are marked clearly on screen when used, so nobody
+## watching mistakes a skipped simulation for a real result.
+
+func _ripen_nearest() -> void:
+	if _nearest_plot < 0:
+		_say("Stand next to a plot first, then press F.")
+		return
+
+	var crop: Crop = _tiles[_nearest_plot]
+	if not crop.force_mature():
+		_say("Plot %d has nothing growing to ripen." % (_nearest_plot + 1))
+		return
+
+	_say("[color=#9cf][DEMO][/color] Plot %d skipped ahead to harvest. Press [b]E[/b] to reap it.\n[color=#aaa]The simulation was skipped, so this yield only reflects damage taken so far.[/color]" % (_nearest_plot + 1))
+
+
+## Runs real days, quickly. Unlike F this does not cheat - crops still dry out,
+## pests still arrive - it just saves pressing Space ten times.
+func _skip_days(count: int) -> void:
+	for i in range(count):
+		_end_day()
+	# _end_day already wrote the last day's report; just mark how we got here.
+	_message_label.text = "[color=#9cf][DEMO][/color] Ran %d days.\n" % count + _message_label.text
 
 
 func _treat_nearest() -> void:

@@ -121,6 +121,24 @@ func treat_pest() -> bool:
 	return true
 
 
+## Jumps straight to maturity, skipping whatever growth is left.
+##
+## DEMO AND TESTING ONLY. This bypasses the simulation entirely: the yield you
+## get reflects only the damage accumulated up to the moment it was called, so
+## a crop ripened the instant it was planted harvests at full weight. Do not
+## call it from gameplay - it is here so a crop cycle can be shown in a meeting
+## without sitting through twenty-six days of it.
+func force_mature() -> bool:
+	if state != State.GROWING:
+		return false
+	stage_index = _definition["stages"].size() - 1
+	days_in_stage = 0.0
+	state = State.MATURE
+	_record_action("force_mature", "[demo] Skipped ahead to harvest.")
+	stage_changed.emit(current_stage_id(), current_stage_name())
+	return true
+
+
 ## Harvests a mature crop and returns the end-of-cycle summary.
 func harvest() -> Dictionary:
 	var summary := build_summary()
