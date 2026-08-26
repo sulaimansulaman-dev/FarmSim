@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "_comment": "Weather and season definitions. Owned by the Gameplay Programmer (crops/weather). Seasons are Level 3 / Conditional scope, but the data lives here now so that adding them later is a content change rather than a code change.",
+
+  "weather_types": [
+    {
+      "id": "clear",
+      "display_name": "Clear",
+      "icon_hint": "sun",
+      "evaporation_multiplier": 1.0,
+      "rainfall": 0.0,
+      "pest_chance": 0.03,
+      "forecast_text": "Clear and mild. Normal water use."
+    },
+    {
+      "id": "hot",
+      "display_name": "Hot",
+      "icon_hint": "sun_hot",
+      "evaporation_multiplier": 1.8,
+      "rainfall": 0.0,
+      "pest_chance": 0.06,
+      "forecast_text": "Hot today. The soil will dry out much faster than usual."
+    },
+    {
+      "id": "overcast",
+      "display_name": "Overcast",
+      "icon_hint": "cloud",
+      "evaporation_multiplier": 0.7,
+      "rainfall": 0.0,
+      "pest_chance": 0.04,
+      "forecast_text": "Overcast. Less water lost to evaporation."
+    },
+    {
+      "id": "rain",
+      "display_name": "Rain",
+      "icon_hint": "rain",
+      "evaporation_multiplier": 0.4,
+      "rainfall": 0.30,
+      "pest_chance": 0.02,
+      "forecast_text": "Rain expected. You should not need to irrigate today."
+    },
+    {
+      "id": "storm",
+      "display_name": "Storm",
+      "icon_hint": "storm",
+      "evaporation_multiplier": 0.3,
+      "rainfall": 0.55,
+      "pest_chance": 0.01,
+      "forecast_text": "Heavy storm. Soil may become waterlogged."
+    },
+    {
+      "id": "drought",
+      "display_name": "Drought",
+      "icon_hint": "drought",
+      "evaporation_multiplier": 2.6,
+      "rainfall": 0.0,
+      "pest_chance": 0.05,
+      "forecast_text": "Drought conditions. Water is being lost fast and there is no rain coming."
+    }
+  ],
+
+  "_seasons_comment": "Level 3 / Conditional scope (C2). Weights are the relative chance of each weather type on any given day in that season. The Baseline uses 'summer' only.",
+
+  "seasons": [
+    {
+      "id": "summer",
+      "display_name": "Summer",
+      "suits_crops": ["maize"],
+      "teaching_note": "Maize is a summer crop in South Africa, planted with the summer rains from about October to December.",
+      "weather_weights": {
+        "clear": 30,
+        "hot": 25,
+        "overcast": 12,
+        "rain": 20,
+        "storm": 8,
+        "drought": 5
+      }
+    },
+    {
+      "id": "autumn",
+      "display_name": "Autumn",
+      "suits_crops": ["beans"],
+      "teaching_note": "Cooler, drier weather suits beans and makes them easier to dry down for storage.",
+      "weather_weights": {
+        "clear": 40,
+        "hot": 10,
+        "overcast": 25,
+        "rain": 18,
+        "storm": 3,
+        "drought": 4
+      }
+    },
+    {
+      "id": "winter",
+      "display_name": "Winter",
+      "suits_crops": [],
+      "teaching_note": "Most of South Africa's summer-rainfall region grows little in winter without irrigation. Planting maize now is a costly mistake.",
+      "weather_weights": {
+        "clear": 45,
+        "hot": 2,
+        "overcast": 30,
+        "rain": 8,
+        "storm": 1,
+        "drought": 14
+      }
+    },
+    {
+      "id": "spring",
+      "display_name": "Spring",
+      "suits_crops": ["maize", "beans"],
+      "teaching_note": "Spring is planting season. Getting seed in the ground before the rains arrive is the single biggest decision of the year.",
+      "weather_weights": {
+        "clear": 35,
+        "hot": 15,
+        "overcast": 20,
+        "rain": 22,
+        "storm": 5,
+        "drought": 3
+      }
+    }
+  ]
+}
