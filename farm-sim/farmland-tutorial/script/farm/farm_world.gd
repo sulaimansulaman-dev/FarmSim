@@ -8,9 +8,10 @@ extends Node2D
 ##
 ## Controls
 ##   WASD / arrows   walk
-##   E               do the sensible thing for this plot - plant the seed you
-##                   are holding, water a growing crop, reap a ripe one
-##   H               harvest (explicit, for when E would water instead)
+##   E               plant the seed you are holding on bare soil, or water a
+##                   crop that is already growing
+##   H               harvest a ripe crop - E deliberately does not, so that
+##                   exactly one key reaps
 ##   C               change which seed you are holding
 ##   T               treat a pest outbreak
 ##   Q               cycle season
@@ -63,6 +64,7 @@ var _picker_crop_ids: Array = []
 
 var _status_label: Label
 var _message_label: RichTextLabel
+var _controls_label: Label
 var _picker: Control
 var _picker_list: VBoxContainer
 var _plant_sheet: Texture2D
@@ -89,7 +91,7 @@ func _ready() -> void:
 	_spawn_player()
 	_build_hud()
 
-	_say("Walk to a plot and press [b]E[/b] to plant, water, or harvest.  [b]C[/b] change seed  [b]H[/b] harvest  [b]T[/b] treat pests  [b]Q[/b] season  [b]Space[/b] end day")
+	_say("Walk onto a plot and press [b]E[/b] to plant the seed you are holding.")
 	_refresh()
 
 
@@ -169,7 +171,7 @@ func _build_hud() -> void:
 	# Text sits over a moving world, so it needs its own ground rather than
 	# relying on an outline. The character can and does walk behind it.
 	_add_backing(panel, Rect2(0, 0, 640, 22))
-	_add_backing(panel, Rect2(0, 302, 640, 58))
+	_add_backing(panel, Rect2(0, 296, 640, 64))
 
 	_status_label = Label.new()
 	_status_label.position = Vector2(6, 4)
@@ -181,14 +183,24 @@ func _build_hud() -> void:
 	_message_label = RichTextLabel.new()
 	_message_label.bbcode_enabled = true
 	_message_label.scroll_active = false
-	_message_label.position = Vector2(6, 306)
-	_message_label.size = Vector2(628, 50)
+	_message_label.position = Vector2(6, 299)
+	_message_label.size = Vector2(628, 38)
 	_message_label.add_theme_font_size_override("normal_font_size", 10)
 	_message_label.add_theme_font_size_override("bold_font_size", 10)
 	_message_label.add_theme_color_override("default_color", Color.WHITE)
 	_message_label.add_theme_color_override("font_outline_color", Color.BLACK)
 	_message_label.add_theme_constant_override("outline_size", 4)
 	panel.add_child(_message_label)
+
+	# The controls never scroll away. The message line above is for what just
+	# happened; this is for what the player can do, and it has to still be there
+	# on the twentieth day, not only on the first.
+	_controls_label = Label.new()
+	_controls_label.position = Vector2(6, 340)
+	_controls_label.text = "E plant/water    H harvest    C seed    T pests    Q season    Space next day"
+	_controls_label.add_theme_font_size_override("font_size", 9)
+	_controls_label.add_theme_color_override("font_color", Color(0.72, 0.76, 0.68))
+	panel.add_child(_controls_label)
 
 	# Demo controls, top right. Clickable for when the keyboard is busy driving
 	# the character, and labelled DEMO so nobody watching mistakes them for
@@ -400,6 +412,15 @@ func _close_crop_picker() -> void:
 	_picker.visible = false
 
 
+## N is only mentioned once it can actually be used, so the permanent line
+## stays short enough to read at a glance.
+func _update_controls_hint() -> void:
+	var text := "E plant/water    H harvest    C seed    T pests    Q season    Space next day"
+	if _is_stuck():
+		text += "    N new season"
+	_controls_label.text = text
+
+
 func _add_backing(parent: Node, area: Rect2) -> void:
 	var backing := ColorRect.new()
 	backing.color = Color(0.05, 0.06, 0.05, 0.62)
@@ -497,7 +518,10 @@ func _context_action() -> void:
 		Crop.State.GROWING:
 			_water_nearest()
 		Crop.State.MATURE:
-			_harvest_nearest()
+			# E deliberately does NOT harvest. Two keys that both reap a crop
+			# means neither is the harvest key, and a tutorial game cannot
+			# afford that ambiguity.
+			_say("Plot %d is ready. Press [b]H[/b] to harvest it." % (_nearest_plot + 1))
 		Crop.State.DEAD:
 			_tiles[_nearest_plot] = Crop.new(_library, 1000 + _nearest_plot)
 			_say("%s cleared. Press E again to replant." % label)
@@ -711,6 +735,8 @@ func _refresh() -> void:
 
 	for i in range(_tiles.size()):
 		_refresh_plot(i)
+
+	_update_controls_hint()
 
 
 func _refresh_plot(index: int) -> void:

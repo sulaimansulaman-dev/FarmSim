@@ -47,12 +47,34 @@ func _ready() -> void:
 	_check("choosing changes the held seed", world._selected_crop != held)
 	_check("choosing a seed does not plant or charge", world._balance == before_choice)
 
+	# --- exactly one key harvests
+	world._nearest_plot = 0
+	world._tiles[0].force_mature()
+	var before_e: float = world._balance
+	world._context_action()
+	_check("E does NOT harvest a ripe crop", world._tiles[0].state == Crop.State.MATURE)
+	_check("E on a ripe crop earns nothing", world._balance == before_e)
+	world._harvest_nearest()
+	_check("H harvests it", world._tiles[0].state == Crop.State.HARVESTED)
+	_check("H pays out", world._balance > before_e)
+
+	# --- the controls line is always on screen
+	_check("controls line exists", world._controls_label != null)
+	_check("controls line is never empty", world._controls_label.text.length() > 0)
+	_check("controls line names H for harvest", world._controls_label.text.contains("H harvest"))
+
 	# --- escape must always be a way out
 	world._open_crop_picker()
 	world._picker_key(KEY_ESCAPE)
 	_check("Escape closes the menu", not world._picker.visible)
 
 	# --- broke, but a harvest is still coming: not stuck
+	# Put a crop back in the ground first: the harvest checks above emptied the
+	# field, and "not stuck" only means anything while something is growing.
+	world._nearest_plot = 2
+	world._context_action()
+	_check("a crop is growing again", world._tiles[2].state == Crop.State.GROWING)
+
 	world._balance = 0.0
 	_check("broke with a crop growing is not stuck", not world._is_stuck())
 	var before: float = world._balance
@@ -64,10 +86,10 @@ func _ready() -> void:
 		world._tiles[i] = Crop.new(world._library, i)
 	_check("broke with a bare field is stuck", world._is_stuck())
 
-	world._nearest_plot = 0
+	world._nearest_plot = 3
 	world._context_action()
-	_check("planting broke does not open a menu or plant", not world._picker.visible)
-	_check("planting broke leaves the plot empty", world._tiles[0].state == Crop.State.EMPTY)
+	_check("planting broke does not open a menu", not world._picker.visible)
+	_check("planting broke leaves the plot empty", world._tiles[3].state == Crop.State.EMPTY)
 
 	world._new_season_if_stuck()
 	_check("N starts a new season when genuinely stuck", world._balance == world._prices.starting_balance)
