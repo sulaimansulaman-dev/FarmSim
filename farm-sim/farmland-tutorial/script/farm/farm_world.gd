@@ -78,6 +78,7 @@ var _player: Node2D
 var _selected_crop: String = "maize"
 var _day: int = 0
 var _harvest_total: float = 0.0
+var _earned_total: float = 0.0
 var _nearest_plot: int = -1
 var _elapsed: float = 0.0
 
@@ -85,6 +86,7 @@ var _balance: float = 0.0
 var _picker_crop_ids: Array = []
 
 var _status_label: Label
+var _plot_label: Label
 var _message_label: RichTextLabel
 var _controls_label: Label
 var _picker: Control
@@ -225,7 +227,7 @@ func _build_hud() -> void:
 
 	# Text sits over a moving world, so it needs its own ground rather than
 	# relying on an outline. The character can and does walk behind it.
-	_add_backing(panel, Rect2(0, 0, 640, 22))
+	_add_backing(panel, Rect2(0, 0, 640, 37))
 	_add_backing(panel, Rect2(0, 290, 640, 70))
 
 	_status_label = Label.new()
@@ -234,6 +236,15 @@ func _build_hud() -> void:
 	_status_label.add_theme_color_override("font_outline_color", Color.BLACK)
 	_status_label.add_theme_constant_override("outline_size", 4)
 	panel.add_child(_status_label)
+
+	# What the player is standing next to, on its own line. Deliberately not the
+	# message area: that carries events, and a harvest summary should not be
+	# wiped the moment the player steps off the plot to read it.
+	_plot_label = Label.new()
+	_plot_label.position = Vector2(6, 20)
+	_plot_label.add_theme_font_size_override("font_size", 10)
+	_plot_label.add_theme_color_override("font_color", Color(0.86, 0.90, 0.82))
+	panel.add_child(_plot_label)
 
 	_message_label = RichTextLabel.new()
 	_message_label.bbcode_enabled = true
@@ -444,6 +455,7 @@ func _new_season_if_stuck() -> void:
 func _new_season() -> void:
 	_balance = _prices.starting_balance
 	_harvest_total = 0.0
+	_earned_total = 0.0
 	_day = 0
 	for i in range(_tiles.size()):
 		_tiles[i] = Crop.new(_library, 1000 + i)
@@ -469,6 +481,52 @@ func _choose_crop(crop_id: String) -> void:
 
 func _close_crop_picker() -> void:
 	_picker.visible = false
+
+
+## Describes whatever the player is standing next to. This is the line that
+## turns a grid of coloured squares into twelve individual crops with their own
+## state, and it is what makes the field readable without a manual.
+func _update_plot_label() -> void:
+	if _nearest_plot < 0:
+		_plot_label.text = "Walk onto a plot to see how it is doing."
+		return
+
+	var crop: Crop = _tiles[_nearest_plot]
+	var name := "Plot %d" % (_nearest_plot + 1)
+
+	match crop.state:
+		Crop.State.EMPTY, Crop.State.HARVESTED:
+			_plot_label.text = "%s: bare soil.  E to plant %s for %s." % [
+				name,
+				_library.get_definition(_selected_crop).get("display_name", _selected_crop),
+				_prices.format_money(_prices.seed_cost(_selected_crop)),
+			]
+		Crop.State.DEAD:
+			_plot_label.text = "%s: the %s died.  E to clear it." % [name, crop.display_name]
+		Crop.State.MATURE:
+			var worth := crop.projected_yield_kg() * _prices.price_per_kg(crop.crop_id)
+			_plot_label.text = "%s: %s READY - about %.0f kg, worth %s.  H to harvest." % [
+				name, crop.display_name, crop.projected_yield_kg(), _prices.format_money(worth)
+			]
+		_:
+			# Lead with whatever needs doing, then the general state. A player
+			# scanning this line wants the verb first.
+			# Both can be true at once, and a crop being eaten does not stop it
+			# also dying of thirst. Showing only the first one found hides the
+			# second problem entirely.
+			var warnings: Array = []
+			if crop.pest_active:
+				warnings.append("PESTS - press T")
+			if crop.is_thirsty():
+				warnings.append("NEEDS WATER - press E")
+			var urgent := ""
+			if not warnings.is_empty():
+				urgent = "  ".join(warnings) + ".  "
+			_plot_label.text = "%s: %s%s, %s.  Water %d%%, health %d, %d%% grown." % [
+				name, urgent, crop.display_name, crop.current_stage_name(),
+				int(crop.moisture * 100.0), int(crop.health),
+				int(crop.growth_progress() * 100.0),
+			]
 
 
 ## N is only mentioned once it can actually be used, so the permanent line
@@ -625,6 +683,7 @@ func _harvest_nearest() -> void:
 	# Placeholder economics - see PriceList. The Economy developer owns DEL-05.
 	var earned := float(summary["yield_kg"]) * _prices.price_per_kg(crop.crop_id)
 	_balance += earned
+	_earned_total += earned
 	_show_harvest("Plot %d" % (_nearest_plot + 1), summary, earned)
 
 
@@ -796,7 +855,10 @@ func _update_nearest_plot() -> void:
 func _refresh() -> void:
 	# The held seed and its price sit in the HUD permanently. Costing a decision
 	# should not require opening a menu to remember what you are about to spend.
-	_status_label.text = "Day %d   %s %.0fC   %s   %s   Seed: %s %s   Harvested: %.0f kg" % [
+	# Balance alone is not checkable. A player who harvests four plots sees four
+	# separate "earned R136" messages and a balance that looks like it came from
+	# nowhere. The season total is what lets them add it up themselves.
+	_status_label.text = "Day %d   %s %.0fC   %s   Money %s   Seed: %s %s   Season: %.0f kg / %s" % [
 		_day,
 		_weather.display_name(),
 		_weather.temperature_c(),
@@ -805,12 +867,14 @@ func _refresh() -> void:
 		_library.get_definition(_selected_crop).get("display_name", _selected_crop),
 		_prices.format_money(_prices.seed_cost(_selected_crop)),
 		_harvest_total,
+		_prices.format_money(_earned_total),
 	]
 
 	for i in range(_tiles.size()):
 		_refresh_plot(i)
 
 	_update_controls_hint()
+	_update_plot_label()
 
 
 func _refresh_plot(index: int) -> void:
@@ -854,10 +918,12 @@ func _refresh_plot(index: int) -> void:
 
 func _show_harvest(label: String, summary: Dictionary, earned: float = 0.0) -> void:
 	var lines: Array = []
-	lines.append("[b]%s harvested - %.1f kg of %s[/b] (%.0f%% lost over %d days). Earned [b]%s[/b], balance %s." % [
+	lines.append("[b]%s harvested - %.1f kg of %s[/b] (%.0f%% lost over %d days). This plot earned [b]%s[/b]; %s so far this season, balance %s." % [
 		label, summary["yield_kg"], summary["display_name"],
 		summary["yield_lost_percent"], summary["days_taken"],
-		_prices.format_money(earned), _prices.format_money(_balance),
+		_prices.format_money(earned),
+		_prices.format_money(_earned_total),
+		_prices.format_money(_balance),
 	])
 	# FR-005: the single costliest day, with the agronomy attached, says more
 	# than an aggregate headline does - and fits in the space available.

@@ -47,6 +47,25 @@ func _ready() -> void:
 	_check("choosing changes the held seed", world._selected_crop != held)
 	_check("choosing a seed does not plant or charge", world._balance == before_choice)
 
+	# --- the inspection line follows the player
+	world._nearest_plot = -1
+	world._refresh()
+	_check("no plot in range says so", world._plot_label.text.contains("Walk onto"))
+
+	world._player.position = world._plot_positions[0]
+	world._update_nearest_plot()
+	world._refresh()
+	_check("standing on a plot names it", world._plot_label.text.begins_with("Plot 1"))
+
+	world._tiles[0].pest_active = true
+	world._tiles[0].moisture = 0.05
+	world._refresh()
+	_check("pests are flagged on the plot line", world._plot_label.text.contains("PESTS"))
+	_check("thirst is flagged alongside pests", world._plot_label.text.contains("NEEDS WATER"))
+	world._tiles[0].pest_active = false
+	world._tiles[0].moisture = 0.60
+	world._refresh()   # put the plot back to healthy BEFORE the marker checks
+
 	# --- soil colour must track the point where damage actually starts
 	world._tiles[0].moisture = 0.60
 	_check("a watered crop is not thirsty", not world._tiles[0].is_thirsty())
@@ -85,6 +104,9 @@ func _ready() -> void:
 	world._refresh()
 	_check("harvesting clears the tool marker", not world._ready_sprites[0].visible)
 	_check("H pays out", world._balance > before_e)
+	# The money must add up, because a player who cannot check it assumes a bug.
+	_check("season earnings track the payout",
+		abs(world._earned_total - (world._balance - before_e)) < 0.01)
 
 	# --- the controls line is always on screen
 	_check("controls line exists", world._controls_label != null)
