@@ -1,0 +1,59 @@
+[gd_scene load_steps=11 format=3 uid="uid://bwjbg2rgvnuqi"]
+
+[ext_resource type="Texture2D" uid="uid://cxgo1e3hq75pc" path="res://assets/game/objects/basic_plants.png" id="1_f6ffl"]
+[ext_resource type="Script" path="res://scenes/objects/plants/tomato.gd" id="1_j705j"]
+[ext_resource type="PackedScene" uid="uid://c2iyl4qnyfprx" path="res://scenes/objects/plants/watering_particles.tscn" id="2_603m6"]
+[ext_resource type="PackedScene" uid="uid://dxdd5sdyku4ux" path="res://scenes/objects/plants/flowering_particles.tscn" id="3_h53bd"]
+[ext_resource type="PackedScene" uid="uid://6ba6j2wgille" path="res://scenes/objects/plants/growth_cycle_component.tscn" id="4_ji0qm"]
+[ext_resource type="PackedScene" uid="uid://cpproi73eia28" path="res://scenes/components/hurt_component.tscn" id="5_rmrry"]
+[ext_resource type="PackedScene" uid="uid://dw37srqs2twxw" path="res://scenes/components/save_data_component.tscn" id="7_t5ipw"]
+[ext_resource type="Resource" uid="uid://ctw6dwhknhnno" path="res://resources/scene_data_resource.tres" id="8_5ovsa"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fst2u"]
+size = Vector2(12, 6)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yv6je"]
+size = Vector2(12, 12)
+
+[node name="Tomato" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_j705j")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+y_sort_enabled = true
+position = Vector2(0, -1)
+texture = ExtResource("1_f6ffl")
+offset = Vector2(0, -5)
+hframes = 6
+vframes = 2
+frame = 7
+
+[node name="WateringParticles" parent="." instance=ExtResource("2_603m6")]
+emitting = false
+
+[node name="FloweringParticles" parent="." instance=ExtResource("3_h53bd")]
+emitting = false
+
+[node name="GrowthCycleComponent" parent="." instance=ExtResource("4_ji0qm")]
+vegetative_period = 2
+reproduction_period = 2
+mature_period = 4
+
+[node name="WateringHurtComponent" parent="." instance=ExtResource("5_rmrry")]
+tool = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WateringHurtComponent"]
+position = Vector2(0, -1)
+shape = SubResource("RectangleShape2D_fst2u")
+
+[node name="TillingHurtComponent" parent="." instance=ExtResource("5_rmrry")]
+monitoring = false
+tool = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TillingHurtComponent"]
+position = Vector2(0, -5)
+shape = SubResource("RectangleShape2D_yv6je")
+debug_color = Color(0.842937, 0.36099, 0.326965, 0.42)
+
+[node name="SaveDataComponent" parent="." instance=ExtResource("7_t5ipw")]
+save_data_resource = ExtResource("8_5ovsa")
