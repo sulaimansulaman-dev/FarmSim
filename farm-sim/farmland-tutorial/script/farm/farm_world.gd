@@ -132,10 +132,10 @@ func _spawn_player() -> void:
 	# as a postage stamp in a field of green, which is fine on a laptop and
 	# useless on a projector. Zooming in is the whole difference.
 	var camera := Camera2D.new()
-	camera.zoom = Vector2(2.6, 2.6)
+	camera.zoom = Vector2(3.0, 3.0)
 	camera.position = FIELD_ORIGIN + Vector2(
 		PLOT_SPACING * (PLOT_COLUMNS - 1) * 0.5,
-		PLOT_SPACING * PLOT_ROWS * 0.5
+		PLOT_SPACING * PLOT_ROWS * 0.5 + 2.0
 	)
 	add_child(camera)
 	camera.make_current()
@@ -150,9 +150,14 @@ func _build_hud() -> void:
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(panel)
 
+	# Text sits over a moving world, so it needs its own ground rather than
+	# relying on an outline. The character can and does walk behind it.
+	_add_backing(panel, Rect2(0, 0, 640, 22))
+	_add_backing(panel, Rect2(0, 302, 640, 58))
+
 	_status_label = Label.new()
 	_status_label.position = Vector2(6, 4)
-	_status_label.add_theme_font_size_override("font_size", 9)
+	_status_label.add_theme_font_size_override("font_size", 11)
 	_status_label.add_theme_color_override("font_outline_color", Color.BLACK)
 	_status_label.add_theme_constant_override("outline_size", 4)
 	panel.add_child(_status_label)
@@ -160,10 +165,10 @@ func _build_hud() -> void:
 	_message_label = RichTextLabel.new()
 	_message_label.bbcode_enabled = true
 	_message_label.scroll_active = false
-	_message_label.position = Vector2(6, 300)
-	_message_label.size = Vector2(628, 56)
-	_message_label.add_theme_font_size_override("normal_font_size", 8)
-	_message_label.add_theme_font_size_override("bold_font_size", 8)
+	_message_label.position = Vector2(6, 306)
+	_message_label.size = Vector2(628, 50)
+	_message_label.add_theme_font_size_override("normal_font_size", 10)
+	_message_label.add_theme_font_size_override("bold_font_size", 10)
 	_message_label.add_theme_color_override("default_color", Color.WHITE)
 	_message_label.add_theme_color_override("font_outline_color", Color.BLACK)
 	_message_label.add_theme_constant_override("outline_size", 4)
@@ -181,11 +186,20 @@ func _build_hud() -> void:
 	demo_bar.add_child(_demo_button("+10 Days (R)", _skip_days.bind(10)))
 
 
+func _add_backing(parent: Node, area: Rect2) -> void:
+	var backing := ColorRect.new()
+	backing.color = Color(0.05, 0.06, 0.05, 0.62)
+	backing.position = area.position
+	backing.size = area.size
+	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(backing)
+
+
 func _demo_button(text: String, action: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
 	button.focus_mode = Control.FOCUS_NONE  # keep WASD working after a click
-	button.add_theme_font_size_override("font_size", 8)
+	button.add_theme_font_size_override("font_size", 10)
 	button.pressed.connect(func():
 		action.call()
 		_refresh()
