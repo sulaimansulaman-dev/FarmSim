@@ -8,9 +8,10 @@ extends Node2D
 ##
 ## Controls
 ##   WASD / arrows   walk
-##   E               do the sensible thing for this plot - open the seed
-##                   picker on bare soil, water a growing crop, reap a ripe one
+##   E               do the sensible thing for this plot - plant the seed you
+##                   are holding, water a growing crop, reap a ripe one
 ##   H               harvest (explicit, for when E would water instead)
+##   C               change which seed you are holding
 ##   T               treat a pest outbreak
 ##   Q               cycle season
 ##   Space           end the day
@@ -58,7 +59,6 @@ var _harvest_total: float = 0.0
 var _nearest_plot: int = -1
 
 var _balance: float = 0.0
-var _pending_plot: int = -1
 var _picker_crop_ids: Array = []
 
 var _status_label: Label
@@ -89,7 +89,7 @@ func _ready() -> void:
 	_spawn_player()
 	_build_hud()
 
-	_say("Walk to a plot and press [b]E[/b] to plant, water, or harvest.  [b]H[/b] harvest  [b]T[/b] treat pests  [b]Q[/b] season  [b]Space[/b] end day")
+	_say("Walk to a plot and press [b]E[/b] to plant, water, or harvest.  [b]C[/b] change seed  [b]H[/b] harvest  [b]T[/b] treat pests  [b]Q[/b] season  [b]Space[/b] end day")
 	_refresh()
 
 
@@ -232,17 +232,14 @@ func _build_crop_picker(parent: Control) -> void:
 ##
 ## Rebuilt every time it opens, because affordability and season suitability
 ## both change between one planting and the next.
-func _open_crop_picker(plot_index: int) -> void:
-	_pending_plot = plot_index
+func _open_crop_picker() -> void:
 	_picker_crop_ids.clear()
 
 	for child in _picker_list.get_children():
 		child.queue_free()
 
 	var heading := Label.new()
-	heading.text = "Choose a seed for plot %d          Balance: %s" % [
-		plot_index + 1, _prices.format_money(_balance)
-	]
+	heading.text = "Which seed?          Balance: %s" % _prices.format_money(_balance)
 	heading.add_theme_font_size_override("font_size", 12)
 	_picker_list.add_child(heading)
 
@@ -253,7 +250,7 @@ func _open_crop_picker(plot_index: int) -> void:
 		number += 1
 
 	var cancel := Button.new()
-	cancel.text = "Cancel  (Esc)"
+	cancel.text = "Keep what I have  (Esc)"
 	cancel.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cancel.focus_mode = Control.FOCUS_NONE
 	cancel.custom_minimum_size = Vector2(360, 22)
@@ -265,7 +262,7 @@ func _open_crop_picker(plot_index: int) -> void:
 	_picker_list.add_child(cancel)
 
 	var hint := Label.new()
-	hint.text = "Press 1-%d to plant." % _picker_crop_ids.size()
+	hint.text = "Press 1-%d to choose. You keep holding it until you change it." % _picker_crop_ids.size()
 	hint.add_theme_font_size_override("font_size", 9)
 	hint.add_theme_color_override("font_color", Color(0.75, 0.78, 0.72))
 	_picker_list.add_child(hint)
@@ -284,10 +281,11 @@ func _crop_card(crop_id: String, number: int) -> Control:
 	card.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	card.focus_mode = Control.FOCUS_NONE
 	card.custom_minimum_size = Vector2(360, 40)
-	card.disabled = not affordable
 	card.pressed.connect(_choose_crop.bind(crop_id))
 
-	var text := "  %d.  %-7s   seed %-5s   %2d days   pays up to %s" % [
+	var marker := "> " if crop_id == _selected_crop else "  "
+	var text := "%s%d.  %-7s   seed %-5s   %2d days   pays up to %s" % [
+		marker,
 		number,
 		definition.get("display_name", crop_id),
 		_prices.format_money(cost),
@@ -301,9 +299,11 @@ func _crop_card(crop_id: String, number: int) -> Control:
 	# "Pays up to" is the best case on purpose. The gap between that number and
 	# what the player actually earns is the whole point of the harvest summary.
 	if not affordable:
-		text += "   -   cannot afford this"
+		text += "   -   cannot afford this yet"
 	elif not suits:
 		text += "   -   wrong season for it"
+	if crop_id == _selected_crop:
+		text += "   (held)"
 
 	card.text = text
 	card.add_theme_font_size_override("font_size", 10)
@@ -380,10 +380,19 @@ func _new_season() -> void:
 	_say("[b]New season.[/b] Field cleared, balance back to %s. Plant less than you can water, and treat pests the day they appear." % _prices.format_money(_balance))
 
 
+## Choosing a seed no longer plants it. The player picks once, then plants as
+## many plots as they like with E, and only comes back here to change their
+## mind. Re-opening this menu for every one of twelve plots was tedious.
 func _choose_crop(crop_id: String) -> void:
 	_selected_crop = crop_id
 	_close_crop_picker()
-	_plant_at(_pending_plot)
+
+	var definition := _library.get_definition(crop_id)
+	_say("Holding [b]%s[/b] seed - %s each, %d days to grow. Press [b]E[/b] on bare soil to plant, [b]C[/b] to change." % [
+		definition.get("display_name", crop_id),
+		_prices.format_money(_prices.seed_cost(crop_id)),
+		_library.days_to_maturity(crop_id),
+	])
 	_refresh()
 
 
@@ -437,6 +446,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			_context_action()
 		KEY_H:
 			_harvest_nearest()
+		KEY_C:
+			_open_crop_picker()
 		KEY_T:
 			_treat_nearest()
 		KEY_Q:
@@ -482,10 +493,7 @@ func _context_action() -> void:
 
 	match crop.state:
 		Crop.State.EMPTY, Crop.State.HARVESTED:
-			if _can_afford_any_seed():
-				_open_crop_picker(_nearest_plot)
-			else:
-				_report_cannot_afford()
+			_plant_at(_nearest_plot)
 		Crop.State.GROWING:
 			_water_nearest()
 		Crop.State.MATURE:
@@ -493,6 +501,10 @@ func _context_action() -> void:
 		Crop.State.DEAD:
 			_tiles[_nearest_plot] = Crop.new(_library, 1000 + _nearest_plot)
 			_say("%s cleared. Press E again to replant." % label)
+
+
+func crop_display_name(crop_id: String) -> String:
+	return str(_library.get_definition(crop_id).get("display_name", crop_id))
 
 
 func _water_nearest() -> void:
@@ -537,7 +549,15 @@ func _plant_at(index: int) -> void:
 
 	var cost := _prices.seed_cost(_selected_crop)
 	if _balance < cost:
-		_say("[color=#e88]Not enough money for %s seed.[/color]" % _selected_crop.capitalize())
+		var alternative := _can_afford_any_seed()
+		var line := "[color=#e88]Cannot afford %s seed - it costs %s and you have %s.[/color]" % [
+			crop_display_name(_selected_crop), _prices.format_money(cost), _prices.format_money(_balance)
+		]
+		if alternative:
+			line += " Press [b]C[/b] to pick something cheaper."
+		_say(line)
+		if not alternative:
+			_report_cannot_afford()
 		return
 
 	if not crop.plant(_selected_crop, 0.55):
@@ -676,12 +696,16 @@ func _update_nearest_plot() -> void:
 
 
 func _refresh() -> void:
-	_status_label.text = "Day %d    %s %.0fC    %s    %s    Harvested: %.0f kg" % [
+	# The held seed and its price sit in the HUD permanently. Costing a decision
+	# should not require opening a menu to remember what you are about to spend.
+	_status_label.text = "Day %d   %s %.0fC   %s   %s   Seed: %s %s   Harvested: %.0f kg" % [
 		_day,
 		_weather.display_name(),
 		_weather.temperature_c(),
 		_weather.season().get("display_name", ""),
 		_prices.format_money(_balance),
+		_library.get_definition(_selected_crop).get("display_name", _selected_crop),
+		_prices.format_money(_prices.seed_cost(_selected_crop)),
 		_harvest_total,
 	]
 
