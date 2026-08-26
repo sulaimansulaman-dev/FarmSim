@@ -171,7 +171,7 @@ func _build_hud() -> void:
 	# Text sits over a moving world, so it needs its own ground rather than
 	# relying on an outline. The character can and does walk behind it.
 	_add_backing(panel, Rect2(0, 0, 640, 22))
-	_add_backing(panel, Rect2(0, 296, 640, 64))
+	_add_backing(panel, Rect2(0, 290, 640, 70))
 
 	_status_label = Label.new()
 	_status_label.position = Vector2(6, 4)
@@ -183,8 +183,12 @@ func _build_hud() -> void:
 	_message_label = RichTextLabel.new()
 	_message_label.bbcode_enabled = true
 	_message_label.scroll_active = false
-	_message_label.position = Vector2(6, 299)
-	_message_label.size = Vector2(628, 38)
+	# Hard guarantee: whatever the text length, it cannot spill onto the
+	# controls line underneath. Getting the box height right is not enough,
+	# because the next long message will always be longer than you planned for.
+	_message_label.clip_contents = true
+	_message_label.position = Vector2(6, 293)
+	_message_label.size = Vector2(628, 42)
 	_message_label.add_theme_font_size_override("normal_font_size", 10)
 	_message_label.add_theme_font_size_override("bold_font_size", 10)
 	_message_label.add_theme_color_override("default_color", Color.WHITE)
@@ -196,7 +200,7 @@ func _build_hud() -> void:
 	# happened; this is for what the player can do, and it has to still be there
 	# on the twentieth day, not only on the first.
 	_controls_label = Label.new()
-	_controls_label.position = Vector2(6, 340)
+	_controls_label.position = Vector2(6, 342)
 	_controls_label.text = "E plant/water    H harvest    C seed    T pests    Q season    Space next day"
 	_controls_label.add_theme_font_size_override("font_size", 9)
 	_controls_label.add_theme_color_override("font_color", Color(0.72, 0.76, 0.68))
@@ -779,13 +783,16 @@ func _show_harvest(label: String, summary: Dictionary, earned: float = 0.0) -> v
 		summary["yield_lost_percent"], summary["days_taken"],
 		_prices.format_money(earned), _prices.format_money(_balance),
 	])
-	lines.append(str(summary["headline"]))
-
-	# FR-005: the costliest day says more than the full list.
+	# FR-005: the single costliest day, with the agronomy attached, says more
+	# than an aggregate headline does - and fits in the space available.
 	var penalties: Array = summary["penalties"].duplicate()
 	penalties.sort_custom(func(a, b): return float(a["percent"]) > float(b["percent"]))
-	if not penalties.is_empty():
-		lines.append("[color=#e99]%s[/color]" % penalties[0]["explanation"])
+	if penalties.is_empty():
+		lines.append(str(summary["headline"]))
+	else:
+		lines.append("[color=#e99]Worst day, -%.0f%%:[/color] %s" % [
+			penalties[0]["percent"], penalties[0]["explanation"]
+		])
 
 	_say("\n".join(lines))
 
