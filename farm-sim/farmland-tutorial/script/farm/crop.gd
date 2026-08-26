@@ -48,6 +48,7 @@ var stage_index: int = 0
 var days_in_stage: float = 0.0
 var pest_active: bool = false
 var pest_days_untreated: int = 0
+var waterlogged_days: int = 0
 
 # --- explanation of the result ----------------------------------------------
 var yield_penalties: Array = []
@@ -89,6 +90,7 @@ func plant(new_crop_id: String, starting_moisture: float = 0.5) -> bool:
 	days_in_stage = 0.0
 	pest_active = false
 	pest_days_untreated = 0
+	waterlogged_days = 0
 	yield_penalties.clear()
 	action_log.clear()
 
@@ -98,11 +100,27 @@ func plant(new_crop_id: String, starting_moisture: float = 0.5) -> bool:
 
 
 ## Adds water to the soil. Amount is a fraction of field capacity (0..1).
+##
+## Watering stops short of drowning the crop. A farmer with a watering can sees
+## the soil is wet and stops; the player has only one watering action and no way
+## to pour a smaller amount, so letting that single action drown the crop
+## punishes them for the only move available to them.
+##
+## Waterlogging is still in the model, and still teaches - it now comes from
+## rain and storms, which the forecast warns about a day ahead. The lesson
+## becomes "look at the forecast before you irrigate", which is a decision the
+## player can actually act on.
 func water(amount: float = 0.35) -> bool:
 	if state != State.GROWING and state != State.MATURE:
 		return false
+
+	var ceiling: float = float(_definition.get("waterlogged_point", 1.0)) - 0.02
+	if moisture >= ceiling:
+		_record_action("water_skipped", "Soil was already wet enough; more would have drowned the roots.")
+		return false
+
 	var before := moisture
-	moisture = clampf(moisture + amount, 0.0, 1.0)
+	moisture = clampf(moisture + amount, 0.0, ceiling)
 	_record_action("water", "Watered. Soil moisture %d%% to %d%%." % [
 		int(round(before * 100.0)), int(round(moisture * 100.0))
 	])
@@ -251,24 +269,41 @@ func _apply_water_stress() -> void:
 	)
 
 
+## Waterlogging needs the soil to STAY saturated, not merely to get a soaking.
+##
+## Soil drains. A single downpour runs off and away within a day, which is why
+## the first saturated day costs nothing - it only drains. Damage starts on the
+## second consecutive day, because that is when roots are actually starved of
+## air. Without this, every storm damaged every crop and waterlogging was more
+## than half of all damage in the game: noise rather than a lesson.
 func _apply_waterlogging() -> void:
 	if not _definition.has("waterlogged_point"):
 		return
 	var soaked: float = float(_definition["waterlogged_point"])
+
 	if moisture <= soaked:
+		waterlogged_days = 0
 		return
 
-	# Over-watering is a real and common mistake, so the model punishes it.
-	# A game where more water is always better teaches the wrong lesson.
+	waterlogged_days += 1
+
+	# Drainage. Excess water leaves the soil quickly whether or not the crop
+	# was harmed by it.
+	var drain: float = _library.tuning("daily_drainage", 0.25)
+	moisture = maxf(moisture - drain, soaked)
+
+	if waterlogged_days < 2:
+		return
+
 	var severity: float = (moisture - soaked) / maxf(1.0 - soaked, 0.001)
-	var damage: float = severity * _library.tuning("waterlog_damage_per_day", 5.0)
+	var damage: float = maxf(severity, 0.35) * _library.tuning("waterlog_damage_per_day", 5.0)
 
 	_damage_health(damage)
 	_record_penalty(
 		"waterlogged",
 		damage,
-		"Day %d, %s: soil was waterlogged (%d%%). Roots need air as well as water; over-watering drowns them." % [
-			day, current_stage()["display_name"], int(round(moisture * 100.0))
+		"Day %d, %s: soil has been waterlogged for %d days. Roots need air as well as water; standing water drowns them." % [
+			day, current_stage()["display_name"], waterlogged_days
 		]
 	)
 

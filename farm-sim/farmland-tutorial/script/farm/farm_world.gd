@@ -585,6 +585,10 @@ func _water_nearest() -> void:
 	var crop: Crop = _tiles[_nearest_plot]
 	if crop.water(0.35):
 		_say("Plot %d watered - soil now %d%%." % [_nearest_plot + 1, int(crop.moisture * 100.0)])
+	elif crop.state == Crop.State.GROWING or crop.state == Crop.State.MATURE:
+		_say("Plot %d is already wet enough (%d%%). More would drown the roots." % [
+			_nearest_plot + 1, int(crop.moisture * 100.0)
+		])
 	else:
 		_say("Plot %d has nothing growing to water." % (_nearest_plot + 1))
 
@@ -710,8 +714,16 @@ func _cycle_season() -> void:
 
 func _end_day() -> void:
 	_day += 1
-	_weather.advance()
 
+	# Simulate the day the player was SHOWN, then roll tomorrow.
+	#
+	# This used to advance the weather first, which meant the day ran on a
+	# fresh roll nobody had seen and the forecast described a day that had
+	# already happened. "Rain expected, you should not need to irrigate" was
+	# advice about the past. Players watered against a dry forecast and were
+	# then rained on, which is where most of the drowned crops came from.
+	var todays_weather := _weather.display_name()
+	var todays_temp := _weather.temperature_c()
 	var rain := _weather.rainfall()
 	var events: Array = []
 
@@ -739,8 +751,11 @@ func _end_day() -> void:
 		elif crop.state == Crop.State.MATURE and was_growing:
 			events.append("[color=#9e9]Plot %d is ready.[/color]" % (i + 1))
 
-	var line := "[b]Day %d - %s, %.0f degrees.[/b] %s" % [
-		_day, _weather.display_name(), _weather.temperature_c(), _weather.forecast_text()
+	# Report the day that just ran, then show what is coming so the player can
+	# actually plan against it.
+	_weather.advance()
+	var line := "[b]Day %d was %s, %.0f degrees.[/b]  Tomorrow: %s" % [
+		_day, todays_weather, todays_temp, _weather.forecast_text()
 	]
 	if not events.is_empty():
 		line += "\n" + "  ".join(events)
