@@ -374,6 +374,17 @@ func current_stage_name() -> String:
 	return stage.get("display_name", "")
 
 
+## True when the soil has dropped below the point where this crop starts
+## taking damage. "Looks a bit dry" and "is losing yield right now" are
+## different things and the player needs to be able to tell them apart.
+func is_thirsty() -> bool:
+	if _definition.is_empty():
+		return false
+	if state != State.GROWING and state != State.MATURE:
+		return false
+	return moisture < float(_definition.get("wilting_point", 0.0))
+
+
 func is_ready_to_harvest() -> bool:
 	return state == State.MATURE
 

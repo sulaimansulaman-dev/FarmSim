@@ -47,6 +47,16 @@ func _ready() -> void:
 	_check("choosing changes the held seed", world._selected_crop != held)
 	_check("choosing a seed does not plant or charge", world._balance == before_choice)
 
+	# --- soil colour must track the point where damage actually starts
+	world._tiles[0].moisture = 0.60
+	_check("a watered crop is not thirsty", not world._tiles[0].is_thirsty())
+	world._tiles[0].moisture = 0.10
+	_check("a dried-out crop is thirsty", world._tiles[0].is_thirsty())
+	world._tiles[0].moisture = 0.60
+
+	var bare := Crop.new(world._library, 99)
+	_check("bare soil is never thirsty", not bare.is_thirsty())
+
 	# --- the plot tells you what it needs without opening anything (FR-003)
 	_check("no pest marker on a healthy crop", not world._pest_sprites[0].visible)
 	_check("no tool marker on an unripe crop", not world._ready_sprites[0].visible)

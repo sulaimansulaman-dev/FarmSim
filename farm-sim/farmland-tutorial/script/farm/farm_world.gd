@@ -51,6 +51,18 @@ const PEST_SPRITE := "res://game/objects/pest_caterpillar.png"
 const TOOL_SHEET := "res://game/objects/basic_tools_and_meterials.png"
 const TOOL_CELL := Rect2(32, 0, 16, 16)
 
+## Soil tint by moisture. Dry reads pale and warm, wet reads dark and cool -
+## the same cue a real field gives you from across the yard, and one of the
+## things FR-003 asks the player to be able to see without opening anything.
+## These are multipliers on the tile art, not absolute colours, so the soil
+## keeps its texture instead of turning into a flat blue square.
+const SOIL_DRY := Color(1.18, 1.10, 0.98)
+const SOIL_WET := Color(0.58, 0.74, 0.95)
+## Below the wilting point the crop is losing yield every day. That is a
+## different state from "getting dry" and it gets its own colour, because a
+## smooth gradient tells the player nothing about when to act.
+const SOIL_PARCHED := Color(1.25, 0.88, 0.66)
+
 var _library := CropLibrary.new()
 var _weather := WeatherSystem.new(2026)
 var _prices := PriceList.new()
@@ -806,12 +818,15 @@ func _refresh_plot(index: int) -> void:
 	var soil: Sprite2D = _soil_sprites[index]
 	var plant: Sprite2D = _plant_sprites[index]
 
-	# Dry soil reads lighter, wet soil darker - the same cue a real field gives
-	# you, and one of the things FR-003 asks the player to be able to see.
-	var wetness := 1.0
 	if crop.state == Crop.State.GROWING or crop.state == Crop.State.MATURE:
-		wetness = lerpf(1.15, 0.66, clampf(crop.moisture, 0.0, 1.0))
-	soil.modulate = Color(wetness, wetness, wetness)
+		# Saturate a little before full, so a well-watered plot looks properly
+		# wet rather than only reaching it at an unreachable 100%.
+		var wetness := clampf(crop.moisture / 0.85, 0.0, 1.0)
+		soil.modulate = SOIL_DRY.lerp(SOIL_WET, wetness)
+		if crop.is_thirsty():
+			soil.modulate = SOIL_PARCHED
+	else:
+		soil.modulate = Color.WHITE
 
 	# Highlight whichever plot the player would act on.
 	if index == _nearest_plot:
