@@ -44,6 +44,13 @@ const GRASS_SHEET := "res://game/tilesets/grass.png"
 ## autotile edge pieces, which would need bitmasking to use correctly.
 const PLAIN_CELL := Rect2(16, 16, 16, 16)
 
+## Overlays that tell the player what a plot needs without opening anything
+## (FR-003). A pest is a bug sitting on the crop; a ripe crop gets a tool
+## planted at its root.
+const PEST_SPRITE := "res://game/objects/placeholder_pest.png"
+const TOOL_SHEET := "res://game/objects/basic_tools_and_meterials.png"
+const TOOL_CELL := Rect2(32, 0, 16, 16)
+
 var _library := CropLibrary.new()
 var _weather := WeatherSystem.new(2026)
 var _prices := PriceList.new()
@@ -51,6 +58,8 @@ var _prices := PriceList.new()
 var _tiles: Array = []
 var _soil_sprites: Array = []
 var _plant_sprites: Array = []
+var _pest_sprites: Array = []
+var _ready_sprites: Array = []
 var _plot_positions: Array = []
 
 var _player: Node2D
@@ -58,6 +67,7 @@ var _selected_crop: String = "maize"
 var _day: int = 0
 var _harvest_total: float = 0.0
 var _nearest_plot: int = -1
+var _elapsed: float = 0.0
 
 var _balance: float = 0.0
 var _picker_crop_ids: Array = []
@@ -95,8 +105,20 @@ func _ready() -> void:
 	_refresh()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_elapsed += delta
 	_update_nearest_plot()
+	_animate_markers()
+
+
+## A static bug on a static plant is easy to miss on a field of twelve. Bobbing
+## it is the cheapest way to make the eye land on the plot that needs attention.
+func _animate_markers() -> void:
+	var bob := sin(_elapsed * 5.0) * 1.2
+	for i in range(_pest_sprites.size()):
+		var pest: Sprite2D = _pest_sprites[i]
+		if pest.visible:
+			pest.position.y = _plot_positions[i].y - 8.0 + bob
 
 
 # --- construction -----------------------------------------------------------
@@ -137,6 +159,27 @@ func _build_plots() -> void:
 		plant.visible = false
 		add_child(plant)
 		_plant_sprites.append(plant)
+
+		# A bug perched on the crop, up and to the right so it does not hide
+		# the growth stage underneath it.
+		var pest := Sprite2D.new()
+		pest.texture = load(PEST_SPRITE)
+		pest.position = pos + Vector2(5, -8)
+		pest.scale = Vector2(0.7, 0.7) * PLOT_SCALE
+		pest.z_index = 2
+		pest.visible = false
+		add_child(pest)
+		_pest_sprites.append(pest)
+
+		# A tool stuck in the ground at the base of a crop that is ready.
+		var ready_marker := Sprite2D.new()
+		ready_marker.texture = _atlas(TOOL_SHEET, TOOL_CELL)
+		ready_marker.position = pos + Vector2(-4, 4)
+		ready_marker.scale = Vector2(0.7, 0.7) * PLOT_SCALE
+		ready_marker.z_index = 1
+		ready_marker.visible = false
+		add_child(ready_marker)
+		_ready_sprites.append(ready_marker)
 
 		_tiles.append(Crop.new(_library, 1000 + i))
 
@@ -759,6 +802,11 @@ func _refresh_plot(index: int) -> void:
 	if index == _nearest_plot:
 		soil.modulate = soil.modulate.lightened(0.25)
 
+	var pest: Sprite2D = _pest_sprites[index]
+	var ready_marker: Sprite2D = _ready_sprites[index]
+	pest.visible = crop.pest_active
+	ready_marker.visible = crop.is_ready_to_harvest()
+
 	if crop.state == Crop.State.EMPTY or crop.state == Crop.State.HARVESTED:
 		plant.visible = false
 		return
@@ -768,8 +816,6 @@ func _refresh_plot(index: int) -> void:
 
 	if crop.state == Crop.State.DEAD:
 		plant.modulate = Color(0.45, 0.36, 0.30)
-	elif crop.pest_active:
-		plant.modulate = Color(1.0, 0.72, 0.72)
 	else:
 		# Unhealthy plants yellow off rather than staying green.
 		var health_ratio := crop.health / Crop.MAX_HEALTH

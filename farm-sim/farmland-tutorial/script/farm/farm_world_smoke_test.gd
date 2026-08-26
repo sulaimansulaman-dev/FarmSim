@@ -47,6 +47,18 @@ func _ready() -> void:
 	_check("choosing changes the held seed", world._selected_crop != held)
 	_check("choosing a seed does not plant or charge", world._balance == before_choice)
 
+	# --- the plot tells you what it needs without opening anything (FR-003)
+	_check("no pest marker on a healthy crop", not world._pest_sprites[0].visible)
+	_check("no tool marker on an unripe crop", not world._ready_sprites[0].visible)
+
+	world._tiles[0].pest_active = true
+	world._refresh()
+	_check("a pest shows a bug on the crop", world._pest_sprites[0].visible)
+
+	world._tiles[0].treat_pest()
+	world._refresh()
+	_check("treating clears the bug", not world._pest_sprites[0].visible)
+
 	# --- exactly one key harvests
 	world._nearest_plot = 0
 	world._tiles[0].force_mature()
@@ -54,8 +66,14 @@ func _ready() -> void:
 	world._context_action()
 	_check("E does NOT harvest a ripe crop", world._tiles[0].state == Crop.State.MATURE)
 	_check("E on a ripe crop earns nothing", world._balance == before_e)
+	# _refresh runs after every keypress in play; calling the action directly
+	# bypasses that, so do it by hand before checking what is drawn.
+	world._refresh()
+	_check("a ripe crop shows the tool marker", world._ready_sprites[0].visible)
 	world._harvest_nearest()
 	_check("H harvests it", world._tiles[0].state == Crop.State.HARVESTED)
+	world._refresh()
+	_check("harvesting clears the tool marker", not world._ready_sprites[0].visible)
 	_check("H pays out", world._balance > before_e)
 
 	# --- the controls line is always on screen
