@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "_comment": "Agronomic crop definitions for FarmSim. Owned by the Gameplay Programmer (crops). Market prices live in economy config, NOT here. Every value here is tunable without touching code (NFR-006).",
+
+  "simulation": {
+    "stress_damage_per_day": 4.0,
+    "waterlog_damage_per_day": 2.5,
+    "pest_damage_per_day": 3.0,
+    "growth_stall_health": 20.0
+  },
+
+  "crops": [
+    {
+      "id": "maize",
+      "display_name": "Maize",
+      "local_name": "Mielies",
+      "base_yield_kg": 100.0,
+      "daily_water_use": 0.14,
+      "wilting_point": 0.25,
+      "waterlogged_point": 0.92,
+      "pest_susceptibility": 1.0,
+      "stages": [
+        {
+          "id": "germination",
+          "display_name": "Germination",
+          "days": 4,
+          "water_sensitivity": 1.2,
+          "teaching_note": "Seed needs steady moisture to sprout. Dry soil now means gaps in the stand that never recover."
+        },
+        {
+          "id": "vegetative",
+          "display_name": "Vegetative",
+          "days": 7,
+          "water_sensitivity": 0.8,
+          "teaching_note": "The plant is building leaves. It is fairly forgiving here \u2014 short dry spells can be tolerated."
+        },
+        {
+          "id": "tasselling",
+          "display_name": "Tasselling",
+          "days": 5,
+          "water_sensitivity": 2.0,
+          "teaching_note": "The single most water-critical stage for maize. Stress during tasselling causes poor pollination and badly filled cobs."
+        },
+        {
+          "id": "grain_fill",
+          "display_name": "Grain Fill",
+          "days": 8,
+          "water_sensitivity": 1.6,
+          "teaching_note": "Kernels are packing on weight. Water shortage now directly shrinks the harvest."
+        },
+        {
+          "id": "mature",
+          "display_name": "Mature",
+          "days": 2,
+          "water_sensitivity": 0.3,
+          "teaching_note": "The crop is drying down for harvest. Extra water is no longer useful."
+        }
+      ]
+    },
+    {
+      "id": "beans",
+      "display_name": "Beans",
+      "local_name": "Boontjies",
+      "base_yield_kg": 60.0,
+      "daily_water_use": 0.11,
+      "wilting_point": 0.22,
+      "waterlogged_point": 0.85,
+      "pest_susceptibility": 1.4,
+      "stages": [
+        {
+          "id": "germination",
+          "display_name": "Germination",
+          "days": 3,
+          "water_sensitivity": 1.2,
+          "teaching_note": "Beans rot easily in waterlogged soil at planting. Moist, not soaked."
+        },
+        {
+          "id": "vegetative",
+          "display_name": "Vegetative",
+          "days": 6,
+          "water_sensitivity": 0.7,
+          "teaching_note": "Beans fix their own nitrogen, which is why they are a good rotation partner for maize."
+        },
+        {
+          "id": "flowering",
+          "display_name": "Flowering",
+          "days": 4,
+          "water_sensitivity": 1.8,
+          "teaching_note": "Water stress at flowering makes the plant drop its flowers, and a dropped flower is a pod you will never harvest."
+        },
+        {
+          "id": "pod_fill",
+          "display_name": "Pod Fill",
+          "days": 6,
+          "water_sensitivity": 1.4,
+          "teaching_note": "Pods are filling out. Steady moisture now decides how many beans are in each pod."
+        },
+        {
+          "id": "mature",
+          "display_name": "Mature",
+          "days": 2,
+          "water_sensitivity": 0.3,
+          "teaching_note": "Pods are drying. Hold off on watering to avoid mould."
+        }
+      ]
+    }
+  ]
+}
