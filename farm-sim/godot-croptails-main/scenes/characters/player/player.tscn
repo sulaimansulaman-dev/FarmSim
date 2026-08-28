@@ -1,4 +1,4 @@
-[gd_scene load_steps=54 format=3 uid="uid://vrcuj5gugs6f"]
+[gd_scene load_steps=55 format=3 uid="uid://vrcuj5gugs6f"]
 
 [ext_resource type="Texture2D" uid="uid://birp2gbnoykkp" path="res://assets/game/characters/character_sprites.png" id="1_8nj4w"]
 [ext_resource type="Texture2D" uid="uid://b72kunkgo5hee" path="res://assets/game/characters/basic_character_sprites.png" id="1_ap6kx"]
@@ -401,6 +401,20 @@ height = 12.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_1qr82"]
 radius = 3.0
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_mp01"]
+properties/0/path = NodePath(".:direction")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:global_position")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("AnimatedSprite2D:animation")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath("AnimatedSprite2D:frame")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 y_sort_enabled = true
 collision_layer = 2
@@ -459,3 +473,9 @@ debug_color = Color(0.915001, 0.268131, 0.290021, 0.42)
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
 position = Vector2(0, -2)
 radius = 4.0
+
+[node name="Camera2D" type="Camera2D" parent="."]
+enabled = false
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_mp01")

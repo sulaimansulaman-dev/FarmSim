@@ -29,10 +29,11 @@ ToolManager="*res://scripts/globals/tool_manager.gd"
 InventoryManager="*res://scripts/globals/inventory_manager.gd"
 DayNightCycleManager="*res://scripts/globals/day_night_cycle_manager.gd"
 SaveGameManager="*res://scripts/globals/save_game_manager.gd"
-DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
+DialogueManager="*uid://db5cfppdqxvjr"
 GameDialogueManager="*res://scripts/globals/game_dialogue_manager.gd"
 GameManager="*res://scripts/globals/game_manager.gd"
 SceneManager="*res://scripts/globals/scene_manager.gd"
+MultiplayerManager="*res://scripts/globals/multiplayer_manager.gd"
 
 [display]
 

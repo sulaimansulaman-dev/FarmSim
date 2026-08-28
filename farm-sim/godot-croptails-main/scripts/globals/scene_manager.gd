@@ -3,6 +3,9 @@ extends Node
 const main_scene_path := 'res://scenes/levels/main_scene.tscn'
 const main_scene_root_path := '/root/MainScene'
 const main_scene_level_root_path := main_scene_root_path + '/GameRoot/LevelRoot'
+const main_scene_player_path := main_scene_root_path + '/GameRoot/Player'
+const main_scene_players_path := main_scene_root_path + '/GameRoot/Players'
+const main_scene_spawner_path := main_scene_root_path + '/GameRoot/MultiplayerSpawner'
 const level_scenes: Dictionary = {
     'Level1': 'res://scenes/levels/level_1.tscn'
 }

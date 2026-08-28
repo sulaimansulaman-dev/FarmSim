@@ -1,15 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://cfttmhivevyme"]
+[gd_scene format=3 uid="uid://cfttmhivevyme"]
 
 [ext_resource type="Theme" uid="uid://bnp65kle34ngr" path="res://scenes/ui/game_ui_theme.tres" id="1_43tjm"]
-[ext_resource type="Script" path="res://scenes/ui/game_menu_screen.gd" id="1_ch8rr"]
+[ext_resource type="Script" uid="uid://duahltyedlqev" path="res://scenes/ui/game_menu_screen.gd" id="1_ch8rr"]
 [ext_resource type="PackedScene" uid="uid://b35ml4ourxwja" path="res://scenes/ui/game_menu_screen_background.tscn" id="2_piudl"]
 
-[node name="GameMenuScreen" type="CanvasLayer"]
+[node name="GameMenuScreen" type="CanvasLayer" unique_id=1575631098]
 script = ExtResource("1_ch8rr")
 
-[node name="GameMenuScreenBackground" parent="." instance=ExtResource("2_piudl")]
+[node name="GameMenuScreenBackground" parent="." unique_id=1471809918 instance=ExtResource("2_piudl")]
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2048557899]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,12 +17,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_43tjm")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer" unique_id=1177009481]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
 
-[node name="Label" type="Label" parent="MarginContainer/MarginContainer"]
+[node name="Label" type="Label" parent="MarginContainer/MarginContainer" unique_id=1050037988]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.458717, 0.297993, 0.376638, 1)
 theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
@@ -31,18 +31,36 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 54
 text = "Croptails"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1796738901]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 
-[node name="StartGameButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="StartGameButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1814057336]
 custom_minimum_size = Vector2(100, 29)
 layout_mode = 2
 theme_type_variation = &"GameMenuButton"
 text = "START"
 
-[node name="SaveGameButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="ResumeButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1910823010]
+custom_minimum_size = Vector2(100, 29)
+layout_mode = 2
+theme_type_variation = &"GameMenuButton"
+text = "RESUME"
+
+[node name="HostButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=963880192]
+custom_minimum_size = Vector2(100, 29)
+layout_mode = 2
+theme_type_variation = &"GameMenuButton"
+text = "HOST GAME"
+
+[node name="JoinButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=407478767]
+custom_minimum_size = Vector2(100, 29)
+layout_mode = 2
+theme_type_variation = &"GameMenuButton"
+text = "JOIN GAME"
+
+[node name="SaveGameButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1288339838]
 custom_minimum_size = Vector2(100, 29)
 layout_mode = 2
 focus_mode = 0
@@ -50,12 +68,78 @@ theme_type_variation = &"GameMenuButton"
 disabled = true
 text = "SAVE"
 
-[node name="ExitGameButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="ExitGameButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=891960667]
 custom_minimum_size = Vector2(100, 29)
 layout_mode = 2
 theme_type_variation = &"GameMenuButton"
 text = "EXIT"
 
+[node name="StatusLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1916066760]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.458717, 0.297993, 0.376638, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 2
+
+[node name="JoinGamePopup" type="PanelContainer" parent="." unique_id=145885666]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_43tjm")
+theme_type_variation = &"DarkWoodPanel"
+
+[node name="MarginContainer" type="MarginContainer" parent="JoinGamePopup" unique_id=320624815]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="VBoxContainer" type="VBoxContainer" parent="JoinGamePopup/MarginContainer" unique_id=32574857]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PromptLabel" type="Label" parent="JoinGamePopup/MarginContainer/VBoxContainer" unique_id=337126854]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.458717, 0.297993, 0.376638, 1)
+text = "Enter server address"
+
+[node name="AddressLineEdit" type="LineEdit" parent="JoinGamePopup/MarginContainer/VBoxContainer" unique_id=2078327195]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+placeholder_text = "127.0.0.1"
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="JoinGamePopup/MarginContainer/VBoxContainer" unique_id=1130764514]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="CancelButton" type="Button" parent="JoinGamePopup/MarginContainer/VBoxContainer/ButtonsContainer" unique_id=1870063088]
+custom_minimum_size = Vector2(70, 29)
+layout_mode = 2
+theme_type_variation = &"GameMenuButton"
+text = "CANCEL"
+
+[node name="JoinConfirmButton" type="Button" parent="JoinGamePopup/MarginContainer/VBoxContainer/ButtonsContainer" unique_id=468646497]
+custom_minimum_size = Vector2(70, 29)
+layout_mode = 2
+theme_type_variation = &"GameMenuButton"
+text = "JOIN"
+
 [connection signal="pressed" from="MarginContainer/VBoxContainer/StartGameButton" to="." method="_on_start_game_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ResumeButton" to="." method="_on_resume_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/SaveGameButton" to="." method="_on_save_game_button_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/ExitGameButton" to="." method="_on_exit_game_button_pressed"]
+[connection signal="text_submitted" from="JoinGamePopup/MarginContainer/VBoxContainer/AddressLineEdit" to="." method="_on_join_address_edit_text_submitted"]
+[connection signal="pressed" from="JoinGamePopup/MarginContainer/VBoxContainer/ButtonsContainer/CancelButton" to="." method="_on_join_popup_cancel_button_pressed"]
+[connection signal="pressed" from="JoinGamePopup/MarginContainer/VBoxContainer/ButtonsContainer/JoinConfirmButton" to="." method="_on_join_confirm_button_pressed"]
