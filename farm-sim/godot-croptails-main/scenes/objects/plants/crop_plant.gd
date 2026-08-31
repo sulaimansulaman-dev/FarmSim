@@ -22,6 +22,7 @@ const SHEET_COLUMNS := 6
 
 func _ready() -> void:
 	crop_sim.crop.stage_changed.connect(on_stage_changed)
+	crop_sim.crop.matured.connect(on_matured)
 	crop_sim.crop.died.connect(on_died)
 
 	watering_hurt_component.hurt.connect(on_watered)
@@ -44,10 +45,12 @@ func update_sprite() -> void:
 func on_stage_changed(_stage_id: String, _display_name: String) -> void:
 	update_sprite()
 
-	# Only a mature crop can be harvested, so only then does the hoe hit it.
-	var ready_to_harvest: bool = crop_sim.crop.is_ready_to_harvest()
-	tilling_hurt_component.monitoring = ready_to_harvest
-	flowering_particles.emitting = ready_to_harvest
+
+## Only a mature crop can be harvested, so only now does the hoe collide with it.
+func on_matured() -> void:
+	update_sprite()
+	tilling_hurt_component.monitoring = true
+	flowering_particles.emitting = true
 
 
 func on_watered(_hit_damage: int) -> void:

@@ -23,6 +23,8 @@ extends RefCounted
 signal stage_changed(new_stage_id: String, display_name: String)
 signal health_changed(new_health: float)
 signal pest_appeared()
+## Emitted when the crop finishes its last stage and can be harvested.
+signal matured()
 signal died()
 
 enum State { EMPTY, GROWING, MATURE, DEAD, HARVESTED }
@@ -152,6 +154,7 @@ func force_mature() -> bool:
 	stage_index = _definition["stages"].size() - 1
 	days_in_stage = 0.0
 	state = State.MATURE
+	matured.emit()
 	_record_action("force_mature", "[demo] Skipped ahead to harvest.")
 	stage_changed.emit(current_stage_id(), current_stage_name())
 	return true
@@ -354,6 +357,7 @@ func _advance_growth(growth_rate: float = 1.0) -> void:
 			stage_changed.emit(current_stage_id(), current_stage_name())
 		else:
 			state = State.MATURE
+			matured.emit()
 
 
 # --- queries ----------------------------------------------------------------
