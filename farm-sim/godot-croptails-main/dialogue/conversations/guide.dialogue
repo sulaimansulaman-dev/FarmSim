@@ -1,12 +1,17 @@
 ~ start
 Marlow: [[Hi|Hello|Howdy]], nice to meet you!
-Marlow: Welcome to your new farm.
-Marlow: As you can see the cows and chickens are hungry.
-Marlow: You need to grow some crops to feed them.
-Marlow: Here are some seeds to grow some crops.
-- Take crop seeds
-	Teemo: Yeah I can grow crops.
+Marlow: Welcome to your farm. Small, but the soil is good.
+Marlow: I have turned over a patch for you already. The rest is up to you.
+Marlow: Start with cabbage. It grows quickly and it forgives a beginner.
+- Take the seeds
+	Teemo: Thank you. Where do I start?
+	Marlow: Four things, in this order.
+	Marlow: The hoe on bare grass digs a new bed. That is how the farm grows.
+	Marlow: The seeds on a dug bed plant a crop.
+	Marlow: The watering can keeps it alive. Let the soil dry out and you lose weight at harvest.
+	Marlow: When it stops growing, swing the hoe at it to bring it in.
+	Marlow: Come find me when you have your first cabbage.
 	do GameDialogueManager.action_give_crop_seeds()
-- Reject crop seeds
-	Teemo: I'm not ready to grow my farm yet.
+- Not yet
+	Teemo: I am not ready to start farming yet.
 => END
