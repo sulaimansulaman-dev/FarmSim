@@ -17,34 +17,47 @@ const SLOT_SIZE := Vector2(26, 32)
 @onready var milk_label: Label = $MarginContainer/VBoxContainer/Milk/MilkLabel
 @onready var slots: VBoxContainer = $MarginContainer/VBoxContainer
 
+@onready var base_labels: Dictionary = {
+	'log': log_label,
+	'stone': stone_label,
+	'corn': corn_label,
+	'tomato': tomato_label,
+	'egg': egg_label,
+	'milk': milk_label,
+}
+
 ## crop_id -> its weight Label, so each crop's slot is built only once.
 var crop_labels: Dictionary = {}
 
 
 func _ready() -> void:
 	InventoryManager.inventory_changed.connect(on_inventory_changed)
+	ToolManager.tool_enabled.connect(on_tool_enabled)
+
+	# Island 1 has no trees, animals or corn, so these slots would only ever
+	# read 0. A slot appears the first time the player actually holds one.
+	for label: Label in base_labels.values():
+		label.get_parent().visible = false
 
 
 func on_inventory_changed(inventory: Dictionary) -> void:
-	if inventory.has('log'):
-		log_label.text = str(inventory['log'])
-
-	if inventory.has('stone'):
-		stone_label.text = str(inventory['stone'])
-
-	if inventory.has('corn'):
-		corn_label.text = str(inventory['corn'])
-
-	if inventory.has('tomato'):
-		tomato_label.text = str(inventory['tomato'])
-
-	if inventory.has('egg'):
-		egg_label.text = str(inventory['egg'])
-
-	if inventory.has('milk'):
-		milk_label.text = str(inventory['milk'])
+	for item_name in base_labels:
+		if not inventory.has(item_name):
+			continue
+		var label: Label = base_labels[item_name]
+		label.text = str(inventory[item_name])
+		label.get_parent().visible = true
 
 	update_crops(inventory)
+
+
+## A crop gets its slot as soon as the seeds are unlocked, so the player can
+## see what they are working towards before the first harvest lands.
+func on_tool_enabled(tool: DataTypes.Tools) -> void:
+	var crop_id: String = CropsCursorComponent.TOOL_CROPS.get(tool, "")
+	if crop_id.is_empty() or crop_labels.has(crop_id):
+		return
+	crop_labels[crop_id] = build_crop_slot(crop_id)
 
 
 ## Anything in the inventory that crops.json knows about gets a slot. Corn and
