@@ -1,5 +1,14 @@
 extends PanelContainer
 
+## Hover text for the toolbar. The base game identifies its tools by sprite
+## alone, which assumes the player already knows what a hoe is - not a safe
+## assumption for an audience that is learning to farm.
+const TOOL_HINTS := {
+    DataTypes.Tools.AxeWood: "Axe - chop trees for wood",
+    DataTypes.Tools.TillGround: "Hoe - break open grass to make a bed you can plant in",
+    DataTypes.Tools.WaterCrops: "Watering can - dry soil costs you weight at harvest",
+}
+
 @onready var tool_axe: Button = $MarginContainer/HBoxContainer/ToolAxe
 @onready var tool_tilling: Button = $MarginContainer/HBoxContainer/ToolTilling
 @onready var tool_watering_can: Button = $MarginContainer/HBoxContainer/ToolWateringCan
@@ -9,6 +18,7 @@ extends PanelContainer
 
 func _ready() -> void:
     ToolManager.tool_enabled.connect(on_tool_enabled)
+    set_tool_hints()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -58,3 +68,26 @@ func _on_tool_corn_pressed() -> void:
 
 func _on_tool_tomato_pressed() -> void:
     ToolManager.select_tool(DataTypes.Tools.PlantTomato)
+
+
+func set_tool_hints() -> void:
+    tool_axe.tooltip_text = TOOL_HINTS[DataTypes.Tools.AxeWood]
+    tool_tilling.tooltip_text = TOOL_HINTS[DataTypes.Tools.TillGround]
+    tool_watering_can.tooltip_text = TOOL_HINTS[DataTypes.Tools.WaterCrops]
+    tool_corn.tooltip_text = seed_hint(DataTypes.Tools.PlantCorn)
+    tool_tomato.tooltip_text = seed_hint(DataTypes.Tools.PlantTomato)
+
+
+## Reads the crop a seed tool actually sows, so reassigning a tool in
+## TOOL_CROPS cannot leave the hover text describing the wrong plant.
+func seed_hint(tool: DataTypes.Tools) -> String:
+    var crop_id: String = CropsCursorComponent.TOOL_CROPS.get(tool, "")
+    if crop_id.is_empty():
+        return "Seeds"
+
+    var definition: Dictionary = CropManager.library.get_definition(crop_id)
+    var crop_name: String = definition.get("display_name", crop_id)
+    var local_name: String = definition.get("local_name", "")
+    if local_name.is_empty():
+        return "%s seeds - plant in a dug bed" % crop_name
+    return "%s (%s) seeds - plant in a dug bed" % [crop_name, local_name]
