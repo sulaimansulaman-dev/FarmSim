@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://do5trwkncib8o"]
+
+[ext_resource type="Script" uid="uid://cum2lcysna1bi" path="res://scenes/objects/plants/crop_plant.gd" id="1_nxgnv"]
+[ext_resource type="Texture2D" uid="uid://cxgo1e3hq75pc" path="res://assets/game/objects/basic_plants.png" id="2_cl61p"]
+[ext_resource type="PackedScene" uid="uid://c2iyl4qnyfprx" path="res://scenes/objects/plants/watering_particles.tscn" id="3_v0cum"]
+[ext_resource type="PackedScene" uid="uid://dxdd5sdyku4ux" path="res://scenes/objects/plants/flowering_particles.tscn" id="4_h0nh3"]
+[ext_resource type="PackedScene" uid="uid://cpproi73eia28" path="res://scenes/components/hurt_component.tscn" id="6_3u5nn"]
+[ext_resource type="PackedScene" uid="uid://dw37srqs2twxw" path="res://scenes/components/save_data_component.tscn" id="7_lnq6e"]
+[ext_resource type="Script" uid="uid://bkdgelary3p1f" path="res://scripts/farm/crop_sim_component.gd" id="8_cl61p"]
+[ext_resource type="Resource" uid="uid://ctw6dwhknhnno" path="res://resources/scene_data_resource.tres" id="8_o8737"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3nlqt"]
+size = Vector2(13.5, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lpyng"]
+size = Vector2(13.5, 12)
+
+[node name="CropPlant" type="Node2D" unique_id=1057901500]
+y_sort_enabled = true
+script = ExtResource("1_nxgnv")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=56339988]
+y_sort_enabled = true
+position = Vector2(0, -1)
+texture = ExtResource("2_cl61p")
+offset = Vector2(0, -3)
+hframes = 6
+vframes = 2
+frame = 1
+
+[node name="WateringParticles" parent="." unique_id=419846092 instance=ExtResource("3_v0cum")]
+emitting = false
+
+[node name="FloweringParticles" parent="." unique_id=1628840916 instance=ExtResource("4_h0nh3")]
+emitting = false
+
+[node name="WateringHurtComponent" parent="." unique_id=1284802751 instance=ExtResource("6_3u5nn")]
+tool = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WateringHurtComponent" unique_id=259389492]
+position = Vector2(0, -1)
+shape = SubResource("RectangleShape2D_3nlqt")
+
+[node name="TillingHurtComponent" parent="." unique_id=1052273952 instance=ExtResource("6_3u5nn")]
+monitoring = false
+tool = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TillingHurtComponent" unique_id=526812769]
+position = Vector2(0, -5)
+shape = SubResource("RectangleShape2D_lpyng")
+debug_color = Color(0.812889, 0.386298, 0.369776, 0.42)
+
+[node name="SaveDataComponent" parent="." unique_id=1108102443 instance=ExtResource("7_lnq6e")]
+save_data_resource = ExtResource("8_o8737")
+
+[node name="CropSimComponent" type="Node" parent="." unique_id=475992826]
+script = ExtResource("8_cl61p")
