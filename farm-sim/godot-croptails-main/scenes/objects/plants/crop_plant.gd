@@ -11,6 +11,8 @@ extends Node2D
 ## right, top to bottom. So frame = row * 6 + column.
 const SHEET_COLUMNS := 6
 
+const crop_harvest_scene := preload("res://scenes/objects/plants/crop_harvest.tscn")
+
 @export var crop_id : String = "maize"
 
 @onready var sprite_2d: Sprite2D = $Sprite2D
@@ -68,7 +70,24 @@ func on_harvested(_hit_damage: int) -> void:
 
 	var summary: Dictionary = crop_sim.crop.harvest()
 	print("Harvested %s: %s" % [crop_id, summary])
+
+	# Deferred, and before queue_free: we are inside the hurt component's
+	# physics callback, where adding a body to the tree is not allowed yet.
+	# This is the same ordering the base game's corn.gd uses.
+	call_deferred("spawn_harvest", int(round(float(summary["yield_kg"]))))
 	queue_free()
+
+
+## Drops the produce as a pickup the player walks over — how every collectable
+## in Croptails reaches the inventory.
+func spawn_harvest(amount_kg: int) -> void:
+	if amount_kg <= 0:
+		return
+
+	var harvest := crop_harvest_scene.instantiate()
+	harvest.setup(crop_id, amount_kg)
+	harvest.global_position = global_position
+	get_parent().add_child(harvest)
 
 
 func on_died() -> void:
