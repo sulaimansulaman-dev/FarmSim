@@ -97,6 +97,19 @@ func sprite_cell_size() -> int:
 	return int(sprites.get("cell_size", 16))
 
 
+## Optional placeholder tint for a crop's art, given in crops.json as a hex
+## string or a colour name. White when the crop has none.
+##
+## This exists only because crops currently borrow each other's spritesheet
+## rows - cabbage draws on the tomato row, so untinted it is indistinguishable
+## from tomatoes. Delete this and the icon_tint entries when the real art lands.
+func icon_tint(crop_id: String) -> Color:
+	var value: String = str(get_definition(crop_id).get("icon_tint", ""))
+	if value.is_empty():
+		return Color.WHITE
+	return Color.from_string(value, Color.WHITE)
+
+
 ## The region of the spritesheet to draw for this crop at its current stage.
 func stage_sprite_region(crop: Crop) -> Rect2:
 	var definition := get_definition(crop.crop_id)
