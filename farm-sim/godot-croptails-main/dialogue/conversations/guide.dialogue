@@ -5,12 +5,7 @@ Marlow: I have turned over a patch for you already. The rest is up to you.
 Marlow: Start with cabbage. It grows quickly and it forgives a beginner.
 - Take the seeds
 	Teemo: Thank you. Where do I start?
-	Marlow: Four things, in this order.
-	Marlow: The hoe on bare grass digs a new bed. That is how the farm grows.
-	Marlow: The seeds on a dug bed plant a crop.
-	Marlow: The watering can keeps it alive. Let the soil dry out and you lose weight at harvest.
-	Marlow: When it stops growing, swing the hoe at it to bring it in.
-	Marlow: Come find me when you have your first cabbage.
+	Marlow: I will walk you through it. Watch the top of the screen and do as I say.
 	do GameDialogueManager.action_give_crop_seeds()
 - Not yet
 	Teemo: I am not ready to start farming yet.

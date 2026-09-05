@@ -57,6 +57,12 @@ func add_crop() -> void:
 	if not TOOL_CROPS.has(ToolManager.selected_tool):
 		return
 
+	# One crop per tile. Without this, a second click stacks another plant on
+	# the same square invisibly: watering and harvesting then hit both, and the
+	# one underneath survives the harvest looking like a seed that will not go.
+	if crop_at(local_cell_position) != null:
+		return
+
 	# Set crop_id before add_child: _ready() runs the moment a node enters the
 	# tree, and that is where crop_plant.gd reads it to decide what to sow.
 	var crop_instance := crop_plant_scene.instantiate() as CropPlant
@@ -73,7 +79,20 @@ func remove_crop() -> void:
 	if distance > 20:
 		return
 
-	var crop_nodes := get_parent().find_child('CropFields').get_children()
-	for node: Node2D in crop_nodes:
-		if node.global_position == local_cell_position:
-			node.queue_free()
+	var crop := crop_at(local_cell_position)
+	if crop != null:
+		crop.queue_free()
+
+
+## The crop standing on a tile, or null if it is free.
+##
+## Crops queued for deletion do not count: harvesting frees the plant but the
+## node lingers until the end of the frame, and a tile you just cleared should
+## be plantable straight away.
+func crop_at(position: Vector2) -> Node2D:
+	for node: Node2D in get_parent().find_child('CropFields').get_children():
+		if node.is_queued_for_deletion():
+			continue
+		if node.global_position == position:
+			return node
+	return null

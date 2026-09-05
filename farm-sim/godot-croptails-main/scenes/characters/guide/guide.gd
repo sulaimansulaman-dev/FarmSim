@@ -2,6 +2,14 @@ extends CharacterBody2D
 
 const balloon_scene: PackedScene = preload("res://dialogue/game_dialogue_balloon.tscn")
 
+## Whether talking to this guide hands over every tool at once.
+##
+## True is the base game's behaviour, and level_1 still needs it. Island 1 turns
+## it off: there the tutorial unlocks one tool per step, so the toolbar itself
+## becomes the instruction and the wrong action is impossible rather than merely
+## discouraged.
+@export var unlocks_all_tools: bool = true
+
 @onready var interactable_component: InteractableComponent = $InteractableComponent
 @onready var interactable_label_component: Control = $InteractableLabelComponent
 
@@ -34,6 +42,9 @@ func on_interactable_deactivated(_body: Node2D) -> void:
 
 
 func on_gave_crop_seeds() -> void:
+    if not unlocks_all_tools:
+        return
+
     ToolManager.enable_tool(DataTypes.Tools.TillGround)
     ToolManager.enable_tool(DataTypes.Tools.WaterCrops)
     ToolManager.enable_tool(DataTypes.Tools.PlantCorn)

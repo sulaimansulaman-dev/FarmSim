@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://b1e1ym4ljlaa0" path="res://scenes/components/field_cursor_component.tscn" id="7_vwu8x"]
 [ext_resource type="PackedScene" uid="uid://c8t2nu208scbx" path="res://scenes/components/crops_cursor_component.tscn" id="8_kn0rq"]
 [ext_resource type="PackedScene" uid="uid://cwuy5cxoymac1" path="res://scenes/characters/guide/guide.tscn" id="12_vu6qy"]
+[ext_resource type="Script" path="res://scenes/levels/tutorial_director.gd" id="13_tutdi"]
 
 [node name="Island1" type="Node2D" unique_id=531785822]
 y_sort_enabled = true
@@ -60,3 +61,8 @@ tilled_soil_tilemap_layer = NodePath("../GameTilemap/TilledSoil")
 
 [node name="Guide" parent="." unique_id=1391652792 instance=ExtResource("12_vu6qy")]
 position = Vector2(531, 256)
+unlocks_all_tools = false
+
+[node name="TutorialDirector" type="CanvasLayer" parent="."]
+layer = 2
+script = ExtResource("13_tutdi")

@@ -361,16 +361,20 @@ func _advance_growth(growth_rate: float = 1.0) -> void:
 		return
 
 	days_in_stage += growth_rate
-	var stage := current_stage()
 
-	if days_in_stage >= float(stage["days"]):
-		if stage_index < _definition["stages"].size() - 1:
-			stage_index += 1
-			days_in_stage = 0.0
-			stage_changed.emit(current_stage_id(), current_stage_name())
-		else:
+	# A loop rather than a single check, and subtraction rather than zeroing.
+	# A tutorial crop running at ten times the calendar clears several stages in
+	# one day, and carrying the remainder forward means no development is thrown
+	# away when a stage is passed part way through a day.
+	while days_in_stage >= float(current_stage()["days"]):
+		if stage_index >= _definition["stages"].size() - 1:
 			state = State.MATURE
 			matured.emit()
+			return
+
+		days_in_stage -= float(current_stage()["days"])
+		stage_index += 1
+		stage_changed.emit(current_stage_id(), current_stage_name())
 
 
 # --- queries ----------------------------------------------------------------
