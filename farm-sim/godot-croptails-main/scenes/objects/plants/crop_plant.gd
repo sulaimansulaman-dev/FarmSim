@@ -1,3 +1,4 @@
+class_name CropPlant
 extends Node2D
 
 ## One planted crop on one tile
@@ -35,6 +36,7 @@ func _ready() -> void:
 		queue_free()
 		return
 
+	add_to_group("crop_plant")
 	status_icon.watch(crop_sim.crop)
 	update_sprite()
 

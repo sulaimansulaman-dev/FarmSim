@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://cfjgitj25txq8"]
+[gd_scene load_steps=7 format=3 uid="uid://cfjgitj25txq8"]
 
 [ext_resource type="Theme" uid="uid://bnp65kle34ngr" path="res://scenes/ui/game_ui_theme.tres" id="1_dg8vg"]
 [ext_resource type="PackedScene" uid="uid://b8dokajwro750" path="res://scenes/ui/emotes_panel.tscn" id="2_jx5nb"]
 [ext_resource type="PackedScene" uid="uid://1b8ym5vxucda" path="res://scenes/ui/tools_panel.tscn" id="2_q6j6c"]
 [ext_resource type="PackedScene" uid="uid://g7mwcje7ep6a" path="res://scenes/ui/inventory_panel.tscn" id="3_jpqn2"]
 [ext_resource type="PackedScene" uid="uid://cffksp8uaiebw" path="res://scenes/ui/day_night_panel.tscn" id="4_0moy6"]
+[ext_resource type="Script" uid="uid://drl1x1i3g6k3k" path="res://scenes/ui/crop_info_panel.gd" id="5_cinfo"]
 
 [node name="GameScreen" type="CanvasLayer"]
 
@@ -39,3 +40,9 @@ size_flags_vertical = 8
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
+
+[node name="CropInfoPanel" type="PanelContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+script = ExtResource("5_cinfo")
