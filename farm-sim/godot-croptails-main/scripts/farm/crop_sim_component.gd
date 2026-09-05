@@ -18,6 +18,11 @@ extends Node
 @export var evaporation_multiplier: float = 1.0
 @export var temperature_c: float = Crop.NO_TEMPERATURE
 
+## How fast this one plant develops compared with the real crop calendar.
+## Left at 1.0 everywhere except the tutorial crop, which the tutorial speeds up
+## so a beginner can see a whole cycle in a couple of minutes.
+@export var growth_multiplier: float = 1.0
+
 var crop: Crop
 
 
@@ -37,4 +42,4 @@ func water() -> bool:
 
 
 func on_time_tick_day(_day: int) -> void:
-	crop.advance_day(evaporation_multiplier, pest_chance, temperature_c)
+	crop.advance_day(evaporation_multiplier, pest_chance, temperature_c, growth_multiplier)

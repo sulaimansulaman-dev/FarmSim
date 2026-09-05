@@ -184,10 +184,15 @@ func harvest() -> Dictionary:
 ## evaporation_multiplier scales water loss: 1.0 normal, higher in a heatwave
 ## or drought. temperature_c drives how much the crop actually develops today.
 ## Both are owned by the weather system.
+##
+## growth_multiplier compresses the calendar without touching the agronomy - a
+## tutorial crop can ripen in a day while crops.json still holds the real
+## number of days the crop takes in the field.
 func advance_day(
 	evaporation_multiplier: float = 1.0,
 	pest_chance: float = 0.0,
-	temperature_c: float = NO_TEMPERATURE
+	temperature_c: float = NO_TEMPERATURE,
+	growth_multiplier: float = 1.0
 ) -> void:
 	if state != State.GROWING and state != State.MATURE:
 		return
@@ -208,7 +213,7 @@ func advance_day(
 		died.emit()
 		return
 
-	_advance_growth(growth_rate_at(temperature_c))
+	_advance_growth(growth_rate_at(temperature_c) * maxf(growth_multiplier, 0.0))
 	health_changed.emit(health)
 
 

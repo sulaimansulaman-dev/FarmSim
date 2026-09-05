@@ -59,8 +59,9 @@ func on_watered(_hit_damage: int) -> void:
 	if not crop_sim.water():
 		return
 
-	# Moisture just moved, so the thirsty badge may no longer be true.
+		# Moisture just moved, so the thirsty badge may no longer be true.
 	status_icon.refresh()
+	FarmEvents.crop_watered.emit(self)
 
 	watering_particles.emitting = true
 	await get_tree().create_timer(2.0).timeout
@@ -76,6 +77,7 @@ func on_harvested(_hit_damage: int) -> void:
 
 	var summary: Dictionary = crop_sim.crop.harvest()
 	print("Harvested %s: %s" % [crop_id, summary])
+	FarmEvents.crop_harvested.emit(crop_id, float(summary["yield_kg"]))
 
 	# Deferred, and before queue_free: we are inside the hurt component's
 	# physics callback, where adding a body to the tree is not allowed yet.

@@ -34,6 +34,7 @@ GameDialogueManager="*res://scripts/globals/game_dialogue_manager.gd"
 GameManager="*res://scripts/globals/game_manager.gd"
 SceneManager="*res://scripts/globals/scene_manager.gd"
 CropManager="*uid://chd00p3mqko5s"
+FarmEvents="*uid://c1d3ef1bgbxrg"
 
 [display]
 

@@ -59,10 +59,14 @@ func add_crop() -> void:
 
 	# Set crop_id before add_child: _ready() runs the moment a node enters the
 	# tree, and that is where crop_plant.gd reads it to decide what to sow.
-	var crop_instance := crop_plant_scene.instantiate() as Node2D
+	var crop_instance := crop_plant_scene.instantiate() as CropPlant
 	crop_instance.crop_id = TOOL_CROPS[ToolManager.selected_tool]
 	crop_instance.global_position = local_cell_position
 	get_parent().find_child('CropFields').add_child(crop_instance)
+
+	# After add_child, not before: add_child runs the plant's _ready(), so by
+	# now its simulation exists and a listener can act on it straight away.
+	FarmEvents.crop_planted.emit(crop_instance)
 
 
 func remove_crop() -> void:
