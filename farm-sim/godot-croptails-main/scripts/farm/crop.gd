@@ -199,12 +199,25 @@ func advance_day(
 
 	day += 1
 
+	var health_before := health
+
 	_apply_water_loss(evaporation_multiplier)
 	_apply_water_stress()
 	_apply_waterlogging()
 	_apply_cold_damage(temperature_c)
 	_maybe_start_pest(pest_chance)
 	_apply_pest_damage()
+
+	# A plant that took no harm today puts condition back on. Without this,
+	# health is a ratchet: one bad spell below growth_stall_health and the crop
+	# can never grow again, yet never dies either - it just stands there for the
+	# rest of the game looking alive.
+	#
+	# Recovering health does NOT undo the loss. yield_penalties is the ledger and
+	# it is append-only, so every kilogram already forfeited stays forfeited.
+	# Health is the plant's condition today; the ledger is what the season cost.
+	if health == health_before and health > 0.0:
+		health = minf(health + _library.tuning("recovery_per_day", 2.0), MAX_HEALTH)
 
 	if health <= 0.0:
 		health = 0.0

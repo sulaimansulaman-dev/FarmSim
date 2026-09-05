@@ -6,7 +6,8 @@
 	"waterlog_damage_per_day": 2.5,
 	"pest_damage_per_day": 3.0,
 	"growth_stall_health": 20.0,
-	"min_growth_rate": 0.3
+	"min_growth_rate": 0.3,
+	"recovery_per_day": 2.0
   },
   "crops": [
 	{
