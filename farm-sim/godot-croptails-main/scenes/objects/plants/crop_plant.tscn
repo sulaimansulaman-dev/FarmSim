@@ -3,11 +3,12 @@
 [ext_resource type="Script" uid="uid://cum2lcysna1bi" path="res://scenes/objects/plants/crop_plant.gd" id="1_nxgnv"]
 [ext_resource type="Texture2D" uid="uid://cxgo1e3hq75pc" path="res://assets/game/objects/basic_plants.png" id="2_cl61p"]
 [ext_resource type="PackedScene" uid="uid://c2iyl4qnyfprx" path="res://scenes/objects/plants/watering_particles.tscn" id="3_v0cum"]
-[ext_resource type="PackedScene" uid="uid://dxdd5sdyku4ux" path="res://scenes/objects/plants/flowering_particles.tscn" id="4_h0nh3"]
 [ext_resource type="PackedScene" uid="uid://cpproi73eia28" path="res://scenes/components/hurt_component.tscn" id="6_3u5nn"]
 [ext_resource type="PackedScene" uid="uid://dw37srqs2twxw" path="res://scenes/components/save_data_component.tscn" id="7_lnq6e"]
 [ext_resource type="Script" uid="uid://bkdgelary3p1f" path="res://scripts/farm/crop_sim_component.gd" id="8_cl61p"]
 [ext_resource type="Resource" uid="uid://ctw6dwhknhnno" path="res://resources/scene_data_resource.tres" id="8_o8737"]
+[ext_resource type="Texture2D" uid="uid://crl8djg0q4mkk" path="res://assets/ui/basic_ui_sprites.png" id="9_uisht"]
+[ext_resource type="Script" uid="uid://b24mw5toi3u6k" path="res://scenes/objects/plants/crop_status_icon.gd" id="10_stsic"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3nlqt"]
 size = Vector2(13.5, 8)
@@ -31,9 +32,6 @@ frame = 1
 [node name="WateringParticles" parent="." unique_id=419846092 instance=ExtResource("3_v0cum")]
 emitting = false
 
-[node name="FloweringParticles" parent="." unique_id=1628840916 instance=ExtResource("4_h0nh3")]
-emitting = false
-
 [node name="WateringHurtComponent" parent="." unique_id=1284802751 instance=ExtResource("6_3u5nn")]
 tool = 3
 
@@ -42,7 +40,6 @@ position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_3nlqt")
 
 [node name="TillingHurtComponent" parent="." unique_id=1052273952 instance=ExtResource("6_3u5nn")]
-monitoring = false
 tool = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TillingHurtComponent" unique_id=526812769]
@@ -55,3 +52,11 @@ save_data_resource = ExtResource("8_o8737")
 
 [node name="CropSimComponent" type="Node" parent="." unique_id=475992826]
 script = ExtResource("8_cl61p")
+
+[node name="StatusIcon" type="Sprite2D" parent="." unique_id=1767968694]
+position = Vector2(0, -20)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("9_uisht")
+region_enabled = true
+region_rect = Rect2(848, 208, 16, 16)
+script = ExtResource("10_stsic")

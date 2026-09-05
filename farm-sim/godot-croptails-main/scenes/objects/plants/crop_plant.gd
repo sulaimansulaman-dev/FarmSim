@@ -18,7 +18,7 @@ const crop_harvest_scene := preload("res://scenes/objects/plants/crop_harvest.ts
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var crop_sim: CropSimComponent = $CropSimComponent
 @onready var watering_particles: GPUParticles2D = $WateringParticles
-@onready var flowering_particles: GPUParticles2D = $FloweringParticles
+@onready var status_icon: CropStatusIcon = $StatusIcon
 @onready var watering_hurt_component: HurtComponent = $WateringHurtComponent
 @onready var tilling_hurt_component: HurtComponent = $TillingHurtComponent
 
@@ -35,6 +35,7 @@ func _ready() -> void:
 		queue_free()
 		return
 
+	status_icon.watch(crop_sim.crop)
 	update_sprite()
 
 func update_sprite() -> void:
@@ -48,16 +49,16 @@ func on_stage_changed(_stage_id: String, _display_name: String) -> void:
 	update_sprite()
 
 
-## Only a mature crop can be harvested, so only now does the hoe collide with it.
 func on_matured() -> void:
 	update_sprite()
-	tilling_hurt_component.monitoring = true
-	flowering_particles.emitting = true
 
 
 func on_watered(_hit_damage: int) -> void:
 	if not crop_sim.water():
 		return
+
+	# Moisture just moved, so the thirsty badge may no longer be true.
+	status_icon.refresh()
 
 	watering_particles.emitting = true
 	await get_tree().create_timer(2.0).timeout
@@ -66,6 +67,9 @@ func on_watered(_hit_damage: int) -> void:
 
 func on_harvested(_hit_damage: int) -> void:
 	if not crop_sim.crop.is_ready_to_harvest():
+		# The hoe now collides with a crop at every stage, so this is a real
+		# swing that deserves an answer rather than a silent nothing.
+		status_icon.refuse()
 		return
 
 	var summary: Dictionary = crop_sim.crop.harvest()
