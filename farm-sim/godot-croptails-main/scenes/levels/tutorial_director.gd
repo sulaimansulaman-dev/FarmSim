@@ -39,9 +39,9 @@ const ARROW_BOB_SECONDS := 0.6
 const ARROW_SCREEN_GAP := 14.0
 const ARROW_WORLD_GAP := 34.0
 
-## How long Marlow lets the player look at their new cabbage in the inventory
-## before moving on to the digging lesson.
-const COUNTED_SECONDS := 7.0
+## A safety net, not the intended path. Space moves this beat on; the timer is
+## only there so a player who presses nothing is never stuck.
+const COUNTED_SECONDS := 15.0
 
 ## The order is the player's order, not the farm's. Marlow has already turned
 ## over a patch, so a beginner sows into it and sees a whole crop through before
@@ -55,7 +55,7 @@ const LINES := {
 	Step.THIRSTY: "Marlow: Let it grow now. A blue mark above it means the soil has dried out - water it again when you see one.\n(The clock buttons at the top right make the days pass faster.)",
 	Step.HARVEST: "Marlow: A gold star bobbing above it means the cabbage is ripe. Take the hoe - the same tool brings a crop in - and swing it at the plant.",
 	Step.COLLECT: "Marlow: It is lying where it fell. Walk over it to pick it up.",
-	Step.COUNTED: "Marlow: And there it is - your cabbage, counted in the panel on the left. That is what the work was for.",
+	Step.COUNTED: "Marlow: And there it is - your cabbage, counted in the panel on the left. That is what the work was for.\n(Press Space when you are ready.)",
 	Step.DIG: "Marlow: One thing left. That hoe does more than bring a crop in - swing it at bare grass and you open new ground.\nTake the hoe, walk to the square I am pointing at, and dig it.",
 	Step.DONE: "Marlow: There you go - new ground, made by you. Hold Ctrl and click if you ever want to close ground again.\nI will put the field back the way I left it, and then the farm is yours. From here a crop takes the days it really takes.",
 }
@@ -197,6 +197,19 @@ func _on_tutorial_crop_died() -> void:
 	_plant = null
 	_step = Step.SOW
 	_say(DIED_LINE)
+
+
+## Space moves the tutorial on from the one step the world cannot finish.
+##
+## Only COUNTED listens. Every other step is gated on the player actually doing
+## something, and letting a keypress skip those would defeat the whole point.
+func _unhandled_input(event: InputEvent) -> void:
+	if _step != Step.COUNTED:
+		return
+
+	if event.is_action_pressed("ui_accept"):
+		get_viewport().set_input_as_handled()
+		_leave_counted()
 
 
 ## Ends the "look at your cabbage" pause. Guarded, because a crop dying during
