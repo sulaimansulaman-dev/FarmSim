@@ -3,8 +3,8 @@ extends Node2D
 const corn_harvest_scene := preload("res://scenes/objects/plants/corn_harvest.tscn")
 
 @export var initial_growth_state: DataTypes.GrowthStates:
-    set(state):
-        $GrowthCycleComponent.current_state = state
+	set(state):
+		$GrowthCycleComponent.current_state = state
 
 var current_growth_state: DataTypes.GrowthStates
 var watering_time: float = 2.0
@@ -19,48 +19,48 @@ var frame_offset: int = 1
 
 
 func _ready() -> void:
-    on_grew_up(growth_cycle_component.current_state)
-    growth_cycle_component.grew_up.connect(on_grew_up)
-    watering_hurt_component.hurt.connect(on_watered)
-    tilling_hurt_component.hurt.connect(on_harvested)
+	on_grew_up(growth_cycle_component.current_state)
+	growth_cycle_component.grew_up.connect(on_grew_up)
+	watering_hurt_component.hurt.connect(on_watered)
+	tilling_hurt_component.hurt.connect(on_harvested)
 
 
 func on_grew_up(growth_state: DataTypes.GrowthStates) -> void:
-    current_growth_state = growth_state
-    sprite_2d.frame = int(growth_state) + frame_offset
-    sprite_2d.modulate = Color.WHITE
+	current_growth_state = growth_state
+	sprite_2d.frame = int(growth_state) + frame_offset
+	sprite_2d.modulate = Color.WHITE
 
-    match growth_state:
-        DataTypes.GrowthStates.Mature:
-            flowering_particles.emitting = true
-            tilling_hurt_component.monitoring = true
-        DataTypes.GrowthStates.Spoiled:
-            flowering_particles.emitting = false
-            sprite_2d.frame = int(DataTypes.GrowthStates.Mature) + frame_offset
-            sprite_2d.modulate = Color.DARK_GOLDENROD
+	match growth_state:
+		DataTypes.GrowthStates.Mature:
+			flowering_particles.emitting = true
+			tilling_hurt_component.monitoring = true
+		DataTypes.GrowthStates.Spoiled:
+			flowering_particles.emitting = false
+			sprite_2d.frame = int(DataTypes.GrowthStates.Mature) + frame_offset
+			sprite_2d.modulate = Color.DARK_GOLDENROD
 
 
 func on_watered(_hit_damage: int) -> void:
-    if current_growth_state == DataTypes.GrowthStates.Mature or current_growth_state == DataTypes.GrowthStates.Spoiled:
-        return
+	if current_growth_state == DataTypes.GrowthStates.Mature or current_growth_state == DataTypes.GrowthStates.Spoiled:
+		return
 
-    if growth_cycle_component.is_watered:
-        return
+	if growth_cycle_component.is_watered:
+		return
 
-    watering_particles.emitting = true
-    await get_tree().create_timer(watering_time).timeout
-    watering_particles.emitting = false
-    growth_cycle_component.is_watered = true
-    sprite_2d.modulate = Color.LIGHT_GRAY
+	watering_particles.emitting = true
+	await get_tree().create_timer(watering_time).timeout
+	watering_particles.emitting = false
+	growth_cycle_component.is_watered = true
+	sprite_2d.modulate = Color.LIGHT_GRAY
 
 
 func on_harvested(_hit_damage: int) -> void:
-    if current_growth_state == DataTypes.GrowthStates.Mature:
-        call_deferred('spawn_harvest')
-    queue_free()
+	if current_growth_state == DataTypes.GrowthStates.Mature:
+		call_deferred('spawn_harvest')
+	queue_free()
 
 
 func spawn_harvest() -> void:
-    var corn_harvest_instance = corn_harvest_scene.instantiate() as Node2D
-    corn_harvest_instance.global_position = global_position
-    get_parent().add_child(corn_harvest_instance)
+	var corn_harvest_instance = corn_harvest_scene.instantiate() as Node2D
+	corn_harvest_instance.global_position = global_position
+	get_parent().add_child(corn_harvest_instance)
