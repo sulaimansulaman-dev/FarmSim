@@ -73,6 +73,11 @@ func on_tool_selected(tool: DataTypes.Tools) -> void:
 		else:
 			button.modulate = TINT_UNSELECTED
 
+## The button that selects a tool, so anything needing to point at one can.
+## Null for a tool with no button, which is only DataTypes.Tools.None.
+func button_for(tool: DataTypes.Tools) -> Button:
+	return _buttons.get(tool)
+
 
 func hint_for(tool: DataTypes.Tools) -> String:
 	if TOOL_HINTS.has(tool):

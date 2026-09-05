@@ -63,6 +63,8 @@ tilled_soil_tilemap_layer = NodePath("../GameTilemap/TilledSoil")
 position = Vector2(531, 256)
 unlocks_all_tools = false
 
-[node name="TutorialDirector" type="CanvasLayer" parent="."]
+[node name="TutorialDirector" type="CanvasLayer" parent="." node_paths=PackedStringArray("tilled_soil", "grass")]
 layer = 2
 script = ExtResource("13_tutdi")
+tilled_soil = NodePath("../GameTilemap/TilledSoil")
+grass = NodePath("../GameTilemap/Grass")
