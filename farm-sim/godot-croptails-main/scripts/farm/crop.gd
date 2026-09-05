@@ -161,10 +161,18 @@ func force_mature() -> bool:
 
 
 ## Harvests a mature crop and returns the end-of-cycle summary.
+##
+## The state change happens BEFORE the summary is built, so the record says
+## what the crop actually is rather than what it was a moment earlier. This is
+## safe: projected_yield_kg() treats HARVESTED and MATURE identically, so the
+## yield figure does not move.
 func harvest() -> Dictionary:
-	var summary := build_summary()
-	if state == State.MATURE:
+	var was_mature := state == State.MATURE
+	if was_mature:
 		state = State.HARVESTED
+
+	var summary := build_summary()
+	if was_mature:
 		_record_action("harvest", "Harvested %.1f kg of %s." % [summary["yield_kg"], display_name])
 	return summary
 

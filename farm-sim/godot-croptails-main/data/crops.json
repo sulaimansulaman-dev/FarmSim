@@ -173,7 +173,7 @@
   ],
   "_sprites": {
 	"_comment": "Where each crop's art lives in game/objects/basic_plants.png. 16x16 cells. Column 0 is the seed packet and column 5 the harvested item; columns 1-4 are the growth art. Swap these numbers when the real asset pack lands - no code changes needed.",
-	"sheet": "res://game/objects/basic_plants.png",
+	"sheet": "res://assets/game/objects/basic_plants.png",
 	"cell_size": 16
   }
 }

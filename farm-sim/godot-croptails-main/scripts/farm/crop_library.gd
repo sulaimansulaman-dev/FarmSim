@@ -90,7 +90,7 @@ func tuning(key: String, fallback: float) -> float:
 # When the real art pack replaces the placeholder, only crops.json changes.
 
 func sprite_sheet_path() -> String:
-	return str(sprites.get("sheet", "res://game/objects/basic_plants.png"))
+	return str(sprites.get("sheet", "res://assets/game/objects/basic_plants.png"))
 
 
 func sprite_cell_size() -> int:
