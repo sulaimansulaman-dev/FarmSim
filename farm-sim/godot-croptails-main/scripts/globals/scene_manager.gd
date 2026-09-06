@@ -1,5 +1,8 @@
 extends Node
 
+## Emitted once a level is in the tree, with the name to show the player.
+signal level_loaded(display_name: String)
+
 const main_scene_path := 'res://scenes/levels/main_scene.tscn'
 const main_scene_root_path := '/root/MainScene'
 const main_scene_level_root_path := main_scene_root_path + '/GameRoot/LevelRoot'
@@ -8,6 +11,18 @@ const level_scenes: Dictionary = {
 	'Island1': 'res://scenes/levels/island_1.tscn',
 	'Island3': 'res://scenes/levels/island_3.tscn'
 }
+
+## What each level is called on screen. Kept apart from the scene paths because
+## one is a filename and the other is player-facing text - and because the team
+## has not settled whether these are Islands or Stages. Change these strings and
+## nothing else has to move.
+const level_names: Dictionary = {
+	'Level1': 'Level 1',
+	'Island1': 'Island 1',
+	'Island3': 'Island 3'
+}
+
+var current_level: String = ''
 
 
 func load_main_scene_container() -> void:
@@ -37,3 +52,6 @@ func load_level(level_name: String) -> void:
 
 	var level_scene: Node = load(scene_path).instantiate()
 	level_root.add_child(level_scene)
+
+	current_level = level_name
+	level_loaded.emit(str(level_names.get(level_name, level_name)))
