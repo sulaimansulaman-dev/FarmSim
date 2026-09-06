@@ -93,7 +93,6 @@ func build_crop_slot(crop_id: String) -> Label:
 
 	var texture_rect := TextureRect.new()
 	texture_rect.texture = icon
-	texture_rect.modulate = CropManager.library.icon_tint(crop_id)
 	texture_rect.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	texture_rect.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	slot.add_child(texture_rect)

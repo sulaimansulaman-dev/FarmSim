@@ -32,7 +32,7 @@ load_path = "res://.godot/imported/basic_plants.png-95b9b15040aa30969080ee5e6985
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_psbt6"]
 atlas = SubResource("CompressedTexture2D_3qnui")
-region = Rect2(0, 16, 16, 16)
+region = Rect2(0, 32, 16, 16)
 
 [node name="ToolsPanel" type="PanelContainer"]
 offset_right = 40.0

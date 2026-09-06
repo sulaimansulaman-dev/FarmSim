@@ -26,7 +26,7 @@ position = Vector2(0, -1)
 texture = ExtResource("2_cl61p")
 offset = Vector2(0, -3)
 hframes = 6
-vframes = 2
+vframes = 3
 frame = 1
 
 [node name="WateringParticles" parent="." unique_id=419846092 instance=ExtResource("3_v0cum")]

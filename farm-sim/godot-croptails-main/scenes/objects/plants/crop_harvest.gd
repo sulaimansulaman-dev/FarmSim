@@ -28,4 +28,3 @@ func _ready() -> void:
 
 	collectable_component.collectable_name = crop_id
 	collectable_component.amount = amount_kg
-	modulate = CropManager.library.icon_tint(crop_id)
