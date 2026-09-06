@@ -23,6 +23,7 @@ extends RefCounted
 signal stage_changed(new_stage_id: String, display_name: String)
 signal health_changed(new_health: float)
 signal pest_appeared()
+signal pest_cleared()
 ## Emitted when the crop finishes its last stage and can be harvested.
 signal matured()
 signal died()
@@ -137,6 +138,7 @@ func treat_pest() -> bool:
 		return false
 	pest_active = false
 	pest_days_untreated = 0
+	pest_cleared.emit()
 	_record_action("treat_pest", "Treated the pest outbreak.")
 	return true
 

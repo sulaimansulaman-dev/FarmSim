@@ -107,6 +107,11 @@ func _refresh(crop: Crop) -> void:
 	_yield_label.text = "About %.0f kg if harvested now" % crop.projected_yield_kg()
 	_note_label.text = str(crop.current_stage().get("teaching_note", ""))
 
+	# An outbreak outranks the stage note. It is what is costing the player
+	# yield right now, and the only one of the two they can still act on.
+	if crop.pest_active:
+		_note_label.text = "Pests are feeding on this crop. Every day it goes untreated costs you yield."
+
 
 func _health_colour(health: float) -> Color:
 	if health >= 70.0:

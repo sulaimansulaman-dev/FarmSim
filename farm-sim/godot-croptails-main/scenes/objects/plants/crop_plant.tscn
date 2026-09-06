@@ -9,6 +9,7 @@
 [ext_resource type="Resource" uid="uid://ctw6dwhknhnno" path="res://resources/scene_data_resource.tres" id="8_o8737"]
 [ext_resource type="Texture2D" uid="uid://crl8djg0q4mkk" path="res://assets/ui/basic_ui_sprites.png" id="9_uisht"]
 [ext_resource type="Script" uid="uid://b24mw5toi3u6k" path="res://scenes/objects/plants/crop_status_icon.gd" id="10_stsic"]
+[ext_resource type="Texture2D" uid="uid://chj4nwmjmi8jh" path="res://assets/game/objects/pest_caterpillar.png" id="11_pest"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3nlqt"]
 size = Vector2(13.5, 8)
@@ -59,3 +60,9 @@ texture = ExtResource("9_uisht")
 region_enabled = true
 region_rect = Rect2(848, 208, 16, 16)
 script = ExtResource("10_stsic")
+
+[node name="PestSprite" type="Sprite2D" parent="." unique_id=884120533]
+visible = false
+z_index = 1
+position = Vector2(3, -7)
+texture = ExtResource("11_pest")

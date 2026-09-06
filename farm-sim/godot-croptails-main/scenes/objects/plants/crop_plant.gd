@@ -20,6 +20,7 @@ const crop_harvest_scene := preload("res://scenes/objects/plants/crop_harvest.ts
 @onready var crop_sim: CropSimComponent = $CropSimComponent
 @onready var watering_particles: GPUParticles2D = $WateringParticles
 @onready var status_icon: CropStatusIcon = $StatusIcon
+@onready var pest_sprite: Sprite2D = $PestSprite
 @onready var watering_hurt_component: HurtComponent = $WateringHurtComponent
 @onready var tilling_hurt_component: HurtComponent = $TillingHurtComponent
 
@@ -27,6 +28,8 @@ func _ready() -> void:
 	crop_sim.crop.stage_changed.connect(on_stage_changed)
 	crop_sim.crop.matured.connect(on_matured)
 	crop_sim.crop.died.connect(on_died)
+	crop_sim.crop.pest_appeared.connect(on_pest_appeared)
+	crop_sim.crop.pest_cleared.connect(on_pest_cleared)
 
 	watering_hurt_component.hurt.connect(on_watered)
 	tilling_hurt_component.hurt.connect(on_harvested)
@@ -53,6 +56,31 @@ func on_stage_changed(_stage_id: String, _display_name: String) -> void:
 
 func on_matured() -> void:
 	update_sprite()
+
+
+## A pest is a creature sitting on the plant, not a badge floating above it, so
+## it gets its own sprite rather than a slot in the status icon. A crop can be
+## infested and thirsty at the same time and the player needs to see both.
+func on_pest_appeared() -> void:
+	pest_sprite.visible = true
+
+
+func on_pest_cleared() -> void:
+	pest_sprite.visible = false
+
+
+## Treats this plant. Nothing is returned - the crop's own signals drive the view.
+##
+## Spraying is not a "hit" like watering or harvesting. Those need a player
+## animation state, and the character spritesheet has none for spraying, so this
+## works the way planting does: the cursor finds the crop and acts on it.
+func spray() -> void:
+	if crop_sim.crop.treat_pest():
+		return
+
+	# Nothing to treat. Say so rather than silently swallowing the click - a
+	# wasted treatment is itself the lesson, and the model already logs it.
+	status_icon.refuse()
 
 
 func on_watered(_hit_damage: int) -> void:
