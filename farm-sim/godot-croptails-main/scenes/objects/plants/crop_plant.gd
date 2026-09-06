@@ -63,10 +63,12 @@ func on_matured() -> void:
 ## infested and thirsty at the same time and the player needs to see both.
 func on_pest_appeared() -> void:
 	pest_sprite.visible = true
+	FarmEvents.pest_appeared.emit(self)
 
 
 func on_pest_cleared() -> void:
 	pest_sprite.visible = false
+	FarmEvents.pest_treated.emit(self)
 
 
 ## Treats this plant. Nothing is returned - the crop's own signals drive the view.

@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://c8t2nu208scbx" path="res://scenes/components/crops_cursor_component.tscn" id="8_kn0rq"]
 [ext_resource type="PackedScene" uid="uid://cwuy5cxoymac1" path="res://scenes/characters/guide/guide.tscn" id="12_vu6qy"]
 [ext_resource type="Script" path="res://scenes/components/island_settings_component.gd" id="13_isle3"]
+[ext_resource type="Script" path="res://scenes/levels/pest_coach.gd" id="14_coach"]
 
 [node name="Island3" type="Node2D" unique_id=531785822]
 y_sort_enabled = true
@@ -61,7 +62,12 @@ tilled_soil_tilemap_layer = NodePath("../GameTilemap/TilledSoil")
 
 [node name="Guide" parent="." unique_id=1391652792 instance=ExtResource("12_vu6qy")]
 position = Vector2(531, 256)
+conversation = "res://dialogue/conversations/guide_island_3.dialogue"
 
 [node name="IslandSettings" type="Node" parent="."]
 script = ExtResource("13_isle3")
 pest_chance = 0.12
+
+[node name="PestCoach" type="CanvasLayer" parent="."]
+layer = 2
+script = ExtResource("14_coach")

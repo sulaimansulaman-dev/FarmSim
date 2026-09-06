@@ -17,3 +17,7 @@ signal soil_tilled(position: Vector2)
 signal crop_planted(plant: CropPlant)
 signal crop_watered(plant: CropPlant)
 signal crop_harvested(crop_id: String, yield_kg: float)
+
+## A pest outbreak started on this plant, or was just cleared from it.
+signal pest_appeared(plant: CropPlant)
+signal pest_treated(plant: CropPlant)
