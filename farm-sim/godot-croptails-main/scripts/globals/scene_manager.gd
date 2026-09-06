@@ -5,7 +5,8 @@ const main_scene_root_path := '/root/MainScene'
 const main_scene_level_root_path := main_scene_root_path + '/GameRoot/LevelRoot'
 const level_scenes: Dictionary = {
 	'Level1': 'res://scenes/levels/level_1.tscn',
-	'Island1': 'res://scenes/levels/island_1.tscn'
+	'Island1': 'res://scenes/levels/island_1.tscn',
+	'Island3': 'res://scenes/levels/island_3.tscn'
 }
 
 
