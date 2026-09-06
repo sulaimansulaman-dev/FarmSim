@@ -40,6 +40,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if TOOL_CROPS.has(ToolManager.selected_tool):
 			get_cell_under_mouse()
 			add_crop()
+		elif ToolManager.selected_tool == DataTypes.Tools.SprayPest:
+			get_cell_under_mouse()
+			spray_crop()
 
 
 func get_cell_under_mouse() -> void:
@@ -73,6 +76,16 @@ func add_crop() -> void:
 	# After add_child, not before: add_child runs the plant's _ready(), so by
 	# now its simulation exists and a listener can act on it straight away.
 	FarmEvents.crop_planted.emit(crop_instance)
+
+
+## Sprays the crop under the mouse, if the player is close enough to reach it.
+func spray_crop() -> void:
+	if distance > 20.0:
+		return
+
+	var crop := crop_at(local_cell_position) as CropPlant
+	if crop != null:
+		crop.spray()
 
 
 func remove_crop() -> void:

@@ -7,6 +7,7 @@ const TOOL_HINTS := {
 	DataTypes.Tools.AxeWood: "Axe - chop trees for wood",
 	DataTypes.Tools.TillGround: "Hoe - break open grass to make a bed you can plant in",
 	DataTypes.Tools.WaterCrops: "Watering can - dry soil costs you weight at harvest",
+	DataTypes.Tools.SprayPest: "Spray - clears a pest outbreak. Wasted on a healthy plant",
 }
 
 ## Which tool is in hand is shown by dimming the others.
@@ -30,6 +31,7 @@ func _ready() -> void:
 		DataTypes.Tools.WaterCrops: $MarginContainer/HBoxContainer/ToolWateringCan,
 		DataTypes.Tools.PlantCorn: $MarginContainer/HBoxContainer/ToolCorn,
 		DataTypes.Tools.PlantTomato: $MarginContainer/HBoxContainer/ToolTomato,
+		DataTypes.Tools.SprayPest: $MarginContainer/HBoxContainer/ToolSpray,
 	}
 
 	for tool in _buttons:
@@ -120,3 +122,7 @@ func _on_tool_corn_pressed() -> void:
 
 func _on_tool_tomato_pressed() -> void:
 	ToolManager.select_tool(DataTypes.Tools.PlantTomato)
+
+
+func _on_tool_spray_pressed() -> void:
+	ToolManager.select_tool(DataTypes.Tools.SprayPest)

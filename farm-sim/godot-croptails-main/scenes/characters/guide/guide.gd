@@ -49,3 +49,4 @@ func on_gave_crop_seeds() -> void:
     ToolManager.enable_tool(DataTypes.Tools.WaterCrops)
     ToolManager.enable_tool(DataTypes.Tools.PlantCorn)
     ToolManager.enable_tool(DataTypes.Tools.PlantTomato)
+    ToolManager.enable_tool(DataTypes.Tools.SprayPest)
