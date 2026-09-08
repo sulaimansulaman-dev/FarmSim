@@ -1,15 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://cfttmhivevyme"]
+[gd_scene format=3 uid="uid://cfttmhivevyme"]
 
 [ext_resource type="Theme" uid="uid://bnp65kle34ngr" path="res://scenes/ui/game_ui_theme.tres" id="1_43tjm"]
-[ext_resource type="Script" path="res://scenes/ui/game_menu_screen.gd" id="1_ch8rr"]
+[ext_resource type="Script" uid="uid://duahltyedlqev" path="res://scenes/ui/game_menu_screen.gd" id="1_ch8rr"]
 [ext_resource type="PackedScene" uid="uid://b35ml4ourxwja" path="res://scenes/ui/game_menu_screen_background.tscn" id="2_piudl"]
 
-[node name="GameMenuScreen" type="CanvasLayer"]
+[node name="GameMenuScreen" type="CanvasLayer" unique_id=1615145536]
 script = ExtResource("1_ch8rr")
 
-[node name="GameMenuScreenBackground" parent="." instance=ExtResource("2_piudl")]
+[node name="GameMenuScreenBackground" parent="." unique_id=1422735480 instance=ExtResource("2_piudl")]
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=609998723]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,12 +17,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_43tjm")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer" unique_id=977223680]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
 
-[node name="Label" type="Label" parent="MarginContainer/MarginContainer"]
+[node name="Label" type="Label" parent="MarginContainer/MarginContainer" unique_id=437505260]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.458717, 0.297993, 0.376638, 1)
 theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
@@ -31,18 +31,18 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 54
 text = "Croptails"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=2123707595]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 
-[node name="StartGameButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="StartGameButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1190183809]
 custom_minimum_size = Vector2(100, 29)
 layout_mode = 2
 theme_type_variation = &"GameMenuButton"
 text = "START"
 
-[node name="SaveGameButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="SaveGameButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=987492647]
 custom_minimum_size = Vector2(100, 29)
 layout_mode = 2
 focus_mode = 0
@@ -50,7 +50,7 @@ theme_type_variation = &"GameMenuButton"
 disabled = true
 text = "SAVE"
 
-[node name="ExitGameButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="ExitGameButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=156942879]
 custom_minimum_size = Vector2(100, 29)
 layout_mode = 2
 theme_type_variation = &"GameMenuButton"
