@@ -1,6 +1,9 @@
 extends Sprite2D
 
-## A perennial fruit tree.
+## A perennial orange tree. Near-identical to apple_tree.gd (same mechanic,
+## different fruit/art) -- kept as a separate file rather than refactored
+## together, to avoid risking the already-tested apple tree this close to a
+## deadline.
 ##
 ## Unlike a crop (Tomato, Corn), this tree is never consumed. It grows up
 ## through the same stage progression as a crop (using the existing
@@ -19,25 +22,25 @@ extends Sprite2D
 ## cells): row 0 = sapling (1 frame), row 1 = young (4 frames), row 2 =
 ## growing (6 frames), row 3 = full-grown/mature (12 frames).
 ##
-## apple_tree_fruiting.png is the same tree at the same four sizes, but with
+## orange_tree_fruiting.png is the same tree at the same four sizes, but with
 ## fruit/blossom art layered on top (12x5 grid, 48px cells). We only use its
 ## row 3 (full-grown) and row 4 (just-harvested) here.
 
-const fruit_harvest_scene: PackedScene = preload("res://scenes/objects/trees/apple_harvest.tscn")
+const fruit_harvest_scene: PackedScene = preload("res://scenes/objects/trees/orange_harvest.tscn")
 const growth_texture: Texture2D = preload("res://assets/game/objects/trees/fruit_tree_growth.png")
-const fruiting_texture: Texture2D = preload("res://assets/game/objects/trees/apple_tree_fruiting.png")
+const fruiting_texture: Texture2D = preload("res://assets/game/objects/trees/orange_tree_fruiting.png")
 
 const GRID_COLUMNS := 12
 
 ## Row 3 in both sheets is the full-grown tree (used for growth + bare mature).
 const ROW_MATURE := 3
-## Row 2 is the same full-grown canopy size, but with fruit visibly sitting	
+## Row 2 is the same full-grown canopy size, but with fruit visibly sitting
 ## in the foliage. (Row 3 of the fruiting sheet turned out to be a "hearts
 ## floating away" animation with no fruit shown on the tree at all -- easy
 ## to misread from a static thumbnail. Row 2 is the one that actually shows
 ## fruit on the tree.)
 const ROW_FRUITING := 2
-## Row 4 of apple_tree_fruiting.png: fruit just fell, hearts still on the ground.
+## Row 4 of orange_tree_fruiting.png: fruit just fell, hearts still on the ground.
 const ROW_JUST_HARVESTED := 4
 
 ## How many in-game days a harvested tree takes to grow fruit again.

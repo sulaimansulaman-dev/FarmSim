@@ -1,7 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://dqp6h1vp8x9wa"]
+[gd_scene load_steps=6 format=3 uid="uid://bqj4wlxm7tsyd"]
 
 [ext_resource type="Texture2D" path="res://assets/game/objects/trees/fruit_tree_growth.png" id="1_growth"]
-[ext_resource type="Script" path="res://scenes/objects/trees/apple_tree.gd" id="2_script"]
+[ext_resource type="Script" path="res://scenes/objects/trees/orange_tree.gd" id="2_script"]
 [ext_resource type="PackedScene" uid="uid://6ba6j2wgille" path="res://scenes/objects/plants/growth_cycle_component.tscn" id="3_growthcycle"]
 [ext_resource type="PackedScene" uid="uid://cpproi73eia28" path="res://scenes/components/hurt_component.tscn" id="4_hurt"]
 
@@ -9,7 +9,7 @@
 radius = 6.0
 height = 14.0
 
-[node name="AppleTree" type="Sprite2D"]
+[node name="OrangeTree" type="Sprite2D"]
 y_sort_enabled = true
 texture = ExtResource("1_growth")
 hframes = 12

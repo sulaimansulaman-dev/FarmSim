@@ -3,6 +3,7 @@
 [ext_resource type="TileSet" uid="uid://dic20l2jo75hl" path="res://tilesets/game_tile_set.tres" id="1_icodn"]
 [ext_resource type="PackedScene" uid="uid://vrcuj5gugs6f" path="res://scenes/characters/player/player.tscn" id="2_53p4p"]
 [ext_resource type="PackedScene" uid="uid://dqp6h1vp8yawa" path="res://scenes/objects/trees/apple_tree.tscn" id="3_2p8ds"]
+[ext_resource type="PackedScene" uid="uid://bqj4wlxm7tsyd" path="res://scenes/objects/trees/orange_tree.tscn" id="4_e1e1k"]
 
 [node name="TestSceneObjects" type="Node2D" unique_id=1391566273]
 y_sort_enabled = true
@@ -25,9 +26,13 @@ tile_set = ExtResource("1_icodn")
 
 [node name="Player" parent="." unique_id=1296367391 instance=ExtResource("2_53p4p")]
 position = Vector2(211, 179)
-current_tool = 1
+current_tool = 2
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=1973615328]
 
 [node name="AppleTree" parent="." unique_id=114421387 instance=ExtResource("3_2p8ds")]
-position = Vector2(381, 168)
+position = Vector2(414, 170)
+
+[node name="OrangeTree" parent="." unique_id=304174198 instance=ExtResource("4_e1e1k")]
+position = Vector2(463, 169)
+fruit_regrow_days = 1
