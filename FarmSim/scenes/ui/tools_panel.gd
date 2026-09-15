@@ -7,7 +7,17 @@ const TOOL_HINTS := {
 	DataTypes.Tools.AxeWood: "Axe - chop trees for wood",
 	DataTypes.Tools.TillGround: "Hoe - break open grass to make a bed you can plant in",
 	DataTypes.Tools.WaterCrops: "Watering can - dry soil costs you weight at harvest",
-	DataTypes.Tools.SprayPest: "Spray - clears a pest outbreak. Wasted on a healthy plant",
+	DataTypes.Tools.SprayPest: "Chemical spray - clears caterpillars, worms and ants. Useless on birds",
+	DataTypes.Tools.OrganicControl: "Organic control - works on every pest, birds too, but may need a second go",
+	DataTypes.Tools.PlantSapling: "Sapling - plant a fruit tree on open grass",
+}
+
+## Tools added after the toolbar scene was authored. Their buttons are built in
+## code as copies of the spray button, so the scene file does not have to change
+## every time a stage adds a tool.
+const EXTRA_TOOL_ICONS := {
+	DataTypes.Tools.OrganicControl: preload("res://assets/game/objects/organic_control.png"),
+	DataTypes.Tools.PlantSapling: preload("res://assets/game/objects/sapling_item.png"),
 }
 
 ## Which tool is in hand is shown by dimming the others.
@@ -33,6 +43,7 @@ func _ready() -> void:
 		DataTypes.Tools.PlantTomato: $MarginContainer/HBoxContainer/ToolTomato,
 		DataTypes.Tools.SprayPest: $MarginContainer/HBoxContainer/ToolSpray,
 	}
+	_build_extra_buttons()
 
 	for tool in _buttons:
 		var button: Button = _buttons[tool]
@@ -46,7 +57,34 @@ func _ready() -> void:
 
 	ToolManager.tool_enabled.connect(on_tool_enabled)
 	ToolManager.tool_selected.connect(on_tool_selected)
+	SceneManager.level_unloading.connect(_on_level_unloading)
 	on_tool_selected(ToolManager.selected_tool)
+
+
+func _build_extra_buttons() -> void:
+	var template: Button = $MarginContainer/HBoxContainer/ToolSpray
+	for tool in EXTRA_TOOL_ICONS:
+		var button := Button.new()
+		button.name = "Tool%s" % DataTypes.Tools.keys()[tool]
+		button.custom_minimum_size = template.custom_minimum_size
+		button.theme_type_variation = template.theme_type_variation
+		button.icon = EXTRA_TOOL_ICONS[tool]
+		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		button.disabled = true
+		button.pressed.connect(toggle_tool.bind(tool))
+		template.get_parent().add_child(button)
+		_buttons[tool] = button
+
+
+## Each stage hands out its own tools, so the last stage's are put away before
+## the next one loads. Without this the axe from the orchard would still be on
+## the toolbar in the seasons stage.
+func _on_level_unloading() -> void:
+	for tool in _buttons:
+		var button: Button = _buttons[tool]
+		button.visible = false
+		button.disabled = true
+	ToolManager.select_tool(DataTypes.Tools.None)
 
 
 func _unhandled_input(event: InputEvent) -> void:

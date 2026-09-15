@@ -23,6 +23,7 @@ func on_hurt(damage: int) -> void:
 
 
 func on_max_damage_reached() -> void:
+	FarmEvents.tree_chopped.emit()
 	_destroyed = true
 	call_deferred('spawn_log')
 	queue_free()

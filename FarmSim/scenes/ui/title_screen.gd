@@ -94,6 +94,9 @@ const SAVE_PATH = "user://save_game.json"
 const SETTINGS_PATH = "user://settings.json"
 var active_username: String = ""
 
+## Stage id -> its level select button, so locks and stars can be refreshed.
+var _stage_buttons: Dictionary = {}
+
 var player_stats: Dictionary = {
 	"farmer_level": 0,
 	"gold_coins": 0,
@@ -1012,9 +1015,9 @@ func _build_singleplayer_screen() -> void:
 
 
 func _update_singleplayer_buttons() -> void:
-	var has_save = FileAccess.file_exists(SAVE_PATH) or FileAccess.file_exists("user://save_game.tres")
+	var has_save = ProgressManager.has_progress()
 	continue_farm_btn.disabled = not has_save
-	continue_farm_btn.tooltip_text = "" if has_save else "No save found yet - start a new farm first."
+	continue_farm_btn.tooltip_text = "" if has_save else "No progress yet - start a new farm first."
 
 
 # --- level select -----------------------------------------------------------
@@ -1062,12 +1065,14 @@ func _build_level_select_screen() -> void:
 
 		var level_id := str(entry['id'])
 		var display_name := str(SceneManager.level_names.get(level_id, level_id))
-		_add_level_entry(
+		var button := _add_level_entry(
 			list,
 			display_name,
 			str(entry['blurb']),
 			func(): _on_play_croptails_level(level_id)
 		)
+		if StageSession.is_stage(level_id):
+			_stage_buttons[level_id] = button
 		index += 1
 
 	_add_list_heading(list, "TEAM LEVEL DRAFTS")
@@ -1114,7 +1119,7 @@ func _add_list_heading(parent: Node, text: String) -> void:
 
 ## One row per level: a button that launches it, with the blurb underneath so
 ## the player knows what they are choosing before they commit to a load.
-func _add_level_entry(parent: Node, title: String, blurb: String, callback: Callable) -> void:
+func _add_level_entry(parent: Node, title: String, blurb: String, callback: Callable) -> Button:
 	var entry = VBoxContainer.new()
 	entry.add_theme_constant_override("separation", 0)
 	parent.add_child(entry)
@@ -1134,6 +1139,25 @@ func _add_level_entry(parent: Node, title: String, blurb: String, callback: Call
 	blurb_lbl.add_theme_font_size_override("font_size", FONT_SMALL)
 	blurb_lbl.add_theme_color_override("font_color", Color("#7a6248"))
 	entry.add_child(blurb_lbl)
+	return btn
+
+
+## Stages unlock in order as their bridge keeper is beaten, and each shows the
+## best star rating earned on it. Re-read every time the list is opened, because
+## finishing a stage changes both.
+func _refresh_stage_buttons() -> void:
+	for level_id in _stage_buttons:
+		var button: Button = _stage_buttons[level_id]
+		var display_name := str(SceneManager.level_names.get(level_id, level_id))
+		var unlocked := ProgressManager.is_stage_unlocked(level_id)
+		button.disabled = not unlocked
+		if not unlocked:
+			button.text = "%s  (locked)" % display_name
+			button.tooltip_text = "Beat the bridge keeper on the stage before to unlock this one."
+		else:
+			var stars := ProgressManager.stars_for(level_id)
+			button.text = display_name if stars == 0 else "%s  [%d/3 stars]" % [display_name, stars]
+			button.tooltip_text = ""
 
 
 # --- multiplayer ------------------------------------------------------------
@@ -1386,9 +1410,9 @@ func _build_stats_screen() -> void:
 	table_vbox.add_theme_constant_override("separation", 3)
 	table_panel.add_child(table_vbox)
 
-	planted_val_lbl = _create_stat_row(table_vbox, "Seeds Planted")
-	yield_val_lbl = _create_stat_row(table_vbox, "Successful Yields")
-	pests_val_lbl = _create_stat_row(table_vbox, "Pests Handled")
+	planted_val_lbl = _create_stat_row(table_vbox, "Stages Completed")
+	yield_val_lbl = _create_stat_row(table_vbox, "Grade A Crops")
+	pests_val_lbl = _create_stat_row(table_vbox, "Stars Earned")
 	rain_val_lbl = _create_stat_row(table_vbox, "Rainy Days Survived")
 
 	var back_btn = Button.new()
@@ -1454,6 +1478,25 @@ func _create_stat_row(parent: Node, label_text: String) -> Label:
 
 	parent.add_child(hbox)
 	return val
+
+
+## The stats screen was never wired to anything and always read zero. It now
+## reads the JSON progress file the stages write.
+func _load_stats_from_progress() -> void:
+	var profile: Dictionary = ProgressManager.data.get("player_profile", {})
+	var harvests := 0
+	var grade_a := 0
+	var planted_stages := 0
+	for record in ProgressManager.stage_evaluations().values():
+		harvests += int(record.get("crops_harvested", 0))
+		grade_a += int(record.get("grade_a_crops", 0))
+		planted_stages += 1
+	player_stats["farmer_level"] = int(profile.get("farmer_level", 1))
+	player_stats["gold_coins"] = int(profile.get("currency_balance", 0))
+	player_stats["total_harvests"] = harvests
+	player_stats["seeds_planted"] = planted_stages
+	player_stats["successful_yields"] = grade_a
+	player_stats["pests_handled"] = ProgressManager.total_stars()
 
 
 func _update_stats_display() -> void:
@@ -1571,10 +1614,12 @@ func _on_play_croptails() -> void:
 
 
 func _on_level_select() -> void:
+	_refresh_stage_buttons()
 	_switch_screen(main_menu_screen, level_select_screen)
 
 
 func _on_level_select_from_singleplayer() -> void:
+	_refresh_stage_buttons()
 	_switch_screen(singleplayer_screen, level_select_screen)
 
 
@@ -1582,12 +1627,13 @@ func _on_level_select_from_singleplayer() -> void:
 ## whether the save is loaded on top. start_level always calls load_game, so a
 ## new farm clears the save first.
 func _on_continue_farm() -> void:
-	_start_croptails(GameManager.default_level)
+	_start_croptails(ProgressManager.furthest_unlocked_stage())
 
 
 func _on_new_farm() -> void:
 	if FileAccess.file_exists(SAVE_PATH):
 		DirAccess.remove_absolute(SAVE_PATH)
+	ProgressManager.reset()
 	_start_croptails(GameManager.default_level)
 
 
@@ -1613,6 +1659,7 @@ func _on_multiplayer() -> void:
 
 
 func _on_stats() -> void:
+	_load_stats_from_progress()
 	_update_stats_display()
 	_switch_screen(main_menu_screen, stats_screen)
 

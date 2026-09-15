@@ -1,23 +1,36 @@
-[gd_scene format=4]
+[gd_scene format=4 uid="uid://b1newhsleo3a6"]
 
 [ext_resource type="PackedScene" uid="uid://cnngd5janbuai" path="res://scenes/components/save_level_data_component.tscn" id="1_oni70"]
+[ext_resource type="Script" uid="uid://j18aqncm7uss" path="res://scenes/components/save_level_data_component.gd" id="2_c13cx"]
 [ext_resource type="PackedScene" uid="uid://bstokvclmhowj" path="res://audio/music/on_the_farm_music.tscn" id="2_ddaqy"]
 [ext_resource type="TileSet" uid="uid://dic20l2jo75hl" path="res://tilesets/game_tile_set.tres" id="3_ny2xk"]
 [ext_resource type="PackedScene" uid="uid://dw37srqs2twxw" path="res://scenes/components/save_data_component.tscn" id="4_fxyxn"]
+[ext_resource type="AudioStream" uid="uid://nqrnok0qiajr" path="res://assets/audio/music/on_the_farm_music.wav" id="4_phje6"]
 [ext_resource type="Resource" uid="uid://beaaywh2uaobq" path="res://resources/tilemap_layer_data_resource.tres" id="5_lnsum"]
+[ext_resource type="Script" uid="uid://re54pfgw731m" path="res://scenes/components/save_data_component.gd" id="7_2tc0y"]
 [ext_resource type="PackedScene" uid="uid://b1e1ym4ljlaa0" path="res://scenes/components/field_cursor_component.tscn" id="7_vwu8x"]
 [ext_resource type="PackedScene" uid="uid://c8t2nu208scbx" path="res://scenes/components/crops_cursor_component.tscn" id="8_kn0rq"]
+[ext_resource type="Script" uid="uid://dejt2jl4ixfno" path="res://scenes/components/field_cursor_component.gd" id="10_6nisp"]
+[ext_resource type="Script" uid="uid://b2hykwnrangui" path="res://scenes/components/crops_cursor_component.gd" id="12_5ww1y"]
 [ext_resource type="PackedScene" uid="uid://cwuy5cxoymac1" path="res://scenes/characters/guide/guide.tscn" id="12_vu6qy"]
-[ext_resource type="Script" path="res://scenes/levels/stage_director.gd" id="20_stgdir"]
-[ext_resource type="Script" path="res://scenes/components/island_settings_component.gd" id="21_isle"]
+[ext_resource type="Script" uid="uid://dt2xdr0ny5t2w" path="res://scenes/characters/guide/guide.gd" id="14_of6xh"]
+[ext_resource type="Script" uid="uid://cxaudt1igber8" path="res://scenes/objects/market/market_stall.gd" id="17_1ao61"]
+[ext_resource type="PackedScene" uid="uid://cva4gmf4f53cr" path="res://scenes/objects/stage_gate/stage_gate.tscn" id="19_fapgw"]
+[ext_resource type="Script" uid="uid://bbweqsdpwwufi" path="res://scenes/objects/stage_gate/stage_gate.gd" id="20_oyhq2"]
+[ext_resource type="Script" uid="uid://ol2pkf1iq8it" path="res://scenes/levels/stage_director.gd" id="20_stgdir"]
+[ext_resource type="Script" uid="uid://ct6d17laohdo2" path="res://scenes/components/island_settings_component.gd" id="21_isle"]
 [ext_resource type="PackedScene" path="res://scenes/objects/market/market_stall.tscn" id="22_stall"]
 
 [node name="Stage5Seasons" type="Node2D" unique_id=531785822]
 y_sort_enabled = true
 
-[node name="SaveLevelDataComponent" parent="." unique_id=1505155695 instance=ExtResource("1_oni70")]
+[node name="SaveLevelDataComponent" type="Node" parent="." unique_id=1505155695 instance=ExtResource("1_oni70")]
+script = ExtResource("2_c13cx")
 
-[node name="OnTheFarmMusic" parent="." unique_id=165376621 instance=ExtResource("2_ddaqy")]
+[node name="OnTheFarmMusic" type="AudioStreamPlayer2D" parent="." unique_id=165376621 instance=ExtResource("2_ddaqy")]
+stream = ExtResource("4_phje6")
+autoplay = true
+bus = &"Music"
 
 [node name="GameTilemap" type="Node2D" parent="." unique_id=282168524]
 y_sort_enabled = true
@@ -34,7 +47,8 @@ tile_set = ExtResource("3_ny2xk")
 tile_map_data = PackedByteArray("AAAaABAAAwACAAIAAAAZABAAAwABAAIAAAAYABAAAwABAAIAAAAXABAAAwABAAIAAAAWABAAAwABAAIAAAAVABAAAwABAAIAAAAUABAAAwABAAIAAAATABAAAwAAAAIAAAAaAA8AAwACAAEAAAAZAA8AAwABAAEAAAAYAA8AAwABAAEAAAAXAA8AAwABAAEAAAAWAA8AAwABAAEAAAAVAA8AAwABAAEAAAAUAA8AAwABAAEAAAATAA8AAwAAAAEAAAAaAA4AAwACAAEAAAAZAA4AAwABAAEAAAAYAA4AAwABAAEAAAAXAA4AAwABAAEAAAAWAA4AAwABAAEAAAAVAA4AAwABAAEAAAAUAA4AAwABAAEAAAATAA4AAwAAAAEAAAAaAA0AAwACAAEAAAAZAA0AAwABAAEAAAAYAA0AAwABAAEAAAAXAA0AAwABAAEAAAAWAA0AAwABAAEAAAAVAA0AAwABAAEAAAAUAA0AAwABAAEAAAATAA0AAwAAAAEAAAAaAAwAAwACAAEAAAAZAAwAAwABAAEAAAAYAAwAAwABAAEAAAAXAAwAAwABAAEAAAAWAAwAAwABAAEAAAAVAAwAAwABAAEAAAAUAAwAAwABAAEAAAATAAwAAwAAAAEAAAAaAAsAAwACAAAAAAAZAAsAAwABAAAAAAAYAAsAAwABAAAAAAAXAAsAAwABAAAAAAAWAAsAAwABAAAAAAAVAAsAAwABAAAAAAAUAAsAAwABAAAAAAATAAsAAwAAAAAAAAA=")
 tile_set = ExtResource("3_ny2xk")
 
-[node name="SaveDataComponent" parent="GameTilemap/TilledSoil" unique_id=1066940759 instance=ExtResource("4_fxyxn")]
+[node name="SaveDataComponent" type="Node" parent="GameTilemap/TilledSoil" unique_id=1066940759 instance=ExtResource("4_fxyxn")]
+script = ExtResource("7_2tc0y")
 save_data_resource = ExtResource("5_lnsum")
 
 [node name="Undergrowth" type="TileMapLayer" parent="GameTilemap" unique_id=1372152069]
@@ -54,34 +68,39 @@ tile_set = ExtResource("3_ny2xk")
 
 [node name="CropFields" type="Node2D" parent="." unique_id=1174516918]
 
-[node name="FieldCursorComponent" parent="." unique_id=1750042841 node_paths=PackedStringArray("grass_tilemap_layer", "tilled_soil_tilemap_layer") instance=ExtResource("7_vwu8x")]
+[node name="FieldCursorComponent" type="Node" parent="." unique_id=1750042841 node_paths=PackedStringArray("grass_tilemap_layer", "tilled_soil_tilemap_layer") instance=ExtResource("7_vwu8x")]
+script = ExtResource("10_6nisp")
 grass_tilemap_layer = NodePath("../GameTilemap/Grass")
 tilled_soil_tilemap_layer = NodePath("../GameTilemap/TilledSoil")
 
-[node name="CropsCursorComponent" parent="." unique_id=1942148933 node_paths=PackedStringArray("tilled_soil_tilemap_layer") instance=ExtResource("8_kn0rq")]
+[node name="CropsCursorComponent" type="Node" parent="." unique_id=1942148933 node_paths=PackedStringArray("tilled_soil_tilemap_layer") instance=ExtResource("8_kn0rq")]
+script = ExtResource("12_5ww1y")
 tilled_soil_tilemap_layer = NodePath("../GameTilemap/TilledSoil")
 
-[node name="Guide" parent="." unique_id=1391652792 instance=ExtResource("12_vu6qy")]
+[node name="Guide" type="CharacterBody2D" parent="." unique_id=1391652792 instance=ExtResource("12_vu6qy")]
+y_sort_enabled = true
 position = Vector2(531, 256)
+script = ExtResource("14_of6xh")
 unlocks_all_tools = false
 
-[node name="IslandSettings" type="Node" parent="."]
+[node name="IslandSettings" type="Node" parent="." unique_id=1404345806]
 script = ExtResource("21_isle")
 pest_chance = 0.08
 follow_seasons = true
 
-[node name="MarketStall" parent="." instance=ExtResource("22_stall")]
+[node name="MarketStall" type="StaticBody2D" parent="." unique_id=838216986 instance=ExtResource("22_stall")]
+y_sort_enabled = true
 position = Vector2(488, 312)
+script = ExtResource("17_1ao61")
 
-[node name="StageDirector" type="CanvasLayer" parent="."]
+[node name="StageDirector" type="CanvasLayer" parent="." unique_id=34083700]
 script = ExtResource("20_stgdir")
 stage_title = "STAGE 5 - SEASONAL CONSTRAINTS"
 stage_brief = "The calendar is running: spring, summer, autumn, winter, eight days each. Each crop has a temperature it needs, and one sown below it simply stops developing. You get a warning the day before a season turns - harvest before winter."
-give_hoe = true
-give_watering_can = true
-give_seeds = true
 give_spray = true
-give_axe = false
 economy_enabled = true
 seasons_enabled = true
-starting_season_index = 0
+
+[node name="StageGate" type="Node2D" parent="." unique_id=1904225277 instance=ExtResource("19_fapgw")]
+y_sort_enabled = true
+script = ExtResource("20_oyhq2")

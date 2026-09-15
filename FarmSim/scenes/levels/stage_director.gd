@@ -98,6 +98,15 @@ func _grant_tools() -> void:
 	if give_axe:
 		ToolManager.enable_tool(DataTypes.Tools.AxeWood)
 
+	# Tools added for the spec's later stages come from data/stages.json rather
+	# than more Inspector checkboxes: organic control (Stage 3 on) and saplings
+	# (Stage 4).
+	var extras: Array = StageSession.definition(SceneManager.current_level).get("extra_tools", [])
+	if "organic" in extras:
+		ToolManager.enable_tool(DataTypes.Tools.OrganicControl)
+	if "sapling" in extras:
+		ToolManager.enable_tool(DataTypes.Tools.PlantSapling)
+
 
 # --- the banner -------------------------------------------------------------
 

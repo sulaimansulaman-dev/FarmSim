@@ -1,28 +1,65 @@
-[gd_scene format=4]
+[gd_scene format=4 uid="uid://ceil6f6i3cypp"]
 
 [ext_resource type="PackedScene" uid="uid://cnngd5janbuai" path="res://scenes/components/save_level_data_component.tscn" id="1_oni70"]
 [ext_resource type="PackedScene" uid="uid://bstokvclmhowj" path="res://audio/music/on_the_farm_music.tscn" id="2_ddaqy"]
+[ext_resource type="Script" uid="uid://j18aqncm7uss" path="res://scenes/components/save_level_data_component.gd" id="2_h720d"]
 [ext_resource type="TileSet" uid="uid://dic20l2jo75hl" path="res://tilesets/game_tile_set.tres" id="3_ny2xk"]
 [ext_resource type="PackedScene" uid="uid://dw37srqs2twxw" path="res://scenes/components/save_data_component.tscn" id="4_fxyxn"]
+[ext_resource type="AudioStream" uid="uid://nqrnok0qiajr" path="res://assets/audio/music/on_the_farm_music.wav" id="4_w606e"]
 [ext_resource type="Resource" uid="uid://beaaywh2uaobq" path="res://resources/tilemap_layer_data_resource.tres" id="5_lnsum"]
+[ext_resource type="Script" uid="uid://re54pfgw731m" path="res://scenes/components/save_data_component.gd" id="7_aumry"]
 [ext_resource type="PackedScene" uid="uid://b1e1ym4ljlaa0" path="res://scenes/components/field_cursor_component.tscn" id="7_vwu8x"]
 [ext_resource type="PackedScene" uid="uid://c8t2nu208scbx" path="res://scenes/components/crops_cursor_component.tscn" id="8_kn0rq"]
+[ext_resource type="Script" uid="uid://dejt2jl4ixfno" path="res://scenes/components/field_cursor_component.gd" id="10_iubc1"]
+[ext_resource type="Script" uid="uid://b2hykwnrangui" path="res://scenes/components/crops_cursor_component.gd" id="12_47k62"]
 [ext_resource type="PackedScene" uid="uid://cwuy5cxoymac1" path="res://scenes/characters/guide/guide.tscn" id="12_vu6qy"]
-[ext_resource type="Script" path="res://scenes/levels/stage_director.gd" id="20_stgdir"]
-[ext_resource type="Script" path="res://scenes/components/island_settings_component.gd" id="21_isle"]
+[ext_resource type="Script" uid="uid://dt2xdr0ny5t2w" path="res://scenes/characters/guide/guide.gd" id="14_1e7iv"]
+[ext_resource type="Script" uid="uid://cxaudt1igber8" path="res://scenes/objects/market/market_stall.gd" id="17_my0da"]
+[ext_resource type="Texture2D" uid="uid://ckdo7eyxwn8aw" path="res://assets/game/objects/trees/fruit_tree_growth.png" id="19_jvo5p"]
+[ext_resource type="Script" uid="uid://dp7s5hsuouv8f" path="res://scenes/objects/trees/apple_tree.gd" id="20_2v5bi"]
+[ext_resource type="Script" uid="uid://ol2pkf1iq8it" path="res://scenes/levels/stage_director.gd" id="20_stgdir"]
+[ext_resource type="Script" uid="uid://ct6d17laohdo2" path="res://scenes/components/island_settings_component.gd" id="21_isle"]
+[ext_resource type="Script" uid="uid://ws26kf7h5fo4" path="res://scenes/objects/trees/orange_tree.gd" id="22_qn5sf"]
 [ext_resource type="PackedScene" path="res://scenes/objects/market/market_stall.tscn" id="22_stall"]
-[ext_resource type="PackedScene" path="res://scenes/objects/trees/apple_tree.tscn" id="30_tree"]
-[ext_resource type="PackedScene" path="res://scenes/objects/trees/orange_tree.tscn" id="31_tree"]
-[ext_resource type="PackedScene" path="res://scenes/objects/trees/peach_tree.tscn" id="32_tree"]
-[ext_resource type="PackedScene" path="res://scenes/objects/trees/pear_tree.tscn" id="33_tree"]
-[ext_resource type="PackedScene" path="res://scenes/objects/trees/large_tree.tscn" id="39_timber"]
+[ext_resource type="Script" uid="uid://dkc4f3dxor2v4" path="res://scenes/objects/trees/peach_tree.gd" id="24_40mix"]
+[ext_resource type="Script" uid="uid://b8oyaehb0myr" path="res://scenes/objects/trees/pear_tree.gd" id="26_y778l"]
+[ext_resource type="Shader" uid="uid://s100egwcy725" path="res://scenes/objects/shake.gdshader" id="28_ii5x4"]
+[ext_resource type="Texture2D" uid="uid://msmsobjhjvk2" path="res://assets/game/objects/basic_grass_biom_things.png" id="29_s2306"]
+[ext_resource type="Script" uid="uid://chou0jfc35ejk" path="res://scenes/objects/trees/large_tree.gd" id="30_8qxdr"]
+[ext_resource type="PackedScene" uid="uid://dqp6h1vp8yawa" path="res://scenes/objects/trees/apple_tree.tscn" id="30_tree"]
+[ext_resource type="PackedScene" uid="uid://bqj4wlxm7tsyd" path="res://scenes/objects/trees/orange_tree.tscn" id="31_tree"]
+[ext_resource type="PackedScene" uid="uid://cva4gmf4f53cr" path="res://scenes/objects/stage_gate/stage_gate.tscn" id="32_m53m3"]
+[ext_resource type="PackedScene" uid="uid://c6iatqm2fk0ba" path="res://scenes/objects/trees/peach_tree.tscn" id="32_tree"]
+[ext_resource type="Script" uid="uid://bbweqsdpwwufi" path="res://scenes/objects/stage_gate/stage_gate.gd" id="33_chkic"]
+[ext_resource type="PackedScene" uid="uid://cq3wj8f0sn7ke" path="res://scenes/objects/trees/pear_tree.tscn" id="33_tree"]
+[ext_resource type="PackedScene" uid="uid://b5qnkp86enqg0" path="res://scenes/objects/trees/large_tree.tscn" id="39_timber"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_am87c"]
+resource_local_to_scene = true
+shader = ExtResource("28_ii5x4")
+shader_parameter/intensity = 0.0
+shader_parameter/speed = 3.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fnqys"]
+atlas = ExtResource("29_s2306")
+region = Rect2(16, 0, 32, 32)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0tb0x"]
+resource_local_to_scene = true
+shader = ExtResource("28_ii5x4")
+shader_parameter/intensity = 0.0
+shader_parameter/speed = 3.0
 
 [node name="Stage4Trees" type="Node2D" unique_id=531785822]
 y_sort_enabled = true
 
-[node name="SaveLevelDataComponent" parent="." unique_id=1505155695 instance=ExtResource("1_oni70")]
+[node name="SaveLevelDataComponent" type="Node" parent="." unique_id=1505155695 instance=ExtResource("1_oni70")]
+script = ExtResource("2_h720d")
 
-[node name="OnTheFarmMusic" parent="." unique_id=165376621 instance=ExtResource("2_ddaqy")]
+[node name="OnTheFarmMusic" type="AudioStreamPlayer2D" parent="." unique_id=165376621 instance=ExtResource("2_ddaqy")]
+stream = ExtResource("4_w606e")
+autoplay = true
+bus = &"Music"
 
 [node name="GameTilemap" type="Node2D" parent="." unique_id=282168524]
 y_sort_enabled = true
@@ -39,7 +76,8 @@ tile_set = ExtResource("3_ny2xk")
 tile_map_data = PackedByteArray("AAAaABAAAwACAAIAAAAZABAAAwABAAIAAAAYABAAAwABAAIAAAAXABAAAwABAAIAAAAWABAAAwABAAIAAAAVABAAAwABAAIAAAAUABAAAwABAAIAAAATABAAAwAAAAIAAAAaAA8AAwACAAEAAAAZAA8AAwABAAEAAAAYAA8AAwABAAEAAAAXAA8AAwABAAEAAAAWAA8AAwABAAEAAAAVAA8AAwABAAEAAAAUAA8AAwABAAEAAAATAA8AAwAAAAEAAAAaAA4AAwACAAEAAAAZAA4AAwABAAEAAAAYAA4AAwABAAEAAAAXAA4AAwABAAEAAAAWAA4AAwABAAEAAAAVAA4AAwABAAEAAAAUAA4AAwABAAEAAAATAA4AAwAAAAEAAAAaAA0AAwACAAEAAAAZAA0AAwABAAEAAAAYAA0AAwABAAEAAAAXAA0AAwABAAEAAAAWAA0AAwABAAEAAAAVAA0AAwABAAEAAAAUAA0AAwABAAEAAAATAA0AAwAAAAEAAAAaAAwAAwACAAEAAAAZAAwAAwABAAEAAAAYAAwAAwABAAEAAAAXAAwAAwABAAEAAAAWAAwAAwABAAEAAAAVAAwAAwABAAEAAAAUAAwAAwABAAEAAAATAAwAAwAAAAEAAAAaAAsAAwACAAAAAAAZAAsAAwABAAAAAAAYAAsAAwABAAAAAAAXAAsAAwABAAAAAAAWAAsAAwABAAAAAAAVAAsAAwABAAAAAAAUAAsAAwABAAAAAAATAAsAAwAAAAAAAAA=")
 tile_set = ExtResource("3_ny2xk")
 
-[node name="SaveDataComponent" parent="GameTilemap/TilledSoil" unique_id=1066940759 instance=ExtResource("4_fxyxn")]
+[node name="SaveDataComponent" type="Node" parent="GameTilemap/TilledSoil" unique_id=1066940759 instance=ExtResource("4_fxyxn")]
+script = ExtResource("7_aumry")
 save_data_resource = ExtResource("5_lnsum")
 
 [node name="Undergrowth" type="TileMapLayer" parent="GameTilemap" unique_id=1372152069]
@@ -59,56 +97,91 @@ tile_set = ExtResource("3_ny2xk")
 
 [node name="CropFields" type="Node2D" parent="." unique_id=1174516918]
 
-[node name="FieldCursorComponent" parent="." unique_id=1750042841 node_paths=PackedStringArray("grass_tilemap_layer", "tilled_soil_tilemap_layer") instance=ExtResource("7_vwu8x")]
+[node name="FieldCursorComponent" type="Node" parent="." unique_id=1750042841 node_paths=PackedStringArray("grass_tilemap_layer", "tilled_soil_tilemap_layer") instance=ExtResource("7_vwu8x")]
+script = ExtResource("10_iubc1")
 grass_tilemap_layer = NodePath("../GameTilemap/Grass")
 tilled_soil_tilemap_layer = NodePath("../GameTilemap/TilledSoil")
 
-[node name="CropsCursorComponent" parent="." unique_id=1942148933 node_paths=PackedStringArray("tilled_soil_tilemap_layer") instance=ExtResource("8_kn0rq")]
+[node name="CropsCursorComponent" type="Node" parent="." unique_id=1942148933 node_paths=PackedStringArray("tilled_soil_tilemap_layer") instance=ExtResource("8_kn0rq")]
+script = ExtResource("12_47k62")
 tilled_soil_tilemap_layer = NodePath("../GameTilemap/TilledSoil")
 
-[node name="Guide" parent="." unique_id=1391652792 instance=ExtResource("12_vu6qy")]
+[node name="Guide" type="CharacterBody2D" parent="." unique_id=1391652792 instance=ExtResource("12_vu6qy")]
+y_sort_enabled = true
 position = Vector2(531, 256)
+script = ExtResource("14_1e7iv")
 unlocks_all_tools = false
 
-[node name="IslandSettings" type="Node" parent="."]
+[node name="IslandSettings" type="Node" parent="." unique_id=953281409]
 script = ExtResource("21_isle")
 pest_chance = 0.06
-follow_seasons = false
 
-[node name="MarketStall" parent="." instance=ExtResource("22_stall")]
+[node name="MarketStall" type="StaticBody2D" parent="." unique_id=1134745713 instance=ExtResource("22_stall")]
+y_sort_enabled = true
 position = Vector2(488, 312)
+script = ExtResource("17_my0da")
 
-[node name="AppleTree" parent="." instance=ExtResource("30_tree")]
+[node name="AppleTree" type="Sprite2D" parent="." unique_id=1819453360 instance=ExtResource("30_tree")]
+y_sort_enabled = true
 position = Vector2(584, 184)
+texture = ExtResource("19_jvo5p")
+offset = Vector2(0, -16)
+hframes = 12
+vframes = 4
+script = ExtResource("20_2v5bi")
 initial_growth_state = 3
 
-[node name="OrangeTree" parent="." instance=ExtResource("31_tree")]
+[node name="OrangeTree" type="Sprite2D" parent="." unique_id=1976056069 instance=ExtResource("31_tree")]
+y_sort_enabled = true
 position = Vector2(632, 184)
+texture = ExtResource("19_jvo5p")
+offset = Vector2(0, -16)
+hframes = 12
+vframes = 4
+script = ExtResource("22_qn5sf")
 initial_growth_state = 3
 
-[node name="PeachTree" parent="." instance=ExtResource("32_tree")]
+[node name="PeachTree" type="Sprite2D" parent="." unique_id=401055392 instance=ExtResource("32_tree")]
+y_sort_enabled = true
 position = Vector2(584, 232)
+texture = ExtResource("19_jvo5p")
+offset = Vector2(0, -16)
+hframes = 12
+vframes = 4
+script = ExtResource("24_40mix")
 initial_growth_state = 3
 
-[node name="PearTree" parent="." instance=ExtResource("33_tree")]
+[node name="PearTree" type="Sprite2D" parent="." unique_id=269388351 instance=ExtResource("33_tree")]
+y_sort_enabled = true
 position = Vector2(632, 232)
-initial_growth_state = 0
+texture = ExtResource("19_jvo5p")
+offset = Vector2(0, -16)
+hframes = 12
+vframes = 4
+script = ExtResource("26_y778l")
 
-[node name="LargeTreeA" parent="." instance=ExtResource("39_timber")]
+[node name="LargeTreeA" type="Sprite2D" parent="." unique_id=671150203 instance=ExtResource("39_timber")]
+material = SubResource("ShaderMaterial_am87c")
 position = Vector2(696, 200)
+texture = SubResource("AtlasTexture_fnqys")
+offset = Vector2(0, -11)
+script = ExtResource("30_8qxdr")
 
-[node name="LargeTreeB" parent="." instance=ExtResource("39_timber")]
+[node name="LargeTreeB" type="Sprite2D" parent="." unique_id=1359861673 instance=ExtResource("39_timber")]
+material = SubResource("ShaderMaterial_0tb0x")
 position = Vector2(696, 264)
+texture = SubResource("AtlasTexture_fnqys")
+offset = Vector2(0, -11)
+script = ExtResource("30_8qxdr")
 
-[node name="StageDirector" type="CanvasLayer" parent="."]
+[node name="StageDirector" type="CanvasLayer" parent="." unique_id=471351198]
 script = ExtResource("20_stgdir")
 stage_title = "STAGE 4 - TREE FARMING"
 stage_brief = "The orchard to the east is already bearing. Swing the hoe at a fruiting tree to shake the fruit down, then walk over it to collect. The two bare trees are timber - take the axe to them for logs. Fruit regrows after a few days."
-give_hoe = true
-give_watering_can = true
-give_seeds = true
 give_spray = true
 give_axe = true
 economy_enabled = true
-seasons_enabled = false
-starting_season_index = 0
+
+[node name="StageGate" type="Node2D" parent="." unique_id=1904225277 instance=ExtResource("32_m53m3")]
+y_sort_enabled = true
+script = ExtResource("33_chkic")

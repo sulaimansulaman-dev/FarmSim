@@ -35,3 +35,19 @@ signal pest_treated(plant: CropPlant)
 ## knowing whether a HUD exists. On a level with no banner, nothing listens and
 ## nothing breaks.
 signal advisory(message: String)
+
+## Something was picked up off the ground - produce, fruit, a log. Carries the
+## inventory key, so graded crops arrive as "cabbage (A)".
+signal item_collected(item_name: String, amount: int)
+
+## Money came in at the market, and how much.
+signal produce_sold(amount: float)
+
+## A supply (spray, organic control, fertiliser, sapling) was bought.
+signal supply_bought(supply_id: String)
+
+## A sapling went into the ground (Stage 4).
+signal tree_planted(tree: Node2D)
+
+## An old tree was felled for timber (Stage 4).
+signal tree_chopped()

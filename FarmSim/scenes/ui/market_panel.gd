@@ -24,6 +24,8 @@ signal closed()
 var _balance_label: Label
 var _basket_label: Label
 var _root: Control
+var _pages: Dictionary = {}
+var _tabs: Dictionary = {}
 
 
 func _ready() -> void:
@@ -83,30 +85,54 @@ func _build() -> void:
 
 	column.add_child(_divider())
 
-	# --- buying
-	_add_heading(column, "SEED  (price per plant sown)")
+	# Three tabs, and only these three (FR-MKT-002): the market deals in seed,
+	# farm supplies - fertiliser, pest control and saplings - and buying back
+	# produce. No animals or livestock are ever offered.
+	var tab_row := HBoxContainer.new()
+	tab_row.add_theme_constant_override("separation", 4)
+	column.add_child(tab_row)
+
+	var pages := {}
+	for page_name in ["SEEDS", "SUPPLIES", "SELL"]:
+		var page := VBoxContainer.new()
+		page.add_theme_constant_override("separation", 4)
+		page.custom_minimum_size = Vector2(320, 0)
+		page.visible = false
+		pages[page_name] = page
+
+		var tab := Button.new()
+		tab.text = page_name
+		tab.focus_mode = Control.FOCUS_NONE
+		tab.theme_type_variation = &"GameMenuButton"
+		tab.custom_minimum_size = Vector2(90, 20)
+		tab.pressed.connect(_show_page.bind(page_name))
+		tab_row.add_child(tab)
+		_tabs[page_name] = tab
+
+	for page in pages.values():
+		column.add_child(page)
+	_pages = pages
+
+	# --- seeds
+	_add_heading(pages["SEEDS"], "SEED  (price per plant sown)")
 	for crop_id in CropManager.library.crop_ids():
-		_add_seed_row(column, str(crop_id))
+		_add_seed_row(pages["SEEDS"], str(crop_id))
 
-	_add_heading(column, "SUPPLIES")
+	# --- supplies
+	_add_heading(pages["SUPPLIES"], "FERTILISER, PEST CONTROL AND SAPLINGS")
 	for supply_id in EconomyManager.supply_ids():
-		_add_supply_row(column, str(supply_id))
-
-	column.add_child(_divider())
+		if _supply_usable_here(str(supply_id)):
+			_add_supply_row(pages["SUPPLIES"], str(supply_id))
 
 	# --- selling
-	_add_heading(column, "SELL")
+	_add_heading(pages["SELL"], "SELL YOUR PRODUCE")
 
 	_basket_label = Label.new()
 	_basket_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_basket_label.custom_minimum_size = Vector2(300, 0)
 	_basket_label.add_theme_font_size_override("font_size", 8)
 	_basket_label.add_theme_color_override("font_color", Color("d8cbb0"))
-	column.add_child(_basket_label)
-
-	var sell_row := HBoxContainer.new()
-	sell_row.add_theme_constant_override("separation", 6)
-	column.add_child(sell_row)
+	pages["SELL"].add_child(_basket_label)
 
 	var sell_all := Button.new()
 	sell_all.text = "SELL EVERYTHING"
@@ -114,15 +140,43 @@ func _build() -> void:
 	sell_all.theme_type_variation = &"GameMenuButton"
 	sell_all.custom_minimum_size = Vector2(150, 22)
 	sell_all.pressed.connect(func(): EconomyManager.sell_all())
-	sell_row.add_child(sell_all)
+	pages["SELL"].add_child(sell_all)
+
+	column.add_child(_divider())
 
 	var close := Button.new()
 	close.text = "CLOSE  (Esc)"
 	close.focus_mode = Control.FOCUS_NONE
 	close.theme_type_variation = &"GameMenuButton"
 	close.custom_minimum_size = Vector2(110, 22)
+	close.size_flags_horizontal = Control.SIZE_SHRINK_END
 	close.pressed.connect(close_market)
-	sell_row.add_child(close)
+	column.add_child(close)
+
+	_show_page("SEEDS")
+
+
+## A supply is only sold on a stage that hands out the tool to use it with, so
+## Stage 2 never sells a spray for pests that do not exist there.
+func _supply_usable_here(supply_id: String) -> bool:
+	var tool_for := {
+		"spray": DataTypes.Tools.SprayPest,
+		"organic": DataTypes.Tools.OrganicControl,
+		"sapling": DataTypes.Tools.PlantSapling,
+	}
+	if not tool_for.has(supply_id):
+		return true
+	var tools_panel := get_tree().root.find_child("ToolsPanel", true, false)
+	if tools_panel == null:
+		return true
+	var button: Button = tools_panel.button_for(tool_for[supply_id])
+	return button != null and button.visible
+
+
+func _show_page(page_name: String) -> void:
+	for key in _pages:
+		_pages[key].visible = key == page_name
+		_tabs[key].modulate = Color(1, 1, 1, 1) if key == page_name else Color(1, 1, 1, 0.55)
 
 
 func _divider() -> Control:
@@ -183,7 +237,10 @@ func _add_supply_row(parent: Node, supply_id: String) -> void:
 	parent.add_child(row)
 
 	var held: int = int(InventoryManager.inventory.get(supply_id, 0))
+	row.tooltip_text = EconomyManager.supply_description(supply_id)
 	var text := Label.new()
+	text.tooltip_text = row.tooltip_text
+	text.mouse_filter = Control.MOUSE_FILTER_PASS
 	text.text = "%-12s  %s     (you have %d)" % [
 		EconomyManager.supply_name(supply_id),
 		EconomyManager.format_money(EconomyManager.supply_cost(supply_id)),

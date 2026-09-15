@@ -15,5 +15,7 @@ enum Tools {
 	WaterCrops,
 	PlantCorn,
 	PlantTomato,
-	SprayPest
+	SprayPest,
+	OrganicControl,
+	PlantSapling
 }

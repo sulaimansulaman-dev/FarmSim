@@ -9,7 +9,10 @@ var game_data_resource: SaveGameDataResource
 
 func _ready() -> void:
     add_to_group('save_level_data_component')
-    level_scene_name = get_parent().name
+    # Keyed by the level id rather than the scene's root node name. Stages 2-5
+    # were built from the Island 1 scene, and a shared root name would let one
+    # stage's save load into another.
+    level_scene_name = SceneManager.current_level if not SceneManager.current_level.is_empty() else str(get_parent().name)
 
 
 func save_node_data() -> void:

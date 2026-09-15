@@ -14,6 +14,14 @@ const SHEET_COLUMNS := 6
 
 const crop_harvest_scene := preload("res://scenes/objects/plants/crop_harvest.tscn")
 
+## One sprite per pest type (FR-PST-002). The caterpillar is the original art.
+const PEST_TEXTURES := {
+	"caterpillar": preload("res://assets/game/objects/pest_caterpillar.png"),
+	"worm": preload("res://assets/game/objects/pest_worm.png"),
+	"ant": preload("res://assets/game/objects/pest_ant.png"),
+	"bird": preload("res://assets/game/objects/pest_bird.png"),
+}
+
 @export var crop_id : String = "maize"
 
 ## Set by the crops cursor before this node enters the tree, when the player had
@@ -71,6 +79,7 @@ func on_matured() -> void:
 ## it gets its own sprite rather than a slot in the status icon. A crop can be
 ## infested and thirsty at the same time and the player needs to see both.
 func on_pest_appeared() -> void:
+	pest_sprite.texture = PEST_TEXTURES.get(crop_sim.crop.pest_type, PEST_TEXTURES["caterpillar"])
 	pest_sprite.visible = true
 	FarmEvents.pest_appeared.emit(self)
 
@@ -80,30 +89,61 @@ func on_pest_cleared() -> void:
 	FarmEvents.pest_treated.emit(self)
 
 
-## Treats this plant. Nothing is returned - the crop's own signals drive the view.
+## Treatment results, as prepare_treatment() reports them.
+const TREAT_REFUSED := -1
+const TREAT_FAILED := 0
+const TREAT_CLEARED := 1
+
+
+## The half of treating a plant that belongs to the player who clicked: checks
+## there is something to treat, pays for the treatment and rolls whether it
+## worked. Returns TREAT_REFUSED when nothing was spent, TREAT_FAILED when the
+## treatment was used up without clearing the pest, or TREAT_CLEARED.
+##
+## Split from apply_treatment() so a LAN game can run this on the clicking
+## device only, then show the outcome on every device.
 ##
 ## Spraying is not a "hit" like watering or harvesting. Those need a player
 ## animation state, and the character spritesheet has none for spraying, so this
 ## works the way planting does: the cursor finds the crop and acts on it.
-func spray() -> void:
-	# Checked before the spray is consumed: a can emptied onto a healthy plant
+func prepare_treatment(supply_id: String) -> int:
+	var crop := crop_sim.crop
+
+	# Checked before anything is consumed: a can emptied onto a healthy plant
 	# is a wasted purchase, and the player should be told that rather than
 	# quietly charged for it.
-	if not crop_sim.crop.pest_active:
+	if not crop.pest_active:
 		status_icon.refuse()
-		FarmEvents.advisory.emit("Nothing to treat on that plant - the spray would be wasted.")
-		return
+		FarmEvents.advisory.emit("Nothing to treat on that plant - the treatment would be wasted.")
+		return TREAT_REFUSED
 
-	if not EconomyManager.consume_supply("spray"):
+	if not EconomyManager.consume_supply(supply_id):
 		status_icon.refuse()
-		return
+		return TREAT_REFUSED
 
-	if crop_sim.crop.treat_pest():
-		return
+	var treatment := EconomyManager.supply_name(supply_id)
+	if not EconomyManager.treatment_works_on(supply_id, crop.pest_type):
+		# The wrong product for the pest is the lesson, so it is used up.
+		FarmEvents.advisory.emit("%s does nothing against %s - that one was wasted. Try a different treatment." % [
+			treatment, crop.pest_display_name()
+		])
+		return TREAT_FAILED
 
-	# Nothing to treat. Say so rather than silently swallowing the click - a
-	# wasted treatment is itself the lesson, and the model already logs it.
-	status_icon.refuse()
+	if randf() > EconomyManager.treatment_success_chance(supply_id):
+		FarmEvents.advisory.emit("The %s did not take this time. The %s are still there - apply it again." % [
+			treatment.to_lower(), crop.pest_display_name()
+		])
+		return TREAT_FAILED
+
+	return TREAT_CLEARED
+
+
+## Shows the outcome of a treatment. Runs on every device.
+func apply_treatment(result: int) -> void:
+	if result == TREAT_CLEARED and crop_sim.crop.pest_active:
+		crop_sim.crop.treat_pest()
+	elif result == TREAT_FAILED:
+		status_icon.refuse()
 
 
 func on_watered(_hit_damage: int) -> void:

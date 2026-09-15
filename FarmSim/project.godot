@@ -39,6 +39,8 @@ GameDialogueManager="*res://scripts/globals/game_dialogue_manager.gd"
 GameManager="*res://scripts/globals/game_manager.gd"
 SceneManager="*res://scripts/globals/scene_manager.gd"
 MultiplayerManager="*res://scripts/globals/multiplayer_manager.gd"
+ProgressManager="*res://scripts/globals/progress_manager.gd"
+StageSession="*res://scripts/globals/stage_session.gd"
 
 [display]
 

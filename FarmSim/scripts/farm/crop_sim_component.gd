@@ -31,7 +31,15 @@ var crop: Crop
 
 
 func _ready() -> void:
-	crop = Crop.new(CropManager.library)
+	# Seeded from the tile the crop stands on. Every crop used to share seed 0,
+	# so every plant on the island rolled the same pest on the same day. A
+	# position seed differs per plant but is identical on every LAN peer, which
+	# keeps outbreaks in step across devices without sending them.
+	var rng_seed := 0
+	var parent_2d := get_parent() as Node2D
+	if parent_2d != null:
+		rng_seed = hash(Vector2i(parent_2d.global_position.round()))
+	crop = Crop.new(CropManager.library, rng_seed)
 	DayNightCycleManager.time_tick_day.connect(on_time_tick_day)
 
 

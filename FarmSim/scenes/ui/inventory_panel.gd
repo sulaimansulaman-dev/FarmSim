@@ -40,6 +40,16 @@ var crop_labels: Dictionary = {}
 const SUPPLY_ICONS := {
 	"spray": {"sheet": SPRAY_SHEET, "region": Rect2(0, 0, 16, 16)},
 	"fertiliser": {"sheet": TOOLS_SHEET, "region": Rect2(32, 0, 16, 16)},
+	"organic": {"sheet": preload("res://assets/game/objects/organic_control.png"), "region": Rect2(0, 0, 16, 16)},
+	"sapling": {"sheet": preload("res://assets/game/objects/sapling_item.png"), "region": Rect2(0, 0, 16, 16)},
+}
+
+## Clicking a supply's slot takes the matching tool in hand (FR-ENG-007), so the
+## stack count and the tool it feeds sit one click apart.
+const SUPPLY_TOOLS := {
+	"spray": DataTypes.Tools.SprayPest,
+	"organic": DataTypes.Tools.OrganicControl,
+	"sapling": DataTypes.Tools.PlantSapling,
 }
 
 
@@ -103,7 +113,32 @@ func build_supply_slot(item_name: String) -> Label:
 	var icon := AtlasTexture.new()
 	icon.atlas = icon_data["sheet"]
 	icon.region = icon_data["region"]
-	return build_slot(item_name, icon, EconomyManager.display_label(item_name))
+	var label := build_slot(item_name, icon, EconomyManager.display_label(item_name))
+	if SUPPLY_TOOLS.has(item_name):
+		var slot: Control = label.get_parent()
+		slot.mouse_filter = Control.MOUSE_FILTER_STOP
+		slot.tooltip_text += " - click to use"
+		slot.gui_input.connect(_on_supply_slot_input.bind(item_name))
+	return label
+
+
+func _on_supply_slot_input(event: InputEvent, item_name: String) -> void:
+	var click := event as InputEventMouseButton
+	if click == null or not click.pressed or click.button_index != MOUSE_BUTTON_LEFT:
+		return
+	get_viewport().set_input_as_handled()
+
+	var tool: DataTypes.Tools = SUPPLY_TOOLS[item_name]
+	var tools_panel := get_tree().root.find_child("ToolsPanel", true, false)
+	if tools_panel == null:
+		return
+	var button: Button = tools_panel.button_for(tool)
+	# Only a tool this stage actually hands out. Holding a spray on an island
+	# with no pests would offer an action the stage has no system for.
+	if button == null or not button.visible or button.disabled:
+		FarmEvents.advisory.emit("You cannot use %s on this stage." % EconomyManager.supply_name(item_name).to_lower())
+		return
+	tools_panel.toggle_tool(tool)
 
 
 ## Builds one slot matching the six already in the scene: the crop's harvested

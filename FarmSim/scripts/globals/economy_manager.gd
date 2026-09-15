@@ -115,6 +115,30 @@ func supply_ids() -> Array:
 	return _supplies.keys()
 
 
+func supply_description(supply_id: String) -> String:
+	return str(_supplies.get(supply_id, {}).get("description", ""))
+
+
+## Whether a treatment can clear this kind of pest at all (Stage 3).
+func treatment_works_on(supply_id: String, pest_type: String) -> bool:
+	var treats: Array = _supplies.get(supply_id, {}).get("treats", [])
+	return pest_type in treats
+
+
+## How often one application of a treatment actually clears the pest.
+func treatment_success_chance(supply_id: String) -> float:
+	return float(_supplies.get(supply_id, {}).get("success_chance", 1.0))
+
+
+## Supplies that are pest treatments, in market order.
+func treatment_ids() -> Array:
+	var ids: Array = []
+	for supply_id in _supplies:
+		if _supplies[supply_id].has("treats"):
+			ids.append(supply_id)
+	return ids
+
+
 func fertiliser_growth_multiplier() -> float:
 	return float(_fertiliser.get("growth_multiplier", 1.0))
 
@@ -166,6 +190,7 @@ func buy_supply(supply_id: String) -> bool:
 
 	_spend(cost)
 	InventoryManager.add_collectable(supply_id, 1)
+	FarmEvents.supply_bought.emit(supply_id)
 	transaction.emit("Bought %s for %s." % [supply_name(supply_id), format_money(cost)], true)
 	return true
 
@@ -252,6 +277,7 @@ func sell_all() -> float:
 
 	balance += earned
 	balance_changed.emit(balance)
+	FarmEvents.produce_sold.emit(earned)
 	transaction.emit("Sold %s for %s." % [", ".join(lines), format_money(earned)], true)
 	return earned
 

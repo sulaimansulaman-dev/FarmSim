@@ -32,6 +32,9 @@ enum State { EMPTY, GROWING, MATURE, DEAD, HARVESTED }
 
 const MAX_HEALTH := 100.0
 
+## The Stage 3 pests (FR-PST-002). Chosen at random when an outbreak starts.
+const PEST_TYPES := ["caterpillar", "worm", "ant", "bird"]
+
 ## Passed as the temperature when the caller is not modelling it at all, in
 ## which case the crop grows at full rate. Keeps the older callers working.
 const NO_TEMPERATURE := -999.0
@@ -51,6 +54,9 @@ var stage_index: int = 0
 var days_in_stage: float = 0.0
 var pest_active: bool = false
 var pest_days_untreated: int = 0
+## Which pest is on the plant while pest_active is true: one of PEST_TYPES.
+## Treatments work on some types and not others (economy.json "treats").
+var pest_type: String = ""
 var waterlogged_days: int = 0
 
 # --- explanation of the result ----------------------------------------------
@@ -130,6 +136,16 @@ func water(amount: float = 0.35) -> bool:
 	return true
 
 
+## A player-facing name for the current pest, e.g. "birds".
+func pest_display_name() -> String:
+	match pest_type:
+		"caterpillar": return "caterpillars"
+		"worm": return "cutworms"
+		"ant": return "ants"
+		"bird": return "birds"
+	return "pests"
+
+
 ## Treats an active pest outbreak. Returns false if there was nothing to treat,
 ## which the UI should surface - wasting a treatment is itself a lesson.
 func treat_pest() -> bool:
@@ -138,6 +154,7 @@ func treat_pest() -> bool:
 		return false
 	pest_active = false
 	pest_days_untreated = 0
+	pest_type = ""
 	pest_cleared.emit()
 	_record_action("treat_pest", "Treated the pest outbreak.")
 	return true
@@ -346,8 +363,9 @@ func _maybe_start_pest(pest_chance: float) -> void:
 	if _rng.randf() < pest_chance * susceptibility:
 		pest_active = true
 		pest_days_untreated = 0
+		pest_type = PEST_TYPES[_rng.randi() % PEST_TYPES.size()]
 		pest_appeared.emit()
-		_record_action("pest_outbreak", "Day %d: a pest outbreak appeared." % day)
+		_record_action("pest_outbreak", "Day %d: %s appeared on the crop." % [day, pest_display_name()])
 
 
 func _apply_pest_damage() -> void:

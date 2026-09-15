@@ -51,6 +51,7 @@ func start_draft(draft_id: String) -> bool:
 
 ## Leaves whatever is running and brings the title screen back.
 func return_to_title() -> void:
+	resume_world()
 	if get_tree().root.has_node('GameMenuScreen'):
 		get_tree().root.get_node('GameMenuScreen').queue_free()
 	SceneManager.return_to_title()
@@ -64,3 +65,23 @@ func show_game_menu_screen() -> void:
 	var instance = game_menu_screen.instantiate()
 	instance.name = 'GameMenuScreen'
 	get_tree().root.add_child(instance)
+
+
+## Freezes the world behind a menu or the quiz (FR-PAM-001).
+##
+## Singleplayer only. In a LAN game the host's world belongs to everyone on it,
+## and one player opening a menu must not stop the clock for the others.
+func pause_world() -> void:
+	if is_networked():
+		return
+	get_tree().paused = true
+
+
+## True only in a real LAN session. Godot keeps an OfflineMultiplayerPeer set
+## in singleplayer, so has_multiplayer_peer() alone is true there too.
+func is_networked() -> bool:
+	return multiplayer.has_multiplayer_peer() and not (multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
+
+
+func resume_world() -> void:
+	get_tree().paused = false

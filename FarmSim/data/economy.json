@@ -18,17 +18,40 @@
       "price_per_kg": 0.8
     }
   },
-  "_supplies_comment": "Consumables the market sells alongside seed. Sprays are what makes Stage 3's pest control a decision rather than a free click - an untreated outbreak costs yield, but a wasted spray costs money.",
+  "_supplies_comment": "Consumables the market sells alongside seed. Sprays are what makes Stage 3's pest control a decision rather than a free click - an untreated outbreak costs yield, but a wasted spray costs money. 'treats' lists which pest types a treatment clears and 'success_chance' how often one application works. Buying supplies is the only thing the market sells: no animals or livestock (FR-MKT-002).",
   "supplies": {
     "spray": {
-      "display_name": "Pest spray",
+      "display_name": "Chemical spray",
       "cost": 14.0,
-      "description": "Clears one pest outbreak. Consumed on use."
+      "description": "Insecticide. Clears caterpillars, worms and ants every time. Useless against birds. Consumed on use.",
+      "treats": [
+        "caterpillar",
+        "worm",
+        "ant"
+      ],
+      "success_chance": 1.0
+    },
+    "organic": {
+      "display_name": "Organic control",
+      "cost": 8.0,
+      "description": "Neem oil plus bird-scare tape. Cheaper and gentler on helpful insects, works on every pest including birds, but only takes three times in four. Consumed on use.",
+      "treats": [
+        "caterpillar",
+        "worm",
+        "ant",
+        "bird"
+      ],
+      "success_chance": 0.75
     },
     "fertiliser": {
       "display_name": "Fertiliser",
       "cost": 22.0,
       "description": "Applied as you sow. The crop develops faster and starts with better soil moisture."
+    },
+    "sapling": {
+      "display_name": "Fruit tree sapling",
+      "cost": 20.0,
+      "description": "Plant it on open grass with the sapling tool. Grows into a fruit tree over several days."
     }
   },
   "_fertiliser_comment": "What one bag of fertiliser buys, applied to a single plant at sowing.",

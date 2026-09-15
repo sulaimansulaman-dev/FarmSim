@@ -95,7 +95,12 @@ func _prepare_multiplayer_scene() -> void:
 	SceneManager.load_main_scene_container()
 
 	if not main_scene_already_running:
-		await SceneManager.load_level('Level1')
+		# The host opens on the furthest stage it has unlocked. A client loads
+		# Stage 1 as a placeholder and is moved to the host's stage the moment
+		# the host sees it connect (StageSession.sync_stage_to_peer).
+		var start_level := ProgressManager.furthest_unlocked_stage() if is_hosting else 'Stage1'
+		await SceneManager.load_level(start_level)
+		SaveGameManager.allow_save_game = is_hosting
 	else:
 		await get_tree().process_frame
 
@@ -152,6 +157,7 @@ func _clear_spawned_players() -> void:
 
 func _on_peer_connected(peer_id: int) -> void:
 	if multiplayer.is_server():
+		StageSession.sync_stage_to_peer(peer_id)
 		_spawn_player(peer_id)
 		player_list_changed.emit()
 

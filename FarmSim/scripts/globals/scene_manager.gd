@@ -3,6 +3,10 @@ extends Node
 ## Emitted once a level is in the tree, with the name to show the player.
 signal level_loaded(display_name: String)
 
+## Emitted just before the running level is torn down, so anything that holds
+## per-level state (the toolbar, for one) can reset before the next level loads.
+signal level_unloading()
+
 ## Emitted when the player leaves a level and the title screen should come back.
 signal returned_to_title()
 
@@ -131,6 +135,8 @@ const draft_levels: Array = [
 
 var current_level: String = ''
 
+var _loading: bool = false
+
 ## True while a Croptails level or a draft is running. The title screen is not a
 ## level, and GameManager checks this before letting Escape open the in-game
 ## pause menu - otherwise Escape on the menu opens a pause screen for a game
@@ -156,9 +162,19 @@ func load_level(level_name: String) -> void:
 	if scene_path == null:
 		return
 
-	var level_root = get_node(main_scene_level_root_path)
+	# Two loads must never interleave - a LAN client can be told to switch to
+	# the host's stage while it is still loading its placeholder, and two
+	# half-finished loads would leave both levels in the tree.
+	while _loading:
+		await get_tree().process_frame
+	_loading = true
+
+	var level_root = get_node_or_null(main_scene_level_root_path)
 	if level_root == null:
+		_loading = false
 		return
+
+	level_unloading.emit()
 
 	var children = level_root.get_children()
 	if children != null:
@@ -167,12 +183,17 @@ func load_level(level_name: String) -> void:
 
 	await  get_tree().process_frame
 
+	# Set before the level enters the tree, so anything reading it from _ready()
+	# - the stage director asking which tools this stage hands out - sees the
+	# level that is arriving rather than the one that just left.
+	current_level = level_name
+
 	var level_scene: Node = load(scene_path).instantiate()
 	level_root.add_child(level_scene)
 
-	current_level = level_name
 	in_game = true
 	draft_active = false
+	_loading = false
 	level_loaded.emit(str(level_names.get(level_name, level_name)))
 
 

@@ -13,6 +13,11 @@ extends CanvasLayer
 
 
 func _ready() -> void:
+    # The menu has to keep working while it holds the rest of the game paused.
+    process_mode = Node.PROCESS_MODE_ALWAYS
+    if SceneManager.in_game:
+        GameManager.pause_world()
+
     # This same screen is used both as the home screen (before the game has
     # started) and as the pause overlay shown mid-game via the "game_menu"
     # input action, so which buttons make sense depends on that context. A
@@ -25,7 +30,9 @@ func _ready() -> void:
     save_game_button.focus_mode = Control.FOCUS_ALL if SaveGameManager.allow_save_game else Control.FOCUS_NONE
 
     resume_button.visible = is_paused_context
-    host_button.visible = is_paused_context and not MultiplayerManager.is_hosting and not MultiplayerManager.is_client
+    # The multiplayer toggle (FR-PAM-001): host from here, or stop hosting.
+    host_button.visible = is_paused_context and not MultiplayerManager.is_client
+    host_button.text = 'STOP HOSTING' if MultiplayerManager.is_hosting else host_button.text
     join_button.visible = !is_paused_context
 
     # Since the two games were compiled together this screen is only ever a
@@ -46,6 +53,13 @@ func _ready() -> void:
 func _on_start_game_button_pressed() -> void:
     GameManager.start_game()
     queue_free()
+
+
+func _exit_tree() -> void:
+    # However the menu closes - resume, a finished join, main menu - the world
+    # must not stay frozen behind it.
+    if not get_tree().root.has_node('QuizBattle'):
+        GameManager.resume_world()
 
 
 func _on_resume_button_pressed() -> void:
@@ -69,6 +83,14 @@ func _on_exit_game_button_pressed() -> void:
 
 
 func _on_host_button_pressed() -> void:
+    if MultiplayerManager.is_hosting:
+        # Closing the server takes every player with it, so this goes back to
+        # the title rather than leaving the host on a map with no player.
+        MultiplayerManager.leave_game()
+        GameManager.return_to_title()
+        return
+    # Hosting runs the world for other people, so it cannot stay paused.
+    GameManager.resume_world()
     host_button.disabled = true
     status_label.text = 'Starting server...'
     await MultiplayerManager.host_game()
