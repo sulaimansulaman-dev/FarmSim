@@ -43,6 +43,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif ToolManager.selected_tool == DataTypes.Tools.SprayPest:
 			get_cell_under_mouse()
 			spray_crop()
+		elif ToolManager.selected_tool == DataTypes.Tools.WaterCrops:
+			get_cell_under_mouse()
+			water_crop()
 
 
 func get_cell_under_mouse() -> void:
@@ -101,6 +104,34 @@ func spray_crop() -> void:
 	var crop := crop_at(local_cell_position) as CropPlant
 	if crop != null:
 		crop.spray()
+
+
+## Waters the crop under the mouse, if the player is close enough to reach it.
+##
+## The can used to work like the axe: a 3px hitbox pushed 21px out in whichever
+## of four directions the player last walked. A click on the seedling only
+## landed if the player happened to be facing it at exactly that distance, so
+## most clicks did nothing. It now targets the tile you click, like sowing and
+## spraying, and turns the player to face it so the animation still reads.
+func water_crop() -> void:
+	if distance > 20.0:
+		return
+
+	var crop := crop_at(local_cell_position) as CropPlant
+	if crop == null:
+		return
+
+	face_towards(local_cell_position)
+	crop.watering_hurt_component.take_hit(1)
+
+
+## Points the player at a spot, so the tool animation plays toward it.
+func face_towards(target: Vector2) -> void:
+	var offset := target - player.global_position
+	if absf(offset.x) >= absf(offset.y):
+		player.direction = Vector2.RIGHT if offset.x > 0.0 else Vector2.LEFT
+	else:
+		player.direction = Vector2.DOWN if offset.y > 0.0 else Vector2.UP
 
 
 func remove_crop() -> void:

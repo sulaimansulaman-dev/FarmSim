@@ -3,3 +3,6 @@ res://scenes/ui/game_ui_theme.tres
 res://tilesets/house_tile_set.tres
 res://tilesets/game_tile_set.tres
 res://dialogue/dialogue_balloon_theme.tres
+res://scenes/characters/player/watering_state.gd
+res://scenes/components/crops_cursor_component.gd
+res://scenes/components/hurt_component.gd

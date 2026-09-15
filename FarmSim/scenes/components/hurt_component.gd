@@ -21,10 +21,21 @@ func _on_area_entered(area: Area2D) -> void:
 			and not attacking_player.is_multiplayer_authority():
 		return
 
-	if multiplayer.has_multiplayer_peer():
-		request_hit.rpc_id(1, hit_component.damage)
+	take_hit(hit_component.damage)
+
+
+## Registers a hit that did not come from a HitComponent overlap - the watering
+## can, which targets the crop under the mouse rather than swinging a hitbox.
+## Same routing as an overlap: the host decides, every peer sees the result.
+func take_hit(damage: int) -> void:
+	if not multiplayer.has_multiplayer_peer():
+		_apply_hit(damage)
+	elif multiplayer.is_server():
+		# rpc_id(1) with call_remote never reaches the host itself, so the host
+		# broadcasts directly instead of asking itself.
+		_apply_hit.rpc(damage)
 	else:
-		_apply_hit(hit_component.damage)
+		request_hit.rpc_id(1, damage)
 
 
 ## Runs only on whoever receives it as id 1 (the host). World objects keep
