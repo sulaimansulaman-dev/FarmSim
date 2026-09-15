@@ -1,0 +1,59 @@
+extends CharacterBody2D
+
+const balloon_scene: PackedScene = preload("res://dialogue/game_dialogue_balloon.tscn")
+
+## Whether talking to this guide hands over every tool at once.
+##
+## True is the base game's behaviour, and level_1 still needs it. Island 1 turns
+## it off: there the tutorial unlocks one tool per step, so the toolbar itself
+## becomes the instruction and the wrong action is impossible rather than merely
+## discouraged.
+@export var unlocks_all_tools: bool = true
+
+## Which conversation this guide runs.
+##
+## Marlow appears on more than one island and has something different to say on
+## each, so the conversation belongs to the level, not to the character. Level 1
+## and Island 1 keep the default; Island 3 points at its own file.
+@export_file("*.dialogue") var conversation: String = "res://dialogue/conversations/guide.dialogue"
+
+@onready var interactable_component: InteractableComponent = $InteractableComponent
+@onready var interactable_label_component: Control = $InteractableLabelComponent
+
+
+func _ready() -> void:
+	interactable_component.interactable_activated.connect(on_interactable_activated)
+	interactable_component.interactable_deactivated.connect(on_interactable_deactivated)
+
+	GameDialogueManager.gave_crop_seeds.connect(on_gave_crop_seeds)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed('show_dialogue'):
+		return
+
+	if not interactable_label_component.visible:
+		return
+
+	var balloon: BaseGameDialogueBalloon = balloon_scene.instantiate()
+	get_tree().root.add_child(balloon)
+	balloon.start(load(conversation), 'start')
+
+
+func on_interactable_activated(_body: Node2D) -> void:
+	interactable_label_component.visible = true
+
+
+func on_interactable_deactivated(_body: Node2D) -> void:
+	interactable_label_component.visible = false
+
+
+func on_gave_crop_seeds() -> void:
+	if not unlocks_all_tools:
+		return
+
+	ToolManager.enable_tool(DataTypes.Tools.TillGround)
+	ToolManager.enable_tool(DataTypes.Tools.WaterCrops)
+	ToolManager.enable_tool(DataTypes.Tools.PlantCorn)
+	ToolManager.enable_tool(DataTypes.Tools.PlantTomato)
+	ToolManager.enable_tool(DataTypes.Tools.SprayPest)
