@@ -48,8 +48,18 @@ const ROW_JUST_HARVESTED := 4
 
 ## Lets a level designer drop this scene in already fully grown, instead of
 ## always starting as a sapling.
-@export var initial_growth_state: DataTypes.GrowthStates:
+## BUG FIX: this used to drop the value on the floor in the exact case it was
+## written for. Godot assigns exported properties while the scene is being built
+## and before _ready, so growth_cycle_component is still null at that moment and
+## the old setter's `if growth_cycle_component:` guard silently skipped the
+## assignment. A tree placed in a level as Mature came up a sapling anyway.
+##
+## The value is now kept and applied in _ready, once the child exists. The
+## setter still writes straight through when it can, so changing it at runtime
+## keeps working.
+@export var initial_growth_state: DataTypes.GrowthStates = DataTypes.GrowthStates.Germination:
 	set(state):
+		initial_growth_state = state
 		if growth_cycle_component:
 			growth_cycle_component.current_state = state
 
@@ -62,6 +72,8 @@ var _days_since_last_harvest: int = 0
 
 
 func _ready() -> void:
+	growth_cycle_component.current_state = initial_growth_state
+
 	texture = growth_texture
 	hframes = GRID_COLUMNS
 	vframes = 4

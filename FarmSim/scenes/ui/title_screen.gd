@@ -1049,8 +1049,17 @@ func _build_level_select_screen() -> void:
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(list)
 
-	_add_list_heading(list, "CROPTAILS")
+	# The staged build, in order. Stage 1 teaches the loop and each stage after
+	# it adds one system, so the order on screen is the order they are meant to
+	# be played in.
+	_add_list_heading(list, "THE FARM - STAGES 1 TO 5")
+
+	var index := 0
 	for entry in SceneManager.croptails_level_order:
+		if index == SceneManager.extras_start_at:
+			_add_list_heading(list, "OLDER LEVELS")
+			_add_list_note(list, "Kept for reference. Not part of the staged build.")
+
 		var level_id := str(entry['id'])
 		var display_name := str(SceneManager.level_names.get(level_id, level_id))
 		_add_level_entry(
@@ -1059,16 +1068,10 @@ func _build_level_select_screen() -> void:
 			str(entry['blurb']),
 			func(): _on_play_croptails_level(level_id)
 		)
+		index += 1
 
 	_add_list_heading(list, "TEAM LEVEL DRAFTS")
-
-	var draft_note = Label.new()
-	draft_note.text = "Work in progress from the team's branches. These run on their own and have their own controls."
-	draft_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	draft_note.custom_minimum_size = Vector2(288, 0)
-	draft_note.add_theme_font_size_override("font_size", FONT_SMALL)
-	draft_note.add_theme_color_override("font_color", Color("#6b4a2c"))
-	list.add_child(draft_note)
+	_add_list_note(list, "Work in progress from the team's branches. These run on their own and have their own controls.")
 
 	for draft in SceneManager.draft_levels:
 		var draft_id := str(draft['id'])
@@ -1084,6 +1087,17 @@ func _build_level_select_screen() -> void:
 	_apply_green_button_style(back_btn)
 	_connect_juicy_button(back_btn, func(): _switch_screen(level_select_screen, main_menu_screen))
 	box.add_child(back_btn)
+
+
+## A line of explanation under a heading, for sections that need one.
+func _add_list_note(parent: Node, text: String) -> void:
+	var note = Label.new()
+	note.text = text
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	note.custom_minimum_size = Vector2(288, 0)
+	note.add_theme_font_size_override("font_size", FONT_SMALL)
+	note.add_theme_color_override("font_color", Color("#6b4a2c"))
+	parent.add_child(note)
 
 
 func _add_list_heading(parent: Node, text: String) -> void:

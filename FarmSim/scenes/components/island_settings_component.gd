@@ -29,13 +29,44 @@ extends Node
 @export var temperature_c: float = Crop.NO_TEMPERATURE
 
 
+## When true, temperature and evaporation come from SeasonManager instead of the
+## exports above, and change under the crop's feet as the seasons turn.
+##
+## This is the seam the original comment asked for - "whoever builds the seasons
+## island sets temperature here rather than touching the crop scene". It reads
+## the calendar rather than holding its own copy of one, so there is still only
+## one place that decides what season it is.
+@export var follow_seasons: bool = false
+
+
 func _ready() -> void:
 	FarmEvents.crop_planted.connect(_on_crop_planted)
+	if follow_seasons:
+		SeasonManager.season_changed.connect(_on_season_changed)
 
 
 func _on_crop_planted(plant: CropPlant) -> void:
 	# Anything wanting to override an island - the tutorial's fast crop, for one -
 	# must connect after this, and then wins: callbacks run in connection order.
 	plant.crop_sim.pest_chance = pest_chance
-	plant.crop_sim.evaporation_multiplier = evaporation_multiplier
-	plant.crop_sim.temperature_c = temperature_c
+	plant.crop_sim.evaporation_multiplier = _evaporation()
+	plant.crop_sim.temperature_c = _temperature()
+
+
+## A season turning has to reach crops that are already in the ground, not only
+## the ones sown after it. Winter arriving should stall the maize standing in
+## the field - that is the entire lesson, and stamping conditions only at
+## planting would let a crop sown in summer sail through the frost.
+func _on_season_changed(_season: Dictionary) -> void:
+	for plant in get_tree().get_nodes_in_group("crop_plant"):
+		if plant is CropPlant:
+			plant.crop_sim.evaporation_multiplier = _evaporation()
+			plant.crop_sim.temperature_c = _temperature()
+
+
+func _temperature() -> float:
+	return SeasonManager.temperature_c() if follow_seasons else temperature_c
+
+
+func _evaporation() -> float:
+	return SeasonManager.evaporation_multiplier() if follow_seasons else evaporation_multiplier

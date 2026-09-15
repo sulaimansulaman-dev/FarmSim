@@ -83,6 +83,74 @@ to the same `walk_*` actions the drafts use, so the drafts needed nothing added.
   the singleplayer card alone was taller than the screen.
 - Added **Play as Guest**, and Enter now submits on the login screen.
 
+## The staged build (Stages 1 to 5)
+
+The level select now leads with the five stages from the functional spec. Each
+stage adds exactly one system to the one before it, which only teaches anything
+if the earlier stages genuinely lack the later ones - so a `StageDirector` node
+in each scene decides which tools the toolbar offers and switches the economy
+and calendar on or off.
+
+| Stage | Scene | Adds |
+|---|---|---|
+| 1 - Core Lifecycle | `island_1.tscn` | Till, sow, water, harvest. Marlow's tutorial. |
+| 2 - Market & Economy | `stage_2_market.tscn` | Money, seed cost, market stall, selling. |
+| 3 - Pests & Quality | `stage_3_pests.tscn` | Pest outbreaks, bought sprays, Grade A/B. |
+| 4 - Tree Farming | `stage_4_trees.tscn` | Fruit orchard, shaking, timber felling. |
+| 5 - Seasons | `stage_5_seasons.tscn` | Four-season calendar, warnings, seed viability. |
+
+Stages 2 to 5 are the Island 1 terrain with different components on it. Object
+positions were not guessed: the tilemap data was decoded to find the walkable
+grass, so the market crate and the orchard sit on real ground clear of the
+tilled field (cells x19-26, y11-16) and the guide.
+
+**Why the managers do not start themselves.** `EconomyManager` and
+`SeasonManager` are autoloads, so they outlive a level. If they switched
+themselves on they would still be on when the player returned to Stage 1, and
+the tutorial would start charging for the seed it hands out free. Each stage
+configures them, so leaving a stage resets them. With the economy off,
+`charge_for_seed` always succeeds and costs nothing - which is what keeps every
+pre-market island playing exactly as it did.
+
+**Grading** is read off the crop's penalty ledger, not its health. Health
+recovers day to day; the ledger is append-only and records what the season
+actually cost. A crop that was eaten by pests for a week and then nursed back to
+full health is not Grade A produce, and grading on health would say it was.
+Graded produce stacks separately in the inventory (`cabbage (A)` vs
+`cabbage (B)`) so the two can be priced and sold apart.
+
+**Balance**, checked against the data rather than asserted: cabbage costs R9 and
+returns R64 at Grade A or R38 at Grade B, so the R14 spray pays for itself.
+Every crop stalls in winter, and off-season growth is genuinely slower rather
+than merely discouraged - maize at spring's 18C develops at about two thirds
+rate. Seasons run 4 in-game days each.
+
+## Bugs found and fixed
+
+**`CropManager` and `FarmEvents` were never registered as autoloads.** Both are
+used in more than twenty places across Croptails - the tools panel, inventory
+panel, crop info panel, crop plant, crop sim, both cursor components, the
+tutorial director and the pest coach. This predates the merge: the original
+Croptails `project.godot` lists nine autoloads and neither is among them. It was
+breaking a large part of the game, and it is the error reported from
+`tools_panel.gd` line 97.
+
+**Autoload ordering.** `SeasonManager._ready` connects to
+`DayNightCycleManager`, so it has to be instantiated after it. Caught by
+auditing every autoload for singletons used during `_ready`; the full list is
+now ordered by dependency.
+
+**Fruit trees ignored `initial_growth_state`.** All four tree scripts export it
+with a comment saying it "lets a level designer drop this scene in already fully
+grown", and it never worked - Godot assigns exported properties before `_ready`,
+so `growth_cycle_component` was still null and the setter's guard silently
+discarded the value. Every tree placed as Mature came up a sapling. The value is
+now kept and applied in `_ready`. Stage 4's orchard depends on this.
+
+**`market_stall.tscn` under-declared `load_steps`.** Cosmetic, but fixed.
+
+A sweep for undefined global identifiers across every script found no others.
+
 ## Known issues, inherited not introduced
 
 - `drafts/scenes/characters/player/player.tscn` assigns `walk_state.gd` to
@@ -99,9 +167,14 @@ to the same `walk_*` actions the drafts use, so the drafts needed nothing added.
 
 ## Verified
 
-No Godot binary was available in the environment used to do the merge, so this
-was checked statically rather than by running it: every `res://` reference
-resolves to a file that exists, every `uid://` reference is defined, no
-duplicate `class_name` remains, all nine autoloads resolve, and every level in
-the catalogue points at a real scene. **It has not been launched.** Open it in
-the editor and play each entry in Level Select before relying on it.
+No Godot binary was available, so this was checked statically rather than by
+running it. Every `res://` reference resolves, every `uid://` is defined, no
+duplicate `class_name` remains, all thirteen autoloads resolve and are ordered
+by dependency, no scene references an undefined `ExtResource` id, every level in
+the catalogue points at a real scene, all GDScript is bracket-balanced with
+consistent indentation, and the economy and season data files were checked for
+consistency against `crops.json`.
+
+**It has not been launched.** Open it in the editor and play each stage before
+relying on it. The stage scenes are generated `.tscn` text, so a property-name
+mistake there is the most likely thing to surface first.

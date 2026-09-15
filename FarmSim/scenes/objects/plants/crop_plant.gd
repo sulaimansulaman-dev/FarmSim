@@ -16,6 +16,11 @@ const crop_harvest_scene := preload("res://scenes/objects/plants/crop_harvest.ts
 
 @export var crop_id : String = "maize"
 
+## Set by the crops cursor before this node enters the tree, when the player had
+## a bag of fertiliser to spend on it. A fertilised plant develops faster and
+## goes in with damper soil, which is what the bag actually buys.
+var fertilised: bool = false
+
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var crop_sim: CropSimComponent = $CropSimComponent
 @onready var watering_particles: GPUParticles2D = $WateringParticles
@@ -33,6 +38,10 @@ func _ready() -> void:
 
 	watering_hurt_component.hurt.connect(on_watered)
 	tilling_hurt_component.hurt.connect(on_harvested)
+
+	if fertilised:
+		crop_sim.growth_multiplier *= EconomyManager.fertiliser_growth_multiplier()
+		crop_sim.starting_moisture = EconomyManager.fertiliser_starting_moisture()
 
 	if not crop_sim.plant(crop_id):
 		push_error("CropPlant: unknown crop id '%s'" % crop_id)
@@ -77,6 +86,18 @@ func on_pest_cleared() -> void:
 ## animation state, and the character spritesheet has none for spraying, so this
 ## works the way planting does: the cursor finds the crop and acts on it.
 func spray() -> void:
+	# Checked before the spray is consumed: a can emptied onto a healthy plant
+	# is a wasted purchase, and the player should be told that rather than
+	# quietly charged for it.
+	if not crop_sim.crop.pest_active:
+		status_icon.refuse()
+		FarmEvents.advisory.emit("Nothing to treat on that plant - the spray would be wasted.")
+		return
+
+	if not EconomyManager.consume_supply("spray"):
+		status_icon.refuse()
+		return
+
 	if crop_sim.crop.treat_pest():
 		return
 
@@ -106,24 +127,24 @@ func on_harvested(_hit_damage: int) -> void:
 		return
 
 	var summary: Dictionary = crop_sim.crop.harvest()
-	print("Harvested %s: %s" % [crop_id, summary])
 	FarmEvents.crop_harvested.emit(crop_id, float(summary["yield_kg"]))
+	FarmEvents.crop_graded.emit(crop_id, str(summary["grade"]), float(summary["yield_kg"]))
 
 	# Deferred, and before queue_free: we are inside the hurt component's
 	# physics callback, where adding a body to the tree is not allowed yet.
 	# This is the same ordering the base game's corn.gd uses.
-	call_deferred("spawn_harvest", int(round(float(summary["yield_kg"]))))
+	call_deferred("spawn_harvest", int(round(float(summary["yield_kg"]))), str(summary["grade"]))
 	queue_free()
 
 
 ## Drops the produce as a pickup the player walks over — how every collectable
 ## in Croptails reaches the inventory.
-func spawn_harvest(amount_kg: int) -> void:
+func spawn_harvest(amount_kg: int, grade: String = "A") -> void:
 	if amount_kg <= 0:
 		return
 
 	var harvest := crop_harvest_scene.instantiate()
-	harvest.setup(crop_id, amount_kg)
+	harvest.setup(crop_id, amount_kg, grade)
 	harvest.global_position = global_position
 	get_parent().add_child(harvest)
 

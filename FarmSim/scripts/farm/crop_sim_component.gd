@@ -23,6 +23,10 @@ extends Node
 ## so a beginner can see a whole cycle in a couple of minutes.
 @export var growth_multiplier: float = 1.0
 
+## Soil moisture the crop goes into the ground with. Fertiliser raises it, which
+## buys the player a day or two before the first watering is due.
+@export var starting_moisture: float = 0.5
+
 var crop: Crop
 
 
@@ -33,7 +37,7 @@ func _ready() -> void:
 
 ## Plants a crop on this tile. Returns false if the id is unknown.
 func plant(crop_id: String) -> bool:
-	return crop.plant(crop_id)
+	return crop.plant(crop_id, starting_moisture)
 
 
 ## Waters this crop. Returns false if it was already watered today.

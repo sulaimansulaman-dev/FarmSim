@@ -3,7 +3,7 @@ extends Node
 const game_menu_screen: PackedScene = preload('res://scenes/ui/game_menu_screen.tscn')
 
 ## Which Croptails level a plain "start the game" begins on.
-const default_level := 'Island1'
+const default_level := 'Stage1'
 
 
 func _unhandled_input(event: InputEvent) -> void:

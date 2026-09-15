@@ -11,13 +11,17 @@ const HARVEST_COLUMN := 5
 
 var crop_id: String = ""
 var amount_kg: int = 0
+## Market grade, which travels with the produce so a pest-hit crop is still
+## worth less once it is sitting in the basket.
+var grade: String = "A"
 
 
 ## Call this on the instance BEFORE adding it to the tree, so _ready() has the
 ## values it needs.
-func setup(new_crop_id: String, new_amount_kg: int) -> void:
+func setup(new_crop_id: String, new_amount_kg: int, new_grade: String = "A") -> void:
 	crop_id = new_crop_id
 	amount_kg = new_amount_kg
+	grade = new_grade
 
 
 func _ready() -> void:
@@ -26,5 +30,5 @@ func _ready() -> void:
 	var column: int = int(definition.get("harvest_sprite_col", HARVEST_COLUMN))
 	frame = row * SHEET_COLUMNS + column
 
-	collectable_component.collectable_name = crop_id
+	collectable_component.collectable_name = EconomyManager.graded_key(crop_id, grade)
 	collectable_component.amount = amount_kg

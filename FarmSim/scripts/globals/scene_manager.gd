@@ -18,6 +18,15 @@ const draft_host_scene_path := 'res://scenes/ui/draft_level_host.tscn'
 const draft_host_root_path := '/root/DraftLevelHost'
 
 const level_scenes: Dictionary = {
+	'Stage1': 'res://scenes/levels/island_1.tscn',
+	'Stage2': 'res://scenes/levels/stage_2_market.tscn',
+	'Stage3': 'res://scenes/levels/stage_3_pests.tscn',
+	'Stage4': 'res://scenes/levels/stage_4_trees.tscn',
+	'Stage5': 'res://scenes/levels/stage_5_seasons.tscn',
+
+	# Kept, but not part of the staged build. Level1 is the original sandbox
+	# with every tool at once, and Island3 was the pest experiment that Stage 3
+	# grew out of. Both still load; they just sit at the bottom of the list.
 	'Level1': 'res://scenes/levels/level_1.tscn',
 	'Island1': 'res://scenes/levels/island_1.tscn',
 	'Island3': 'res://scenes/levels/island_3.tscn'
@@ -28,28 +37,57 @@ const level_scenes: Dictionary = {
 ## has not settled whether these are Islands or Stages. Change these strings and
 ## nothing else has to move.
 const level_names: Dictionary = {
-	'Level1': 'Level 1',
+	'Stage1': 'Stage 1 - Core Lifecycle',
+	'Stage2': 'Stage 2 - Market & Economy',
+	'Stage3': 'Stage 3 - Pests & Quality',
+	'Stage4': 'Stage 4 - Tree Farming',
+	'Stage5': 'Stage 5 - Seasons',
+	'Level1': 'Level 1 (sandbox)',
 	'Island1': 'Island 1',
-	'Island3': 'Island 3'
+	'Island3': 'Island 3 (pest prototype)'
 }
 
-## The order the Croptails levels are offered in on the title screen, with the
-## blurb shown under each. A Dictionary has no dependable order, so the menu
-## reads this rather than level_scenes.
+## The order the levels are offered in on the title screen, with the blurb shown
+## under each. A Dictionary has no dependable order, so the menu reads this.
+##
+## The five stages come first and in order, because each one only makes sense
+## once the one before it is understood. Everything after `extras_start_at` is
+## older material kept for reference rather than part of the build, and the menu
+## draws a divider there.
 const croptails_level_order: Array = [
 	{
-		'id': 'Island1',
-		'blurb': 'The starting island. Guide, tutorial prompts and the full tool set.'
+		'id': 'Stage1',
+		'blurb': 'Plant, water, wait, harvest. Marlow walks you through one whole crop cycle. Start here.'
+	},
+	{
+		'id': 'Stage2',
+		'blurb': 'Seed costs money and produce sells. Buy sprays and fertiliser at the market crate, and mind the balance.'
+	},
+	{
+		'id': 'Stage3',
+		'blurb': 'Pests attack growing crops. Treat them with bought spray, or harvest Grade B and take the lower price.'
+	},
+	{
+		'id': 'Stage4',
+		'blurb': 'An orchard of fruit trees. Shake them with the hoe for fruit, chop the bare ones with the axe for logs.'
+	},
+	{
+		'id': 'Stage5',
+		'blurb': 'Spring to winter on a running calendar. Crops stall below their minimum temperature - plant for the season.'
 	},
 	{
 		'id': 'Level1',
-		'blurb': 'The original sandbox level - the widest spread of crops and animals.'
+		'blurb': 'The original sandbox: every tool at once, no stage gating, no economy.'
 	},
 	{
 		'id': 'Island3',
-		'blurb': 'A later island with its own guide conversation.'
+		'blurb': 'The pest experiment Stage 3 grew out of. Superseded, kept for reference.'
 	},
 ]
+
+## Index in croptails_level_order where the staged build ends and the older
+## reference levels begin.
+const extras_start_at: int = 5
 
 ## The level drafts that came out of the team's branches.
 ##

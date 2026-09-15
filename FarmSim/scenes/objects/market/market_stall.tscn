@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scenes/objects/market/market_stall.gd" id="1_stall"]
+[ext_resource type="Texture2D" uid="uid://dl5le8s46n6uq" path="res://assets/game/objects/chest.png" id="2_chest"]
+[ext_resource type="PackedScene" uid="uid://4s7odvueaa2" path="res://scenes/components/interactable_component.tscn" id="3_inter"]
+[ext_resource type="PackedScene" uid="uid://7ontxgmrj8fa" path="res://scenes/components/interactable_label_component.tscn" id="4_label"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_stall"]
+atlas = ExtResource("2_chest")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_stall"]
+size = Vector2(16, 6)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_stall"]
+radius = 21.0
+
+[node name="MarketStall" type="StaticBody2D"]
+y_sort_enabled = true
+script = ExtResource("1_stall")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+y_sort_enabled = true
+texture = SubResource("AtlasTexture_stall")
+offset = Vector2(0, -7)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("RectangleShape2D_stall")
+
+[node name="InteractableComponent" parent="." instance=ExtResource("3_inter")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractableComponent"]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_stall")
+
+[node name="InteractableLabelComponent" parent="." instance=ExtResource("4_label")]
+visible = false
+offset_left = -28.0
+offset_top = -35.0
+offset_right = -10.0
+offset_bottom = -17.0
+
+[connection signal="interactable_activated" from="InteractableComponent" to="." method="_on_interactable_activated"]
+[connection signal="interactable_deactivated" from="InteractableComponent" to="." method="_on_interactable_deactivated"]

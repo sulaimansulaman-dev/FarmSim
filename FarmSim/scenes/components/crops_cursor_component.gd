@@ -66,11 +66,26 @@ func add_crop() -> void:
 	if crop_at(local_cell_position) != null:
 		return
 
+	var crop_id: String = TOOL_CROPS[ToolManager.selected_tool]
+
+	# Paid for before anything is built, so a refused sale leaves no half-planted
+	# node behind. Returns true untouched when the economy is off.
+	if not EconomyManager.charge_for_seed(crop_id):
+		return
+
+	# Seed viability, checked at the moment of sowing. This reports and lets the
+	# player go ahead: being allowed to plant maize in winter and then watching
+	# it sit in the ground is the lesson. A disabled button is just a puzzle.
+	var warning := SeasonManager.viability_warning(crop_id)
+	if not warning.is_empty():
+		FarmEvents.advisory.emit(warning)
+
 	# Set crop_id before add_child: _ready() runs the moment a node enters the
 	# tree, and that is where crop_plant.gd reads it to decide what to sow.
 	var crop_instance := crop_plant_scene.instantiate() as CropPlant
-	crop_instance.crop_id = TOOL_CROPS[ToolManager.selected_tool]
+	crop_instance.crop_id = crop_id
 	crop_instance.global_position = local_cell_position
+	crop_instance.fertilised = EconomyManager.consume_fertiliser_if_held()
 	get_parent().find_child('CropFields').add_child(crop_instance)
 
 	# After add_child, not before: add_child runs the plant's _ready(), so by

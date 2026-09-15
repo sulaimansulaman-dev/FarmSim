@@ -460,6 +460,31 @@ func projected_yield_kg() -> float:
 	return maxf(base * kept * maturity, 0.0)
 
 
+## Produce quality, as a market grade.
+##
+## Grade is deliberately read off the penalty ledger rather than off health.
+## Health is the plant's condition on the day you look at it and it recovers;
+## the ledger is what the season actually cost, and it never un-writes itself.
+## A crop that was eaten by pests for a week and then nursed back to full health
+## is not Grade A produce, and grading on health would say it was.
+##
+## The threshold lives in crops.json (simulation.grade_a_max_loss_percent) so
+## the balance can be tuned without touching code.
+func quality_grade() -> String:
+	if state == State.DEAD:
+		return "Spoiled"
+	var threshold: float = _library.tuning("grade_a_max_loss_percent", 15.0)
+	return "A" if total_penalty_percent() <= threshold else "B"
+
+
+## What a kilogram of this produce is worth relative to a clean Grade A crop.
+func quality_multiplier() -> float:
+	match quality_grade():
+		"A": return 1.0
+		"B": return _library.tuning("grade_b_price_multiplier", 0.6)
+		_: return 0.0
+
+
 ## The end-of-cycle summary (FR-004, FR-005).
 ##
 ## Returned as plain Dictionaries and Arrays so it serialises straight to JSON
@@ -496,6 +521,8 @@ func build_summary() -> Dictionary:
 		"potential_yield_kg": float(_definition.get("base_yield_kg", 0.0)),
 		"yield_kg": snappedf(projected_yield_kg(), 0.1),
 		"yield_lost_percent": snappedf(total_penalty_percent(), 0.1),
+		"grade": quality_grade(),
+		"quality_multiplier": quality_multiplier(),
 		"headline": headline,
 		"losses_by_cause": causes,
 		"penalties": yield_penalties.duplicate(true),

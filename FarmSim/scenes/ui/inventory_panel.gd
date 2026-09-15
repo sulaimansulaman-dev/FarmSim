@@ -5,6 +5,8 @@ extends PanelContainer
 ## slot is built the first time the player harvests one, then reused.
 
 const PLANTS_SHEET := preload("res://assets/game/objects/basic_plants.png")
+const SPRAY_SHEET := preload("res://assets/game/objects/spray_can.png")
+const TOOLS_SHEET := preload("res://assets/game/objects/basic_tools_and_materials.png")
 ## Column 5 of the sheet holds the harvested-item icon on every row.
 const HARVEST_COLUMN := 5
 const SLOT_SIZE := Vector2(26, 32)
@@ -26,8 +28,19 @@ const SLOT_SIZE := Vector2(26, 32)
 	'milk': milk_label,
 }
 
-## crop_id -> its weight Label, so each crop's slot is built only once.
+## Inventory key -> its weight Label, so each slot is built only once.
+##
+## Keyed by the inventory key rather than the crop id, because Grade A and
+## Grade B cabbage are two separate stacks that sell for different money and so
+## need two separate slots.
 var crop_labels: Dictionary = {}
+
+## Market supplies, which are neither base collectables nor crops. Their icons
+## come from their own sheets rather than basic_plants.png.
+const SUPPLY_ICONS := {
+	"spray": {"sheet": SPRAY_SHEET, "region": Rect2(0, 0, 16, 16)},
+	"fertiliser": {"sheet": TOOLS_SHEET, "region": Rect2(32, 0, 16, 16)},
+}
 
 
 func _ready() -> void:
@@ -51,29 +64,53 @@ func on_inventory_changed(inventory: Dictionary) -> void:
 	update_crops(inventory)
 
 
-## A crop gets its slot as soon as the seeds are unlocked, so the player can
-## see what they are working towards before the first harvest lands.
-func on_tool_enabled(tool: DataTypes.Tools) -> void:
-	var crop_id: String = CropsCursorComponent.TOOL_CROPS.get(tool, "")
-	if crop_id.is_empty() or crop_labels.has(crop_id):
-		return
-	crop_labels[crop_id] = build_crop_slot(crop_id)
+## Unlocking a seed no longer pre-builds a slot.
+##
+## It used to, so the player could see what they were working towards. Now that
+## produce is graded the crop has no single slot to build - which of Grade A or
+## Grade B the first harvest lands in is not known until it is harvested - so
+## slots are built on arrival instead.
+func on_tool_enabled(_tool: DataTypes.Tools) -> void:
+	pass
 
 
-## Anything in the inventory that crops.json knows about gets a slot. Corn and
-## tomato are base-game collectables, not crops, so they keep their fixed slots.
+## Anything in the inventory the panel can draw an icon for gets a slot: graded
+## crops from crops.json, and market supplies. Corn and tomato are base-game
+## collectables, not simulated crops, so they keep their fixed slots.
 func update_crops(inventory: Dictionary) -> void:
 	for item_name in inventory:
-		if not CropManager.library.has_crop(item_name):
+		var parts: Array = EconomyManager.split_grade(item_name)
+		var base_name: String = parts[0]
+
+		var is_crop: bool = CropManager.library.has_crop(base_name)
+		var is_supply: bool = SUPPLY_ICONS.has(base_name)
+		if not is_crop and not is_supply:
 			continue
+
 		if not crop_labels.has(item_name):
-			crop_labels[item_name] = build_crop_slot(item_name)
-		crop_labels[item_name].text = str(int(inventory[item_name]))
+			crop_labels[item_name] = build_crop_slot(item_name) if is_crop else build_supply_slot(item_name)
+
+		var quantity: int = int(inventory[item_name])
+		crop_labels[item_name].text = str(quantity)
+		# An emptied stack leaves its slot in place but greys it out, so the
+		# toolbar does not jump around every time the last spray is used.
+		crop_labels[item_name].get_parent().modulate.a = 1.0 if quantity > 0 else 0.4
+
+
+## A slot for a market supply, icon taken from its own spritesheet.
+func build_supply_slot(item_name: String) -> Label:
+	var icon_data: Dictionary = SUPPLY_ICONS[item_name]
+	var icon := AtlasTexture.new()
+	icon.atlas = icon_data["sheet"]
+	icon.region = icon_data["region"]
+	return build_slot(item_name, icon, EconomyManager.display_label(item_name))
 
 
 ## Builds one slot matching the six already in the scene: the crop's harvested
-## icon, with its weight sitting over the bottom of it.
-func build_crop_slot(crop_id: String) -> Label:
+## icon, with its weight sitting over the bottom of it. Grade A and Grade B of
+## the same crop share the icon and are told apart by the tooltip.
+func build_crop_slot(item_name: String) -> Label:
+	var crop_id: String = EconomyManager.split_grade(item_name)[0]
 	var definition: Dictionary = CropManager.library.get_definition(crop_id)
 	var cell: int = CropManager.library.sprite_cell_size()
 	var row: int = int(definition.get("sprite_row", 0))
@@ -83,13 +120,18 @@ func build_crop_slot(crop_id: String) -> Label:
 	icon.atlas = PLANTS_SHEET
 	icon.region = Rect2(column * cell, row * cell, cell, cell)
 
+	return build_slot(item_name, icon, "%s, kg" % EconomyManager.display_label(item_name))
+
+
+## The shared slot body, matching the six already placed in this scene.
+func build_slot(item_name: String, icon: Texture2D, tooltip: String) -> Label:
 	var slot := PanelContainer.new()
-	slot.name = crop_id.capitalize()
+	slot.name = item_name.validate_node_name()
 	slot.custom_minimum_size = SLOT_SIZE
 	slot.theme_type_variation = &"InventoryItemPanel"
 	# The label is 26px wide - room for a number, not a unit. So the unit
 	# lives in the tooltip instead of being crammed in next to the figure.
-	slot.tooltip_text = "%s (kg)" % definition.get("display_name", crop_id)
+	slot.tooltip_text = tooltip
 
 	var texture_rect := TextureRect.new()
 	texture_rect.texture = icon

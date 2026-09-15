@@ -18,6 +18,20 @@ signal crop_planted(plant: CropPlant)
 signal crop_watered(plant: CropPlant)
 signal crop_harvested(crop_id: String, yield_kg: float)
 
+## The same harvest, with the market grade the produce came in at. Kept apart
+## from crop_harvested so the tutorial, which predates grading and only counts
+## harvests, does not have to care about it.
+signal crop_graded(crop_id: String, grade: String, yield_kg: float)
+
 ## A pest outbreak started on this plant, or was just cleared from it.
 signal pest_appeared(plant: CropPlant)
 signal pest_treated(plant: CropPlant)
+
+## Something the player should be told, in one line, on the HUD.
+##
+## Used for seed-viability warnings, refused purchases and season turns. It is a
+## signal rather than a direct call into a UI node because the thing raising the
+## advisory - the crops cursor, the economy, the calendar - has no business
+## knowing whether a HUD exists. On a level with no banner, nothing listens and
+## nothing breaks.
+signal advisory(message: String)
