@@ -21,6 +21,14 @@ extends CanvasLayer
 
 const UI_THEME := preload("res://scenes/ui/game_ui_theme.tres")
 
+## The notification card sits under the clock on the right.
+const PANEL_WIDTH := 150.0
+## Gap between the clock's speed buttons and the top of the card.
+const GAP_BELOW_CLOCK := 4.0
+## Used only if the clock cannot be found, e.g. a level without the HUD.
+const FALLBACK_RIGHT_GAP := 10.0
+const FALLBACK_TOP := 88.0
+
 ## Shown once when the stage opens.
 @export_multiline var stage_title: String = ""
 @export_multiline var stage_brief: String = ""
@@ -104,23 +112,27 @@ func _build_banner() -> void:
 	_panel.theme_type_variation = &"DarkWoodPanel"
 	_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel.visible = false
-	# Across the bottom, clear of the toolbar on the left and the clock on the
-	# right. The crop info panel sits bottom-right, so this stops short of it.
-	_panel.anchor_top = 1.0
-	_panel.anchor_bottom = 1.0
-	_panel.anchor_left = 0.0
+	# A small card on the right, tucked under the clock and speed buttons, so it
+	# no longer covers the field, the toolbar or the stage label. Anchored to the
+	# top-right corner and allowed to grow downward as the text wraps.
+	_panel.anchor_left = 1.0
 	_panel.anchor_right = 1.0
-	_panel.offset_left = 56
-	_panel.offset_right = -96
-	_panel.offset_top = -46
-	_panel.offset_bottom = -4
+	_panel.anchor_top = 0.0
+	_panel.anchor_bottom = 0.0
+	_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_panel.grow_vertical = Control.GROW_DIRECTION_END
+	_panel.custom_minimum_size.x = PANEL_WIDTH
+	_panel.offset_right = -FALLBACK_RIGHT_GAP
+	_panel.offset_left = -FALLBACK_RIGHT_GAP - PANEL_WIDTH
+	_panel.offset_top = FALLBACK_TOP
+	_panel.offset_bottom = FALLBACK_TOP
 	root.add_child(_panel)
 
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 6)
-	margin.add_theme_constant_override("margin_right", 6)
-	margin.add_theme_constant_override("margin_top", 3)
-	margin.add_theme_constant_override("margin_bottom", 3)
+	margin.add_theme_constant_override("margin_left", 5)
+	margin.add_theme_constant_override("margin_right", 5)
+	margin.add_theme_constant_override("margin_top", 2)
+	margin.add_theme_constant_override("margin_bottom", 2)
 	_panel.add_child(margin)
 
 	_label = Label.new()
@@ -138,6 +150,7 @@ func _build_banner() -> void:
 ## the second one early, and the player loses a line they never finished reading.
 func _say(text: String, seconds: float) -> void:
 	_label.text = text
+	_place_under_clock()
 	_panel.visible = true
 
 	_clear_timer = get_tree().create_timer(seconds)
@@ -146,6 +159,31 @@ func _say(text: String, seconds: float) -> void:
 	if _clear_timer != this_timer:
 		return
 	_panel.visible = false
+
+
+## Lines the card up with the clock's right edge, just below the speed buttons.
+##
+## The clock lives in the HUD in main_scene, not in this level, and its size
+## comes from the theme, so it is measured rather than guessed. Re-measured on
+## every message so a window resize never leaves the card behind.
+func _place_under_clock() -> void:
+	var clock := get_tree().root.find_child("DayNightPanel", true, false)
+	if clock == null:
+		return
+
+	var time_panel := clock.get_node_or_null("TimePanel") as Control
+	var speed := clock.get_node_or_null("SpeedControl") as Control
+	if time_panel == null or speed == null:
+		return
+
+	var viewport_width := get_viewport().get_visible_rect().size.x
+	var right_edge := time_panel.get_global_rect().end.x
+	var top := speed.get_global_rect().end.y + GAP_BELOW_CLOCK
+
+	_panel.offset_right = right_edge - viewport_width
+	_panel.offset_left = _panel.offset_right - PANEL_WIDTH
+	_panel.offset_top = top
+	_panel.offset_bottom = top
 
 
 func _on_advisory(message: String) -> void:

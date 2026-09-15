@@ -52,7 +52,7 @@ mouse_cursor/custom_image="res://assets/ui/mouse_icon.png"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg")
+enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg", "res://addons/godot_mcp/plugin.cfg")
 
 [file_customization]
 

@@ -104,25 +104,33 @@ func seed_hint(tool: DataTypes.Tools) -> String:
 	return "%s (%s) seeds - %d days to harvest" % [crop_name, local_name, days]
 
 
+## Clicking the tool already in hand puts it away; clicking any other picks it up.
+func toggle_tool(tool: DataTypes.Tools) -> void:
+	if ToolManager.selected_tool == tool:
+		ToolManager.select_tool(DataTypes.Tools.None)
+	else:
+		ToolManager.select_tool(tool)
+
+
 func _on_tool_axe_pressed() -> void:
-	ToolManager.select_tool(DataTypes.Tools.AxeWood)
+	toggle_tool(DataTypes.Tools.AxeWood)
 
 
 func _on_tool_tilling_pressed() -> void:
-	ToolManager.select_tool(DataTypes.Tools.TillGround)
+	toggle_tool(DataTypes.Tools.TillGround)
 
 
 func _on_tool_watering_can_pressed() -> void:
-	ToolManager.select_tool(DataTypes.Tools.WaterCrops)
+	toggle_tool(DataTypes.Tools.WaterCrops)
 
 
 func _on_tool_corn_pressed() -> void:
-	ToolManager.select_tool(DataTypes.Tools.PlantCorn)
+	toggle_tool(DataTypes.Tools.PlantCorn)
 
 
 func _on_tool_tomato_pressed() -> void:
-	ToolManager.select_tool(DataTypes.Tools.PlantTomato)
+	toggle_tool(DataTypes.Tools.PlantTomato)
 
 
 func _on_tool_spray_pressed() -> void:
-	ToolManager.select_tool(DataTypes.Tools.SprayPest)
+	toggle_tool(DataTypes.Tools.SprayPest)
