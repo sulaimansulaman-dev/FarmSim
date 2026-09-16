@@ -1,5 +1,5 @@
 ff57004065f068ab77a04e7d20890f5b
-::res://::1789509834
+::res://::1789574144
 ATTRIBUTION.md::TextFile::-1::1789509792::0::1::::<><><>0<>0<><>::
 COMPILED_BUILD.md::TextFile::-1::1789509792::0::1::::<><><>0<>0<><>::
 icon.png::CompressedTexture2D::1247718584403756358::1789509793::1789509793::1::::<><><>0<>0<>ada12ccdd01c64e808aadac9a7f63a44<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.ctex::
@@ -23,7 +23,7 @@ plugin.gd::GDScript::8897918231145588923::1789509792::0::1::::<>EditorPlugin<><>
 settings.gd::GDScript::8188508453555257032::1789509792::0::1::::<>Node<><>0<>1<><>::
 test_scene.gd::GDScript::7845081576632664344::1789509792::0::1::::BaseDialogueTestScene<>Node2D<><>0<>0<><>::
 test_scene.tscn::PackedScene::-1::1789509792::0::1::::<><><>0<>0<><>::res://addons/dialogue_manager/test_scene.gd
-::res://addons/dialogue_manager/assets/::1789509792
+::res://addons/dialogue_manager/assets/::1789509837
 icon.svg::CompressedTexture2D::9148339284877624195::1789509792::1789509837::1::::<><><>0<>0<>b9cd01d47b7432b7516dc9b23d8cf543<>res://.godot/imported/icon.svg-17eb5d3e2a3cfbe59852220758c5b7bd.ctex::
 responses_menu.svg::CompressedTexture2D::8371359403825774630::1789509792::1789509837::1::::<><><>0<>0<>87c0e16666f0d434c838e4c260e9dfa7<>res://.godot/imported/responses_menu.svg-87cf63ca685d53616205049572f4eb8f.ctex::
 update.svg::CompressedTexture2D::9126631778427806641::1789509792::1789509792::1::::<><><>0<>0<>6e74f65ef82a75a32ef8446fe242ef7e<>res://.godot/imported/update.svg-f1628866ed4eb2e13e3b81f75443687e.ctex::
@@ -172,9 +172,9 @@ crops.json::JSON::-1::1789509792::0::1::::<><><>0<>0<><>::
 economy.json::JSON::-1::1789509792::0::1::::<><><>0<>0<><>::
 seasons.json::JSON::-1::1789509792::0::1::::<><><>0<>0<><>::
 stages.json::JSON::-1::1789509792::0::1::::<><><>0<>0<><>::
-::res://dialogue/::1789509792
+::res://dialogue/::1789509840
 base_game_dialogue_balloon.gd::GDScript::7974367434298250930::1789509792::0::1::::BaseGameDialogueBalloon<>CanvasLayer<><>0<>0<><>::
-dialogue_balloon_theme.tres::Theme::7582048547840504597::1789509792::0::1::::<><><>0<>0<><>::uid://crl8djg0q4mkk::::res://assets/ui/basic_ui_sprites.png
+dialogue_balloon_theme.tres::Theme::7582048547840504597::1789509840::0::1::::<><><>0<>0<><>::uid://crl8djg0q4mkk::::res://assets/ui/basic_ui_sprites.png
 game_dialogue_balloon.gd::GDScript::8568926208615434778::1789509792::0::1::::<>BaseGameDialogueBalloon<><>0<>0<><>::
 game_dialogue_balloon.tscn::PackedScene::2440921746240405369::1789509792::0::1::::<><><>0<>0<><>::res://dialogue/game_dialogue_balloon.gd<>uid://dga2h486fcrj6::::res://dialogue/dialogue_balloon_theme.tres<>uid://ckvgyvclnwggo::::res://addons/dialogue_manager/dialogue_label.tscn<>uid://b8dokajwro750::::res://scenes/ui/emotes_panel.tscn<>res://addons/dialogue_manager/dialogue_reponses_menu.gd
 ::res://dialogue/conversations/::1789509792
@@ -445,7 +445,7 @@ ui_smoke_test.gd::GDScript::2206081929738450136::1789509793::0::1::::<>Node<><>0
 ui_smoke_test.tscn::PackedScene::1131944258678666743::1789509793::0::1::::<><><>0<>0<><>::uid://6ov32hingaeq::::res://scenes/test/ui_smoke_test.gd
 visual_capture_test.gd::GDScript::3377164107259837216::1789509793::0::1::::<>Node<><>0<>0<><>::
 visual_capture_test.tscn::PackedScene::7020799152291232330::1789509793::0::1::::<><><>0<>0<><>::uid://bod6nt0pwwsbg::::res://scenes/test/visual_capture_test.gd
-::res://scenes/ui/::1789509793
+::res://scenes/ui/::1789509839
 crop_info_panel.gd::GDScript::8376801642539231810::1789509793::0::1::::<>PanelContainer<><>0<>0<><>::
 day_night_panel.gd::GDScript::8165911338876132666::1789509793::0::1::::<>Control<><>0<>0<><>::
 day_night_panel.tscn::PackedScene::5134747628302441160::1789509793::0::1::::<><><>0<>0<><>::uid://bnp65kle34ngr::::res://scenes/ui/game_ui_theme.tres<>res://scenes/ui/day_night_panel.gd<>uid://crl8djg0q4mkk::::res://assets/ui/basic_ui_sprites.png
@@ -458,7 +458,7 @@ game_menu_screen.tscn::PackedScene::5164184196275150468::1789509793::0::1::::<><
 game_menu_screen_background.gd::GDScript::3568514956710948578::1789509793::0::1::::<>Node2D<><>0<>0<><>::
 game_menu_screen_background.tscn::PackedScene::4414389431562724434::1789509793::0::1::::<><><>0<>0<><>::uid://dic20l2jo75hl::::res://tilesets/game_tile_set.tres<>res://scenes/ui/game_menu_screen_background.gd<>uid://divsi0qoom2br::::res://scenes/houses/large_house.tscn<>uid://bshnhdivl4acy::::res://scenes/objects/chest/chest.tscn<>uid://cw10sxhqb1fst::::res://scenes/objects/egg.tscn<>uid://dhp8c5fw5gv3y::::res://scenes/characters/chicken/chicken.tscn<>uid://cwuy5cxoymac1::::res://scenes/characters/guide/guide.tscn<>uid://b57aocwmaoclj::::res://scenes/objects/milk.tscn<>uid://vrcuj5gugs6f::::res://scenes/characters/player/player.tscn<>uid://cpnuvesf1ff37::::res://scenes/characters/cow/cow.tscn
 game_screen.tscn::PackedScene::5142744586785252917::1789509793::0::1::::<><><>0<>0<><>::uid://bnp65kle34ngr::::res://scenes/ui/game_ui_theme.tres<>uid://b8dokajwro750::::res://scenes/ui/emotes_panel.tscn<>uid://1b8ym5vxucda::::res://scenes/ui/tools_panel.tscn<>uid://g7mwcje7ep6a::::res://scenes/ui/inventory_panel.tscn<>uid://qd5ot0ry1qt1::::res://scenes/ui/emotes_panel.gd<>uid://cffksp8uaiebw::::res://scenes/ui/day_night_panel.tscn<>uid://drl1x1i3g6k3k::::res://scenes/ui/crop_info_panel.gd<>uid://c4ioawbemb3yo::::res://scenes/ui/inventory_panel.gd<>uid://bawe0rcrpeokv::::res://scenes/ui/level_label.gd<>uid://c878hx0u1i4rb::::res://scenes/ui/tools_panel.gd<>uid://jvoydca08yda::::res://scenes/ui/status_panel.gd<>uid://dolvmp5waumfa::::res://scenes/ui/day_night_panel.gd<>uid://csll5uk6uge0i::::res://scenes/ui/objectives_panel.gd
-game_ui_theme.tres::Theme::3331777660337990137::1789509793::0::1::::<><><>0<>0<><>::uid://crl8djg0q4mkk::::res://assets/ui/basic_ui_sprites.png<>uid://bva4l65qjxb45::::res://assets/ui/fonts/zx_palm_variation.tres<>uid://c2ykqyg46in3s::::res://assets/ui/fonts/pixel_font_sproutlands.ttf
+game_ui_theme.tres::Theme::3331777660337990137::1789509839::0::1::::<><><>0<>0<><>::uid://crl8djg0q4mkk::::res://assets/ui/basic_ui_sprites.png<>uid://bva4l65qjxb45::::res://assets/ui/fonts/zx_palm_variation.tres<>uid://c2ykqyg46in3s::::res://assets/ui/fonts/pixel_font_sproutlands.ttf
 inventory_panel.gd::GDScript::6825684050076707766::1789509793::0::1::::<>PanelContainer<><>0<>0<><>::
 inventory_panel.tscn::PackedScene::487961160511832506::1789509793::0::1::::<><><>0<>0<><>::uid://bnp65kle34ngr::::res://scenes/ui/game_ui_theme.tres<>res://scenes/ui/inventory_panel.gd<>uid://h1q5ebdv8utq::::res://assets/game/objects/basic_tools_and_materials.png<>uid://cxgo1e3hq75pc::::res://assets/game/objects/basic_plants.png<>uid://1kwg67jxqvsb::::res://assets/game/objects/egg_item.png<>uid://bjq10hvhr554a::::res://assets/game/objects/simple_milk_and_grass_item.png
 level_label.gd::GDScript::2432125403880286673::1789509793::0::1::::<>PanelContainer<><>0<>0<><>::
@@ -469,7 +469,7 @@ quiz_battle.gd::GDScript::13025139700269699::1789509793::0::1::::<>CanvasLayer<>
 quiz_battle.tscn::PackedScene::239268757912116310::1789509793::0::1::::<><><>0<>0<><>::uid://gkr0uq8ykpn::::res://scenes/ui/quiz_battle.gd
 status_panel.gd::GDScript::675944583224387294::1789509793::0::1::::<>PanelContainer<><>0<>0<><>::
 title_screen.gd::GDScript::6858214764634623463::1789509793::0::1::::<>Control<><>0<>0<><>::
-title_screen.tscn::PackedScene::6205451552268044397::1789509793::0::1::::<><><>0<>0<><>::uid://c4yf2bhuckyct::::res://scenes/ui/title_screen.gd
+title_screen.tscn::PackedScene::6205451552268044397::1789509839::0::1::::<><><>0<>0<><>::uid://c4yf2bhuckyct::::res://scenes/ui/title_screen.gd
 tools_panel.gd::GDScript::7157150704490776663::1789509793::0::1::::<>PanelContainer<><>0<>0<><>::
 tools_panel.tscn::PackedScene::1829021509767914910::1789509793::0::1::::<><><>0<>0<><>::uid://bnp65kle34ngr::::res://scenes/ui/game_ui_theme.tres<>uid://c878hx0u1i4rb::::res://scenes/ui/tools_panel.gd<>uid://h1q5ebdv8utq::::res://assets/game/objects/basic_tools_and_materials.png<>uid://cxgo1e3hq75pc::::res://assets/game/objects/basic_plants.png<>uid://j30khokhol8p::::res://assets/game/objects/spray_can.png
 ::res://scripts/::1789509793
@@ -497,6 +497,6 @@ tool_manager.gd::GDScript::3325284931935686572::1789509793::0::1::::<>Node<><>0<
 ::res://scripts/state_machine/::1789509793
 node_state.gd::GDScript::6590119447596841073::1789509793::0::1::::NodeState<>Node<><>0<>0<><>::
 node_state_machine.gd::GDScript::3018429869355764282::1789509793::0::1::::NodeStateMachine<>Node<><>0<>0<><>::
-::res://tilesets/::1789509793
-game_tile_set.tres::TileSet::7726586179239489713::1789509793::0::1::::<><><>0<>0<><>::uid://cjcef4sviq2qg::::res://assets/game/tilesets/water.png<>uid://divsi0qoom2br::::res://scenes/houses/large_house.tscn<>uid://cmgyw37a71yme::::res://assets/game/tilesets/grass.png<>uid://d2a3wvlp7lejm::::res://scenes/objects/trees/small_tree.tscn<>uid://b5qnkp86enqg0::::res://scenes/objects/trees/large_tree.tscn<>uid://msmsobjhjvk2::::res://assets/game/objects/basic_grass_biom_things.png<>uid://v44op7uf8xmh::::res://scenes/objects/rocks/rock.tscn<>uid://dyrkc14j205xi::::res://assets/game/tilesets/tilled_dirt_wide_v2.png<>uid://ddmn00rkkmte6::::res://assets/game/tilesets/fences.png
-house_tile_set.tres::TileSet::1490919832952122937::1789509793::0::1::::<><><>0<>0<><>::uid://dok54rdgpbgee::::res://assets/game/tilesets/wooden_house_walls.png<>uid://bi26cjr31i6ig::::res://assets/game/objects/basic_furniture.png<>uid://r8fj17odsnwn::::res://scenes/houses/door.tscn
+::res://tilesets/::1789509840
+game_tile_set.tres::TileSet::7726586179239489713::1789509840::0::1::::<><><>0<>0<><>::uid://cjcef4sviq2qg::::res://assets/game/tilesets/water.png<>uid://divsi0qoom2br::::res://scenes/houses/large_house.tscn<>uid://cmgyw37a71yme::::res://assets/game/tilesets/grass.png<>uid://d2a3wvlp7lejm::::res://scenes/objects/trees/small_tree.tscn<>uid://b5qnkp86enqg0::::res://scenes/objects/trees/large_tree.tscn<>uid://msmsobjhjvk2::::res://assets/game/objects/basic_grass_biom_things.png<>uid://v44op7uf8xmh::::res://scenes/objects/rocks/rock.tscn<>uid://dyrkc14j205xi::::res://assets/game/tilesets/tilled_dirt_wide_v2.png<>uid://ddmn00rkkmte6::::res://assets/game/tilesets/fences.png
+house_tile_set.tres::TileSet::1490919832952122937::1789509839::0::1::::<><><>0<>0<><>::uid://dok54rdgpbgee::::res://assets/game/tilesets/wooden_house_walls.png<>uid://bi26cjr31i6ig::::res://assets/game/objects/basic_furniture.png<>uid://r8fj17odsnwn::::res://scenes/houses/door.tscn
