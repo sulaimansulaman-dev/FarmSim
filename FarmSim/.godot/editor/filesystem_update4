@@ -1,0 +1,5 @@
+res://scenes/ui/title_screen.tscn
+res://scenes/ui/game_ui_theme.tres
+res://tilesets/house_tile_set.tres
+res://tilesets/game_tile_set.tres
+res://dialogue/dialogue_balloon_theme.tres

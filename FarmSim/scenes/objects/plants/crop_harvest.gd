@@ -1,0 +1,34 @@
+extends Sprite2D
+
+## The produce a crop drops when the player hoes down a mature plant.
+
+## basic_plants.png is 6 columns by 2 rows; frame = row * 6 + column.
+const SHEET_COLUMNS := 6
+## Column 5 holds the harvested-item icon on every row of the sheet.
+const HARVEST_COLUMN := 5
+
+@onready var collectable_component: CollectableComponent = $CollectableComponent
+
+var crop_id: String = ""
+var amount_kg: int = 0
+## Market grade, which travels with the produce so a pest-hit crop is still
+## worth less once it is sitting in the basket.
+var grade: String = "A"
+
+
+## Call this on the instance BEFORE adding it to the tree, so _ready() has the
+## values it needs.
+func setup(new_crop_id: String, new_amount_kg: int, new_grade: String = "A") -> void:
+	crop_id = new_crop_id
+	amount_kg = new_amount_kg
+	grade = new_grade
+
+
+func _ready() -> void:
+	var definition: Dictionary = CropManager.library.get_definition(crop_id)
+	var row: int = int(definition.get("sprite_row", 0))
+	var column: int = int(definition.get("harvest_sprite_col", HARVEST_COLUMN))
+	frame = row * SHEET_COLUMNS + column
+
+	collectable_component.collectable_name = EconomyManager.graded_key(crop_id, grade)
+	collectable_component.amount = amount_kg

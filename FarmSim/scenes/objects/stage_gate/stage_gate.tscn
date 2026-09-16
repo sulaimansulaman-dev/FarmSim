@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://cva4gmf4f53cr"]
+
+[ext_resource type="Script" uid="uid://bbweqsdpwwufi" path="res://scenes/objects/stage_gate/stage_gate.gd" id="1_prr3c"]
+[ext_resource type="Texture2D" uid="uid://b1fadfgcu3104" path="res://assets/game/objects/bridge_gate_closed.png" id="2_uv5o0"]
+[ext_resource type="PackedScene" uid="uid://bq266i32iomth" path="res://scenes/characters/bridge_keeper/bridge_keeper.tscn" id="3_5ubm3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kkcvp"]
+size = Vector2(16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wib6n"]
+size = Vector2(12, 40)
+
+[node name="StageGate" type="Node2D" unique_id=1904225277]
+y_sort_enabled = true
+script = ExtResource("1_prr3c")
+
+[node name="Floor" type="Node2D" parent="." unique_id=494184102]
+z_index = -1
+
+[node name="Boundary" type="StaticBody2D" parent="." unique_id=241220051]
+
+[node name="Barrier" type="StaticBody2D" parent="." unique_id=389829801]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Barrier" unique_id=1082503984]
+shape = SubResource("RectangleShape2D_kkcvp")
+
+[node name="Sprite2D" type="Sprite2D" parent="Barrier" unique_id=1436145253]
+texture = ExtResource("2_uv5o0")
+offset = Vector2(0, -2)
+
+[node name="Keeper" type="StaticBody2D" parent="." unique_id=1998148510 instance=ExtResource("3_5ubm3")]
+y_sort_enabled = true
+
+[node name="KeeperTrigger" type="Area2D" parent="." unique_id=980405035]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KeeperTrigger" unique_id=1121545080]
+shape = SubResource("RectangleShape2D_wib6n")
+
+[node name="SignLabel" type="Label" parent="." unique_id=886435294]
+z_index = 5
+offset_left = -50.0
+offset_top = -36.0
+offset_right = 54.0
+offset_bottom = -13.0
+theme_override_colors/font_color = Color(0.95686275, 0.91764706, 0.8392157, 1)
+theme_override_colors/font_outline_color = Color(0.23137255, 0.18431373, 0.16470589, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 8
+text = "Bridge closed"
+horizontal_alignment = 1

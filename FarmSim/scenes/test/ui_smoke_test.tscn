@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://qek7r1xk1sc2"]
+
+[ext_resource type="Script" uid="uid://6ov32hingaeq" path="res://scenes/test/ui_smoke_test.gd" id="1_kgt4k"]
+
+[node name="UISmokeTest" type="Node" unique_id=707754203]
+process_mode = 3
+script = ExtResource("1_kgt4k")

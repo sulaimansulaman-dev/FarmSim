@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://c6iatqm2fk0ba"]
+
+[ext_resource type="Texture2D" path="res://assets/game/objects/trees/fruit_tree_growth.png" id="1_growth"]
+[ext_resource type="Script" path="res://scenes/objects/trees/peach_tree.gd" id="2_script"]
+[ext_resource type="PackedScene" uid="uid://6ba6j2wgille" path="res://scenes/objects/plants/growth_cycle_component.tscn" id="3_growthcycle"]
+[ext_resource type="PackedScene" uid="uid://cpproi73eia28" path="res://scenes/components/hurt_component.tscn" id="4_hurt"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_trunk"]
+radius = 6.0
+height = 14.0
+
+[node name="PeachTree" type="Sprite2D"]
+y_sort_enabled = true
+texture = ExtResource("1_growth")
+hframes = 12
+vframes = 4
+offset = Vector2(0, -16)
+script = ExtResource("2_script")
+fruit_regrow_days = 3
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(0, -1)
+shape = SubResource("CapsuleShape2D_trunk")
+
+[node name="GrowthCycleComponent" parent="." instance=ExtResource("3_growthcycle")]
+germination_period = 2
+vegetative_period = 2
+reproduction_period = 2
+mature_period = 100
+
+[node name="HarvestHurtComponent" parent="." instance=ExtResource("4_hurt")]
+monitoring = false
+tool = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HarvestHurtComponent"]
+position = Vector2(0, -1)
+shape = SubResource("CapsuleShape2D_trunk")
+debug_color = Color(0.905882, 0.615686, 0.156863, 0.42)
