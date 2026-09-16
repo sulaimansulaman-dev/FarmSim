@@ -6,7 +6,6 @@ extends PanelContainer
 
 const PLANTS_SHEET := preload("res://assets/game/objects/basic_plants.png")
 const SPRAY_SHEET := preload("res://assets/game/objects/spray_can.png")
-const TOOLS_SHEET := preload("res://assets/game/objects/basic_tools_and_materials.png")
 ## Column 5 of the sheet holds the harvested-item icon on every row.
 const HARVEST_COLUMN := 5
 const SLOT_SIZE := Vector2(26, 32)
@@ -39,7 +38,7 @@ var crop_labels: Dictionary = {}
 ## come from their own sheets rather than basic_plants.png.
 const SUPPLY_ICONS := {
 	"spray": {"sheet": SPRAY_SHEET, "region": Rect2(0, 0, 16, 16)},
-	"fertiliser": {"sheet": TOOLS_SHEET, "region": Rect2(32, 0, 16, 16)},
+	"fertiliser": {"sheet": preload("res://assets/game/objects/fertiliser_bag.png"), "region": Rect2(0, 0, 16, 16)},
 	"organic": {"sheet": preload("res://assets/game/objects/organic_control.png"), "region": Rect2(0, 0, 16, 16)},
 	"sapling": {"sheet": preload("res://assets/game/objects/sapling_item.png"), "region": Rect2(0, 0, 16, 16)},
 }
