@@ -52,6 +52,10 @@ window/stretch/mode="canvas_items"
 window/stretch/scale_mode="integer"
 mouse_cursor/custom_image="res://assets/ui/mouse_icon.png"
 
+[dotnet]
+
+project/assembly_name="FarmSim"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg", "res://addons/godot_mcp/plugin.cfg")
