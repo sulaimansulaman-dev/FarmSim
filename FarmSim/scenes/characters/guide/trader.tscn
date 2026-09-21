@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://dtfrfefaqj16y"]
+
+[ext_resource type="Shader" uid="uid://gk0os2lurxb4" path="res://scenes/characters/guide/replace_color.gdshader" id="2_6di0q"]
+[ext_resource type="Texture2D" uid="uid://p57fvxv32of8" path="res://assets/game/characters/market_trader_sprite.png" id="3_72xf4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vcyyu"]
+shader = ExtResource("2_6di0q")
+shader_parameter/original_0 = Color(0.360525, 0.305806, 0.572534, 1)
+shader_parameter/original_1 = Color(0.462623, 0.427451, 0.666819, 1)
+shader_parameter/replace_0 = Color(0.657128, 0.124659, 0.297044, 1)
+shader_parameter/replace_1 = Color(0.918142, 0.454021, 0.586231, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6di0q"]
+atlas = ExtResource("3_72xf4")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k4dfl"]
+atlas = ExtResource("3_72xf4")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g3c0m"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6di0q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k4dfl")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mmrqf"]
+radius = 4.0
+
+[node name="trader" type="CharacterBody2D" unique_id=1894285166]
+y_sort_enabled = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1705676780]
+y_sort_enabled = true
+material = SubResource("ShaderMaterial_vcyyu")
+sprite_frames = SubResource("SpriteFrames_g3c0m")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -7)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=472690094]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_mmrqf")

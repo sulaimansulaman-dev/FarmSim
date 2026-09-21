@@ -1,16 +1,5 @@
-res://scenes/ui/game_screen.tscn
+res://scenes/objects/market/market_stall.tscn
 res://scenes/ui/game_ui_theme.tres
 res://tilesets/house_tile_set.tres
 res://tilesets/game_tile_set.tres
 res://dialogue/dialogue_balloon_theme.tres
-res://scenes/ui/tools_panel.tscn
-res://scenes/ui/market_panel.gd
-res://scenes/ui/status_panel.gd
-res://scenes/ui/day_night_panel.tscn
-res://scenes/ui/tools_panel.gd
-res://scripts/globals/economy_manager.gd
-res://scripts/globals/inventory_manager.gd
-res://scripts/globals/tool_manager.gd
-res://scenes/components/crops_cursor_component.gd
-res://scripts/state_machine/node_state_machine.gd
-res://scenes/ui/inventory_panel.tscn

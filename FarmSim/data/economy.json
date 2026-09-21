@@ -1,75 +1,75 @@
 {
   "_comment": "Prices for the market stage. Tuning the economy means editing this file, not GDScript - same rule crops.json follows. Seed cost is per plant sown; price_per_kg is what a Grade A kilogram fetches, and crops.json's grade_b_price_multiplier scales a Grade B one down from there.",
   "currency": {
-    "symbol": "R",
-    "starting_balance": 120.0
+	"symbol": "R",
+	"starting_balance": 120.0
   },
   "crops": {
-    "maize": {
-      "seed_cost": 18.0,
-      "price_per_kg": 0.95
-    },
-    "beans": {
-      "seed_cost": 12.0,
-      "price_per_kg": 1.3
-    },
-    "cabbage": {
-      "seed_cost": 9.0,
-      "price_per_kg": 0.8
-    }
+	"maize": {
+	  "seed_cost": 18.0,
+	  "price_per_kg": 0.95
+	},
+	"beans": {
+	  "seed_cost": 12.0,
+	  "price_per_kg": 1.3
+	},
+	"cabbage": {
+	  "seed_cost": 9.0,
+	  "price_per_kg": 0.8
+	}
   },
   "_supplies_comment": "Consumables the market sells alongside seed. Sprays are what makes Stage 3's pest control a decision rather than a free click - an untreated outbreak costs yield, but a wasted spray costs money. 'treats' lists which pest types a treatment clears and 'success_chance' how often one application works. Buying supplies is the only thing the market sells: no animals or livestock (FR-MKT-002).",
   "supplies": {
-    "spray": {
-      "display_name": "Chemical spray",
-      "cost": 14.0,
-      "description": "Insecticide. Clears caterpillars, worms and ants every time. Useless against birds. Consumed on use.",
-      "treats": [
-        "caterpillar",
-        "worm",
+	"spray": {
+	  "display_name": "Chemical spray",
+	  "cost": 14.0,
+	  "description": "Insecticide. Clears caterpillars, worms and ants every time. Useless against birds. Consumed on use.",
+	  "treats": [
+		"caterpillar",
+		"worm",
         "ant"
-      ],
-      "success_chance": 1.0
-    },
-    "organic": {
-      "display_name": "Organic control",
-      "cost": 8.0,
-      "description": "Neem oil plus bird-scare tape. Cheaper and gentler on helpful insects, works on every pest including birds, but only takes three times in four. Consumed on use.",
-      "treats": [
-        "caterpillar",
-        "worm",
-        "ant",
+	  ],
+	  "success_chance": 1.0
+	},
+	"organic": {
+	  "display_name": "Organic control",
+	  "cost": 8.0,
+	  "description": "Neem oil plus bird-scare tape. Cheaper and gentler on helpful insects, works on every pest including birds, but only takes three times in four. Consumed on use.",
+	  "treats": [
+		"caterpillar",
+		"worm",
+		"ant",
         "bird"
-      ],
-      "success_chance": 0.75
-    },
-    "fertiliser": {
-      "display_name": "Fertiliser",
-      "cost": 22.0,
-      "description": "Applied as you sow. The crop develops faster and starts with better soil moisture."
-    },
-    "sapling": {
-      "display_name": "Fruit tree sapling",
-      "cost": 20.0,
-      "description": "Plant it on open grass with the sapling tool. Grows into a fruit tree over several days."
-    }
+	  ],
+	  "success_chance": 0.75
+	},
+	"fertiliser": {
+	  "display_name": "Fertiliser",
+	  "cost": 22.0,
+	  "description": "Applied as you sow. The crop develops faster and starts with better soil moisture."
+	},
+	"sapling": {
+	  "display_name": "Fruit tree sapling",
+	  "cost": 20.0,
+	  "description": "Plant it on open grass with the sapling tool. Grows into a fruit tree over several days."
+	}
   },
   "_fertiliser_comment": "What one bag of fertiliser buys, applied to a single plant at sowing.",
   "fertiliser": {
-    "growth_multiplier": 1.45,
-    "starting_moisture": 0.7
+	"growth_multiplier": 1.45,
+	"starting_moisture": 0.7
   },
   "_produce_comment": "Things the farm produces that are not simulated crops. Keys are the collectable_name values the pickup scenes already use, which are lowercase - the inventory is keyed by those, not by display names.",
   "produce": {
-    "egg": 6.0,
-    "milk": 11.0,
-    "apple": 5.0,
-    "orange": 5.0,
-    "peach": 6.0,
-    "pear": 6.0,
-    "corn": 7.0,
-    "tomato": 7.0,
-    "log": 4.0,
-    "stone": 3.0
+	"egg": 6.0,
+	"milk": 11.0,
+	"apple": 5.0,
+	"orange": 5.0,
+	"peach": 6.0,
+	"pear": 6.0,
+	"corn": 7.0,
+	"tomato": 7.0,
+	"log": 4.0,
+	"stone": 3.0
   }
 }
