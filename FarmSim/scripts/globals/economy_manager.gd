@@ -175,7 +175,21 @@ func charge_for_seed(crop_id: String) -> bool:
 	_spend(cost)
 	return true
 
+## Buys one bag of seed into the inventory.
+func buy_seed(crop_id: String) -> bool:
+	var cost := seed_cost(crop_id)
+	if not can_afford(cost):
+		transaction.emit("Not enough money for %s seed (%s)." % [
+			crop_id.capitalize(), format_money(cost)
+		], false)
+		return false
 
+	_spend(cost)
+	var seed_item_id = crop_id+"_seed"
+	InventoryManager.add_collectable(seed_item_id, 1)
+	transaction.emit("Bought %s seed for %s." % [crop_id.capitalize(), format_money(cost)], true)
+	return true
+	
 ## Buys one unit of a supply into the inventory.
 func buy_supply(supply_id: String) -> bool:
 	if not _supplies.has(supply_id):

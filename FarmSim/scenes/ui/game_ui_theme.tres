@@ -159,6 +159,17 @@ texture_margin_right = 4.0
 texture_margin_bottom = 4.0
 region_rect = Rect2(0, 0, 26, 26)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_c0p0g"]
+atlas = ExtResource("1_06ppf")
+region = Rect2(201, 9, 30, 30)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_r1vnj"]
+texture = SubResource("AtlasTexture_c0p0g")
+texture_margin_left = 7.636609
+texture_margin_top = 7.3732777
+texture_margin_right = 7.3732777
+texture_margin_bottom = 6.846615
+
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_g7gm5"]
 load_path = "res://.godot/imported/basic_ui_sprites.png-f1365ff47f1f008f610f3c558cf47256.ctex"
 
@@ -248,6 +259,8 @@ InventoryLabel/base_type = &"Label"
 InventoryLabel/font_sizes/font_size = 8
 InventoryLabel/fonts/font = ExtResource("2_f66y5")
 Label/fonts/font = ExtResource("2_ohaot")
+LightWoodPanel/base_type = &"PanelContainer"
+LightWoodPanel/styles/panel = SubResource("StyleBoxTexture_r1vnj")
 MarginContainer/constants/margin_bottom = 10
 MarginContainer/constants/margin_left = 10
 MarginContainer/constants/margin_right = 10

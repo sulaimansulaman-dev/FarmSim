@@ -2,7 +2,10 @@ extends Node
 
 signal inventory_changed(inventory: Dictionary)
 
-var inventory: Dictionary = {}
+var inventory: Dictionary = {
+	"maize_seed": 10,     
+	"cabbage_seed": 10,   
+	}
 
 ## amount defaults to 1 so every existing pickup keeps working unchanged.
 ## Crops pass a harvest weight in kilograms instead.

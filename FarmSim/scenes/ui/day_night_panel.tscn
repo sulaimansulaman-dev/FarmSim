@@ -1,72 +1,72 @@
-[gd_scene load_steps=5 format=3 uid="uid://cffksp8uaiebw"]
+[gd_scene format=3 uid="uid://cffksp8uaiebw"]
 
 [ext_resource type="Theme" uid="uid://bnp65kle34ngr" path="res://scenes/ui/game_ui_theme.tres" id="1_bw0rf"]
-[ext_resource type="Script" path="res://scenes/ui/day_night_panel.gd" id="2_dwq87"]
+[ext_resource type="Script" uid="uid://dolvmp5waumfa" path="res://scenes/ui/day_night_panel.gd" id="2_dwq87"]
 [ext_resource type="Texture2D" uid="uid://crl8djg0q4mkk" path="res://assets/ui/basic_ui_sprites.png" id="2_erjd0"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a4mse"]
 atlas = ExtResource("2_erjd0")
 region = Rect2(261, 2, 7, 12)
 
-[node name="DayNightPanel" type="Control"]
+[node name="DayNightPanel" type="Control" unique_id=1546520367]
 layout_mode = 3
 anchors_preset = 0
 theme = ExtResource("1_bw0rf")
 script = ExtResource("2_dwq87")
 
-[node name="DayPanel" type="PanelContainer" parent="."]
+[node name="DayPanel" type="PanelContainer" parent="." unique_id=1258361393]
 layout_mode = 0
 offset_left = -80.0
-offset_bottom = 26.0
+offset_bottom = 44.0
 theme_type_variation = &"DayNightCounterPanel"
 
-[node name="MarginContainer" type="MarginContainer" parent="DayPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="DayPanel" unique_id=53170872]
 layout_mode = 2
 theme_override_constants/margin_left = 3
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 3
 theme_override_constants/margin_bottom = 3
 
-[node name="DayLabel" type="Label" parent="DayPanel/MarginContainer"]
+[node name="DayLabel" type="Label" parent="DayPanel/MarginContainer" unique_id=882564665]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_type_variation = &"DayNightLabel"
 text = "DAY 0
 "
 
-[node name="TimePanel" type="PanelContainer" parent="."]
+[node name="TimePanel" type="PanelContainer" parent="." unique_id=1222509676]
 layout_mode = 0
 offset_left = -80.0
 offset_top = 28.0
 offset_bottom = 54.0
 theme_type_variation = &"DayNightCounterPanel"
 
-[node name="MarginContainer" type="MarginContainer" parent="TimePanel"]
+[node name="MarginContainer" type="MarginContainer" parent="TimePanel" unique_id=888288781]
 layout_mode = 2
 theme_override_constants/margin_left = 3
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 3
 theme_override_constants/margin_bottom = 3
 
-[node name="TimeLabel" type="Label" parent="TimePanel/MarginContainer"]
+[node name="TimeLabel" type="Label" parent="TimePanel/MarginContainer" unique_id=1150679196]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_type_variation = &"DayNightLabel"
 text = "00:00"
 
-[node name="SpeedControl" type="Control" parent="."]
+[node name="SpeedControl" type="Control" parent="." unique_id=781174429]
 anchors_preset = 0
 offset_left = -80.0
 offset_top = 56.0
 offset_bottom = 74.0
 
-[node name="NormalSpeedButton" type="Button" parent="SpeedControl"]
+[node name="NormalSpeedButton" type="Button" parent="SpeedControl" unique_id=1890713117]
 layout_mode = 0
 offset_right = 26.0
 offset_bottom = 18.0
 theme_type_variation = &"DayNightButton"
 
-[node name="TextureRect" type="TextureRect" parent="SpeedControl/NormalSpeedButton"]
+[node name="TextureRect" type="TextureRect" parent="SpeedControl/NormalSpeedButton" unique_id=1905900396]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -81,14 +81,14 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("AtlasTexture_a4mse")
 
-[node name="FastSpeedButton" type="Button" parent="SpeedControl"]
+[node name="FastSpeedButton" type="Button" parent="SpeedControl" unique_id=1658197031]
 layout_mode = 0
 offset_left = 27.0
 offset_right = 53.0
 offset_bottom = 18.0
 theme_type_variation = &"DayNightButton"
 
-[node name="TextureRect" type="TextureRect" parent="SpeedControl/FastSpeedButton"]
+[node name="TextureRect" type="TextureRect" parent="SpeedControl/FastSpeedButton" unique_id=1336051697]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -103,7 +103,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("AtlasTexture_a4mse")
 
-[node name="TextureRect2" type="TextureRect" parent="SpeedControl/FastSpeedButton"]
+[node name="TextureRect2" type="TextureRect" parent="SpeedControl/FastSpeedButton" unique_id=1397641130]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -118,14 +118,14 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("AtlasTexture_a4mse")
 
-[node name="FastestSpeedButton" type="Button" parent="SpeedControl"]
+[node name="FastestSpeedButton" type="Button" parent="SpeedControl" unique_id=899081999]
 layout_mode = 0
 offset_left = 54.0
 offset_right = 80.0
 offset_bottom = 18.0
 theme_type_variation = &"DayNightButton"
 
-[node name="TextureRect" type="TextureRect" parent="SpeedControl/FastestSpeedButton"]
+[node name="TextureRect" type="TextureRect" parent="SpeedControl/FastestSpeedButton" unique_id=1852781205]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -140,7 +140,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("AtlasTexture_a4mse")
 
-[node name="TextureRect2" type="TextureRect" parent="SpeedControl/FastestSpeedButton"]
+[node name="TextureRect2" type="TextureRect" parent="SpeedControl/FastestSpeedButton" unique_id=316289240]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -155,7 +155,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("AtlasTexture_a4mse")
 
-[node name="TextureRect3" type="TextureRect" parent="SpeedControl/FastestSpeedButton"]
+[node name="TextureRect3" type="TextureRect" parent="SpeedControl/FastestSpeedButton" unique_id=1493576600]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

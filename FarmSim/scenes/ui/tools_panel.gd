@@ -33,6 +33,37 @@ const TINT_UNSELECTED := Color(1, 1, 1, 0.45)
 
 var _buttons: Dictionary = {}
 
+##Adds a count lable to an inventory item to track quantity
+##quanity values store 
+func _add_count_label(button: Button, item_id: String) -> void:
+	var label := Label.new()
+	label.name = "CountLabel"
+	label.anchor_left = 1.0
+	label.anchor_top = 1.0
+	label.anchor_right = 1.0
+	label.anchor_bottom = 1.0
+	label.offset_left = -12
+	label.offset_top = -12
+	label.offset_right = -2
+	label.offset_bottom = -2
+	label.add_theme_font_size_override("font_size", 8)
+	label.add_theme_color_override("font_color", Color("ffffff"))
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	label.set_meta("item_id", item_id)
+	button.add_child(label)
+
+func _on_inventory_changed(inventory: Dictionary) -> void:
+	for tool in _buttons:
+		var button: Button = _buttons[tool]
+		var label := button.get_node_or_null("CountLabel") as Label
+		if label:
+			var item_id: String = label.get_meta("item_id")
+			var count: int = int(inventory.get(item_id+"_seed", 0))
+			label.text = str(count)
+			# Optional: Hide the label if the player has 0 of that item
+			label.visible = count > 0
+
 
 func _ready() -> void:
 	_buttons = {
@@ -44,6 +75,12 @@ func _ready() -> void:
 		DataTypes.Tools.SprayPest: $MarginContainer/HBoxContainer/ToolSpray,
 	}
 	_build_extra_buttons()
+
+	_add_count_label(_buttons[DataTypes.Tools.PlantCorn], "maize")
+	_add_count_label(_buttons[DataTypes.Tools.PlantTomato], "cabbage")
+	_add_count_label(_buttons[DataTypes.Tools.SprayPest], "spray")
+	_add_count_label(_buttons[DataTypes.Tools.SprayPest], "organic")
+
 
 	for tool in _buttons:
 		var button: Button = _buttons[tool]
@@ -59,6 +96,11 @@ func _ready() -> void:
 	ToolManager.tool_selected.connect(on_tool_selected)
 	SceneManager.level_unloading.connect(_on_level_unloading)
 	on_tool_selected(ToolManager.selected_tool)
+	
+	# --- ADDED: Connect and initialize inventory updates ---
+	InventoryManager.inventory_changed.connect(_on_inventory_changed)
+	_on_inventory_changed(InventoryManager.inventory)
+
 
 
 func _build_extra_buttons() -> void:
