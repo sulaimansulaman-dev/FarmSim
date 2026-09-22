@@ -28,7 +28,7 @@
         {
           "id": "germination",
           "display_name": "Germination",
-          "days": 4,
+          "days": 2,
           "water_sensitivity": 1.2,
           "teaching_note": "Seed needs steady moisture to sprout. Dry soil now means gaps in the stand that never recover.",
           "sprite_col": 1
@@ -36,7 +36,7 @@
         {
           "id": "vegetative",
           "display_name": "Vegetative",
-          "days": 7,
+          "days": 4,
           "water_sensitivity": 0.8,
           "teaching_note": "The plant is building leaves. It is fairly forgiving here \u2014 short dry spells can be tolerated.",
           "sprite_col": 2
@@ -44,7 +44,7 @@
         {
           "id": "tasselling",
           "display_name": "Tasselling",
-          "days": 5,
+          "days": 3,
           "water_sensitivity": 2.0,
           "teaching_note": "The single most water-critical stage for maize. Stress during tasselling causes poor pollination and badly filled cobs.",
           "sprite_col": 3
@@ -52,7 +52,7 @@
         {
           "id": "grain_fill",
           "display_name": "Grain Fill",
-          "days": 8,
+          "days": 4,
           "water_sensitivity": 1.6,
           "teaching_note": "Kernels are packing on weight. Water shortage now directly shrinks the harvest.",
           "sprite_col": 3
@@ -60,7 +60,7 @@
         {
           "id": "mature",
           "display_name": "Mature",
-          "days": 2,
+          "days": 1,
           "water_sensitivity": 0.3,
           "teaching_note": "The crop is drying down for harvest. Extra water is no longer useful.",
           "sprite_col": 4
@@ -84,7 +84,7 @@
         {
           "id": "germination",
           "display_name": "Germination",
-          "days": 3,
+          "days": 2,
           "water_sensitivity": 1.2,
           "teaching_note": "Beans rot easily in waterlogged soil at planting. Moist, not soaked.",
           "sprite_col": 1
@@ -92,7 +92,7 @@
         {
           "id": "vegetative",
           "display_name": "Vegetative",
-          "days": 6,
+          "days": 3,
           "water_sensitivity": 0.7,
           "teaching_note": "Beans fix their own nitrogen, which is why they are a good rotation partner for maize.",
           "sprite_col": 2
@@ -100,7 +100,7 @@
         {
           "id": "flowering",
           "display_name": "Flowering",
-          "days": 4,
+          "days": 2,
           "water_sensitivity": 1.8,
           "teaching_note": "Water stress at flowering makes the plant drop its flowers, and a dropped flower is a pod you will never harvest.",
           "sprite_col": 3
@@ -108,7 +108,7 @@
         {
           "id": "pod_fill",
           "display_name": "Pod Fill",
-          "days": 6,
+          "days": 3,
           "water_sensitivity": 1.4,
           "teaching_note": "Pods are filling out. Steady moisture now decides how many beans are in each pod.",
           "sprite_col": 3
@@ -116,7 +116,7 @@
         {
           "id": "mature",
           "display_name": "Mature",
-          "days": 2,
+          "days": 1,
           "water_sensitivity": 0.3,
           "teaching_note": "Pods are drying. Hold off on watering to avoid mould.",
           "sprite_col": 4
@@ -140,7 +140,7 @@
         {
           "id": "germination",
           "display_name": "Germination",
-          "days": 2,
+          "days": 1,
           "water_sensitivity": 1.3,
           "teaching_note": "Cabbage seed is small and sits shallow. Keep the top of the soil damp or the stand comes up patchy.",
           "sprite_col": 1
@@ -148,7 +148,7 @@
         {
           "id": "leafing",
           "display_name": "Leafing",
-          "days": 3,
+          "days": 2,
           "water_sensitivity": 1.0,
           "teaching_note": "The plant is building the frame of outer leaves that will feed the head later. It forgives a short dry spell here.",
           "sprite_col": 2
@@ -156,7 +156,7 @@
         {
           "id": "heading",
           "display_name": "Heading",
-          "days": 3,
+          "days": 1,
           "water_sensitivity": 1.7,
           "teaching_note": "The head is forming and the plant drinks hardest now. Let it dry at this stage and the head stays small and loose.",
           "sprite_col": 3
@@ -164,7 +164,7 @@
         {
           "id": "mature",
           "display_name": "Mature",
-          "days": 2,
+          "days": 1,
           "water_sensitivity": 0.4,
           "teaching_note": "The head is firm. Cut it now - left standing too long, cabbage heads split.",
           "sprite_col": 4
