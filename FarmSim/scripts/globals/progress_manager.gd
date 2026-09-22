@@ -21,6 +21,11 @@ signal progress_changed()
 const SAVE_PATH := "user://farmsim_save.json"
 const SCHEMA_VERSION := 1
 
+## TEMPORARY - testing switch. While true every stage is playable from the
+## level select without beating the stage before it. Progress, stars and the
+## save file still work as normal. Set back to false before release.
+const UNLOCK_ALL_STAGES := true
+
 var data: Dictionary = {}
 
 
@@ -80,6 +85,8 @@ func unlocked_areas() -> Array:
 
 
 func is_stage_unlocked(stage_id: String) -> bool:
+	if UNLOCK_ALL_STAGES:
+		return true
 	var area := StageSession.area_id(stage_id)
 	if area.is_empty():
 		# Anything that is not one of the five stages (old sandbox levels) is
@@ -104,7 +111,9 @@ func total_stars() -> int:
 func furthest_unlocked_stage() -> String:
 	var furthest := "Stage1"
 	for stage_id in StageSession.stage_order():
-		if is_stage_unlocked(stage_id):
+		# Real progress, not the testing switch, so Continue still lands on the
+		# stage the player actually reached.
+		if unlocked_areas().has(StageSession.area_id(stage_id)):
 			furthest = stage_id
 	return furthest
 
