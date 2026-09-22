@@ -9,7 +9,8 @@
     "min_growth_rate": 0.3,
     "recovery_per_day": 2.0,
     "grade_a_max_loss_percent": 15.0,
-    "grade_b_price_multiplier": 0.6
+    "grade_b_price_multiplier": 0.6,
+    "pest_protection_days": 3
   },
   "crops": [
     {

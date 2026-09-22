@@ -86,7 +86,7 @@ unlocks_all_tools = false
 
 [node name="IslandSettings" type="Node" parent="." unique_id=497019513]
 script = ExtResource("21_isle")
-pest_chance = 0.14
+pest_chance = 0.08
 
 [node name="MarketStall" type="StaticBody2D" parent="." unique_id=1098799344 instance=ExtResource("22_stall")]
 y_sort_enabled = true

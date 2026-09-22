@@ -57,6 +57,10 @@ var pest_days_untreated: int = 0
 ## Which pest is on the plant while pest_active is true: one of PEST_TYPES.
 ## Treatments work on some types and not others (economy.json "treats").
 var pest_type: String = ""
+## Days left before a new outbreak can start. treat_pest() sets it, so a
+## treatment protects the plant for a while instead of the pest rolling straight
+## back the next morning. Tuned in crops.json (simulation.pest_protection_days).
+var pest_protection_days: int = 0
 var waterlogged_days: int = 0
 
 # --- explanation of the result ----------------------------------------------
@@ -99,6 +103,7 @@ func plant(new_crop_id: String, starting_moisture: float = 0.5) -> bool:
 	days_in_stage = 0.0
 	pest_active = false
 	pest_days_untreated = 0
+	pest_protection_days = 0
 	waterlogged_days = 0
 	yield_penalties.clear()
 	action_log.clear()
@@ -155,6 +160,7 @@ func treat_pest() -> bool:
 	pest_active = false
 	pest_days_untreated = 0
 	pest_type = ""
+	pest_protection_days = int(_library.tuning("pest_protection_days", 3.0))
 	pest_cleared.emit()
 	_record_action("treat_pest", "Treated the pest outbreak.")
 	return true
@@ -357,6 +363,9 @@ func _apply_waterlogging() -> void:
 
 
 func _maybe_start_pest(pest_chance: float) -> void:
+	if pest_protection_days > 0:
+		pest_protection_days -= 1
+		return
 	if pest_active or pest_chance <= 0.0:
 		return
 	var susceptibility: float = float(_definition.get("pest_susceptibility", 1.0))
