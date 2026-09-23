@@ -150,9 +150,17 @@ func _on_supply_slot_input(event: InputEvent, item_name: String) -> void:
 	tools_panel.toggle_tool(tool)
 
 
+## Grade badge colours: the same green and orange the crop info panel uses for
+## a healthy and a struggling plant.
+const GRADE_COLOURS := {
+	"A": Color("6ab04c"),
+	"B": Color("f0932b"),
+}
+
+
 ## Builds one slot matching the six already in the scene: the crop's harvested
 ## icon, with its weight sitting over the bottom of it. Grade A and Grade B of
-## the same crop share the icon and are told apart by the tooltip.
+## the same crop share one icon, so the grade is badged in the corner.
 func build_crop_slot(item_name: String) -> Label:
 	var crop_id: String = EconomyManager.split_grade(item_name)[0]
 	var definition: Dictionary = CropManager.library.get_definition(crop_id)
@@ -164,7 +172,26 @@ func build_crop_slot(item_name: String) -> Label:
 	icon.atlas = PLANTS_SHEET
 	icon.region = Rect2(column * cell, row * cell, cell, cell)
 
-	return build_slot(item_name, icon, "%s, kg" % EconomyManager.display_label(item_name))
+	var count := build_slot(item_name, icon, "%s, kg" % EconomyManager.display_label(item_name))
+
+	# Two cabbages of different grades are two stacks that sell for different
+	# money, and until now they were two identical icons with different numbers
+	# on them - which reads as the same crop counted twice.
+	var grade: String = EconomyManager.split_grade(item_name)[1]
+	if not grade.is_empty():
+		_add_grade_badge(count.get_parent(), grade)
+	return count
+
+
+## The grade letter, tucked into the top-left of the slot.
+func _add_grade_badge(slot: Control, grade: String) -> void:
+	var badge := Label.new()
+	badge.text = grade
+	badge.theme_type_variation = &"InventoryLabel"
+	badge.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	badge.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	badge.add_theme_color_override("font_color", GRADE_COLOURS.get(grade, Color.WHITE))
+	slot.add_child(badge)
 
 
 ## The shared slot body, matching the six already placed in this scene.
