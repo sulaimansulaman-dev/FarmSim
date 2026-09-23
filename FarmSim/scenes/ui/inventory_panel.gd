@@ -113,10 +113,13 @@ func build_supply_slot(item_name: String) -> Label:
 	icon.atlas = icon_data["sheet"]
 	icon.region = icon_data["region"]
 	var label := build_slot(item_name, icon, EconomyManager.display_label(item_name))
-	if SUPPLY_TOOLS.has(item_name):
+	if SUPPLY_TOOLS.has(item_name) or item_name == "fertiliser":
 		var slot: Control = label.get_parent()
 		slot.mouse_filter = Control.MOUSE_FILTER_STOP
-		slot.tooltip_text += " - click to use"
+		slot.tooltip_text += (
+			" - click to use on your next sowing" if item_name == "fertiliser"
+			else " - click to use"
+		)
 		slot.gui_input.connect(_on_supply_slot_input.bind(item_name))
 	return label
 
@@ -126,6 +129,13 @@ func _on_supply_slot_input(event: InputEvent, item_name: String) -> void:
 	if click == null or not click.pressed or click.button_index != MOUSE_BUTTON_LEFT:
 		return
 	get_viewport().set_input_as_handled()
+
+	# Fertiliser is the one supply with no tool of its own: it goes in with the
+	# seed, so clicking it arms the next sowing instead of taking something in
+	# hand. Handled before the tool lookup, which would find nothing for it.
+	if item_name == "fertiliser":
+		EconomyManager.toggle_fertiliser()
+		return
 
 	var tool: DataTypes.Tools = SUPPLY_TOOLS[item_name]
 	var tools_panel := get_tree().root.find_child("ToolsPanel", true, false)
