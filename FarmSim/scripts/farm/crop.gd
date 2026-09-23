@@ -242,7 +242,7 @@ func advance_day(
 	# it is append-only, so every kilogram already forfeited stays forfeited.
 	# Health is the plant's condition today; the ledger is what the season cost.
 	if health == health_before and health > 0.0:
-		health = minf(health + _library.tuning("recovery_per_day", 2.0), MAX_HEALTH)
+		health = minf(health + _library.tuning("recovery_per_day", 2.0) * _damage_scale(), MAX_HEALTH)
 
 	if health <= 0.0:
 		health = 0.0
@@ -285,6 +285,7 @@ func _apply_cold_damage(temperature_c: float) -> void:
 	var damage: float = float(_definition.get("cold_damage_per_day", 0.0))
 	if damage <= 0.0:
 		return
+	damage *= _damage_scale()
 
 	_damage_health(damage)
 	_record_penalty(
@@ -310,7 +311,7 @@ func _apply_water_stress() -> void:
 	var severity: float = (wilting - moisture) / maxf(wilting, 0.001)
 	var stage := current_stage()
 	var sensitivity: float = float(stage["water_sensitivity"])
-	var damage: float = severity * sensitivity * _library.tuning("stress_damage_per_day", 9.0)
+	var damage: float = severity * sensitivity * _library.tuning("stress_damage_per_day", 9.0) * _damage_scale()
 
 	_damage_health(damage)
 	_record_penalty(
@@ -350,7 +351,7 @@ func _apply_waterlogging() -> void:
 		return
 
 	var severity: float = (moisture - soaked) / maxf(1.0 - soaked, 0.001)
-	var damage: float = maxf(severity, 0.35) * _library.tuning("waterlog_damage_per_day", 5.0)
+	var damage: float = maxf(severity, 0.35) * _library.tuning("waterlog_damage_per_day", 5.0) * _damage_scale()
 
 	_damage_health(damage)
 	_record_penalty(
@@ -381,7 +382,7 @@ func _apply_pest_damage() -> void:
 	if not pest_active:
 		return
 	pest_days_untreated += 1
-	var damage: float = _library.tuning("pest_damage_per_day", 7.0)
+	var damage: float = _library.tuning("pest_damage_per_day", 7.0) * _damage_scale()
 
 	_damage_health(damage)
 	_record_penalty(
@@ -558,6 +559,23 @@ func build_summary() -> Dictionary:
 
 
 # --- internals --------------------------------------------------------------
+
+## What one day of neglect costs on this crop, relative to a crop grown on its
+## true agronomic calendar. Set per crop in crops.json as damage_scale.
+##
+## Damage accrues per day, so compressing a crop's cycle quietly makes it
+## forgiving. Cabbage at 5 days instead of 10 halved every mistake the player
+## could make: an unwatered, untreated cabbage still came in at Grade A, which
+## made Stage 3's spray a waste of money and its "two Grade A crops" goal pass
+## itself. This puts the consequences back in proportion to the cycle actually
+## played, so a short crop is quick rather than easy.
+##
+## Recovery scales with it, so a nursed plant still mends at the same rate
+## relative to the harm - otherwise raising the damage alone would make every
+## mistake permanent.
+func _damage_scale() -> float:
+	return maxf(float(_definition.get("damage_scale", 1.0)), 0.0)
+
 
 func _damage_health(amount: float) -> void:
 	health = clampf(health - amount, 0.0, MAX_HEALTH)

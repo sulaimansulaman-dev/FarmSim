@@ -15,6 +15,7 @@
   "crops": [
     {
       "id": "maize",
+      "damage_scale": 1.85,
       "display_name": "Maize",
       "local_name": "Mielies",
       "base_yield_kg": 100.0,
@@ -71,6 +72,7 @@
     },
     {
       "id": "beans",
+      "damage_scale": 1.9,
       "display_name": "Beans",
       "local_name": "Boontjies",
       "base_yield_kg": 60.0,
@@ -127,6 +129,7 @@
     },
     {
       "id": "cabbage",
+      "damage_scale": 2.0,
       "display_name": "Cabbage",
       "local_name": "Kool",
       "base_yield_kg": 80.0,
