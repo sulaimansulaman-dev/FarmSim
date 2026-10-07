@@ -24,12 +24,18 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_dg8vg")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=644317364]
+[node name="TopLeft" type="HBoxContainer" parent="MarginContainer" unique_id=1408825317]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_constants/separation = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/TopLeft" unique_id=644317364]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="EmotesPanel" type="Panel" parent="MarginContainer/VBoxContainer" unique_id=2143495511 instance=ExtResource("2_jx5nb")]
+[node name="EmotesPanel" type="Panel" parent="MarginContainer/TopLeft/VBoxContainer" unique_id=2143495511 instance=ExtResource("2_jx5nb")]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -38,7 +44,7 @@ theme = ExtResource("1_dg8vg")
 theme_type_variation = &"DarkWoodPanel"
 script = ExtResource("3_wwq64")
 
-[node name="InventoryPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1040144013 instance=ExtResource("3_jpqn2")]
+[node name="InventoryPanel" type="PanelContainer" parent="MarginContainer/TopLeft/VBoxContainer" unique_id=1040144013 instance=ExtResource("3_jpqn2")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -79,9 +85,9 @@ size_flags_horizontal = 4
 size_flags_vertical = 0
 script = ExtResource("7_status")
 
-[node name="ObjectivesPanel" type="VBoxContainer" parent="MarginContainer" unique_id=186500777]
+[node name="ObjectivesPanel" type="VBoxContainer" parent="MarginContainer/TopLeft" unique_id=186500777]
 layout_mode = 2
 size_flags_horizontal = 0
-size_flags_vertical = 8
+size_flags_vertical = 0
 mouse_filter = 2
 script = ExtResource("13_4pji1")

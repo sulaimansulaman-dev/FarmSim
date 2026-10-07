@@ -62,7 +62,7 @@ func _process(_delta: float) -> void:
 	var plant := _crop_under_mouse()
 	visible = plant != null
 	if plant != null:
-		_refresh(plant.crop_sim.crop)
+		_refresh(plant.crop_sim.crop, plant.fertilised)
 
 
 ## The nearest crop to the mouse, or null.
@@ -85,8 +85,8 @@ func _crop_under_mouse() -> CropPlant:
 	return closest
 
 
-func _refresh(crop: Crop) -> void:
-	_name_label.text = crop.display_name
+func _refresh(crop: Crop, fertilised: bool = false) -> void:
+	_name_label.text = crop.display_name + (" (fertilised)" if fertilised else "")
 
 	if crop.state == Crop.State.DEAD:
 		_stage_label.text = "Died on day %d" % crop.day
@@ -109,8 +109,29 @@ func _refresh(crop: Crop) -> void:
 
 	# An outbreak outranks the stage note. It is what is costing the player
 	# yield right now, and the only one of the two they can still act on.
+	#
+	# The pest is named, and so is what clears it: since Stage 3 sells two
+	# treatments and insecticide does nothing to birds, "pests are feeding on
+	# this crop" leaves the player to find the difference out by wasting money.
 	if crop.pest_active:
-		_note_label.text = "Pests are feeding on this crop. Every day it goes untreated costs you yield."
+		_note_label.text = "%s are feeding on this crop. %sEvery day untreated costs you yield." % [
+			crop.pest_display_name().capitalize(), _treatment_hint(crop.pest_type)
+		]
+	elif crop.pest_protection_days > 0:
+		_note_label.text = "Treated. Protected from new pests for %d more day%s." % [
+			crop.pest_protection_days, "" if crop.pest_protection_days == 1 else "s"
+		]
+
+
+## "Organic control clears them. " - or nothing at all on an island with no
+## market, where the spray is free and there is only one of it.
+func _treatment_hint(pest_type: String) -> String:
+	if not EconomyManager.enabled:
+		return ""
+	var treatments := EconomyManager.treatments_for(pest_type)
+	if treatments.is_empty():
+		return ""
+	return "%s clears them. " % " or ".join(treatments)
 
 
 func _health_colour(health: float) -> Color:

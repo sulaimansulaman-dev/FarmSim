@@ -22,6 +22,9 @@ const PEST_TEXTURES := {
 	"bird": preload("res://assets/game/objects/pest_bird.png"),
 }
 
+## How long the watering splash runs for.
+const WATERING_SECONDS := 2.0
+
 @export var crop_id : String = "maize"
 
 ## Set by the crops cursor before this node enters the tree, when the player had
@@ -109,6 +112,15 @@ const TREAT_CLEARED := 1
 func prepare_treatment(supply_id: String) -> int:
 	var crop := crop_sim.crop
 
+	# A crop that died while infested keeps pest_active set, because
+	# advance_day() stops simulating it - so without this the player can buy a
+	# can, spray a corpse and be told it worked. Watering and harvesting both
+	# check the state; treating has to as well.
+	if crop.state == Crop.State.DEAD:
+		status_icon.refuse()
+		FarmEvents.advisory.emit("That crop is dead. No treatment brings it back - clear the tile and sow again.")
+		return TREAT_REFUSED
+
 	# Checked before anything is consumed: a can emptied onto a healthy plant
 	# is a wasted purchase, and the player should be told that rather than
 	# quietly charged for it.
@@ -150,12 +162,19 @@ func on_watered(_hit_damage: int) -> void:
 	if not crop_sim.water():
 		return
 
-		# Moisture just moved, so the thirsty badge may no longer be true.
+	# Moisture just moved, so the thirsty badge may no longer be true.
 	status_icon.refresh()
 	FarmEvents.crop_watered.emit(self)
 
 	watering_particles.emitting = true
-	await get_tree().create_timer(2.0).timeout
+
+	# A one-shot connection rather than await, for the same reason
+	# crop_status_icon.refuse() uses one: harvesting or digging this plant up
+	# inside the two seconds would resume the coroutine on a freed node.
+	get_tree().create_timer(WATERING_SECONDS).timeout.connect(_stop_watering_particles)
+
+
+func _stop_watering_particles() -> void:
 	watering_particles.emitting = false
 
 

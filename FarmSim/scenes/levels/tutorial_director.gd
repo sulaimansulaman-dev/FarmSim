@@ -18,10 +18,10 @@ const UI_SHEET := preload("res://assets/ui/basic_ui_sprites.png")
 ##
 ## crops.json keeps the real agronomy untouched. These only bend this single
 ## plant's clock, so a beginner meets thirst and ripeness within a couple of
-## game-days instead of the ten that cabbage honestly takes. Measured: thirsty
+## game-days instead of the five that cabbage honestly takes. Measured: thirsty
 ## on day 1, ripe on day 2.
 const TUTORIAL_EVAPORATION := 6.0
-const TUTORIAL_GROWTH := 10.0
+const TUTORIAL_GROWTH := 5.0
 
 ## How long Marlow's closing line stays up before the banner clears.
 const CLOSING_SECONDS := 12.0
