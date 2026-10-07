@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "_comment": "PLACEHOLDER PRICING. This file belongs to the Economy developer (DEL-05), not to the crop simulation. It exists now only because the GDD requires the crop-selection screen to show seed cost, growth duration and expected payout, and that screen cannot show a price that does not exist. Every number here is a guess and should be replaced with researched figures. Kept separate from crops.json so two developers are not editing the same file.",
+
+  "currency": {
+    "symbol": "R",
+    "starting_balance": 250
+  },
+
+  "crops": {
+    "maize": {
+      "seed_cost": 40,
+      "price_per_kg": 1.2,
+      "note": "Cheap seed, slow to mature, low value per kilogram. The safe staple."
+    },
+    "beans": {
+      "seed_cost": 55,
+      "price_per_kg": 2.4,
+      "note": "Dearer seed and a smaller harvest, but worth more per kilogram and ready sooner. The riskier, better-paying option."
+    }
+  }
+}

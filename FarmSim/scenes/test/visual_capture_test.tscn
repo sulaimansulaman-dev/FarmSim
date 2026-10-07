@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://c7a6sh7hfaujy"]
+
+[ext_resource type="Script" uid="uid://bod6nt0pwwsbg" path="res://scenes/test/visual_capture_test.gd" id="1_hueha"]
+
+[node name="VisualCaptureTest" type="Node" unique_id=151450099]
+process_mode = 3
+script = ExtResource("1_hueha")

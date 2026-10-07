@@ -1,0 +1,214 @@
+[gd_resource type="Resource" script_class="DialogueResource" format=3]
+
+[ext_resource type="Script" uid="uid://re5mu20y4a8v" path="res://addons/dialogue_manager/dialogue_resource.gd" id="1_fdxxs"]
+
+[resource]
+script = ExtResource("1_fdxxs")
+using_states = PackedStringArray()
+titles = {
+"start": "2"
+}
+character_names = PackedStringArray("Marlow", "Teemo")
+first_title = "2"
+lines = {
+"1": {
+&"id": "1",
+&"next_id": "2",
+"text": "start",
+"type": &"title"
+},
+"10": {
+"character": "Marlow",
+"character_replacements": Array[Dictionary]([]),
+&"id": "10",
+&"next_id": "11",
+"notes": "",
+"parent_id": "7",
+"tags": PackedStringArray(),
+"text": "Spraying costs you nothing. Leaving a pest there costs you weight at harvest.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Spraying costs you nothing. Leaving a pest there costs you weight at harvest.",
+"type": &"dialogue"
+},
+"11": {
+"character": "Teemo",
+"character_replacements": Array[Dictionary]([]),
+&"id": "11",
+&"next_id": "12",
+"notes": "",
+"parent_id": "7",
+"tags": PackedStringArray(),
+"text": "So check the plants, not the calendar.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "So check the plants, not the calendar.",
+"type": &"dialogue"
+},
+"12": {
+"character": "Marlow",
+"character_replacements": Array[Dictionary]([]),
+&"id": "12",
+&"next_id": "15",
+"notes": "",
+"parent_id": "7",
+"tags": PackedStringArray(),
+"text": "Now you are farming.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Now you are farming.",
+"type": &"dialogue"
+},
+"13": {
+"character": "",
+"character_replacements": Array[Dictionary]([]),
+&"id": "13",
+&"next_id": "14",
+"next_id_after": "15",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "I have dealt with them before",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "I have dealt with them before",
+"type": &"response"
+},
+"14": {
+"character": "Teemo",
+"character_replacements": Array[Dictionary]([]),
+&"id": "14",
+&"next_id": "15",
+"notes": "",
+"parent_id": "13",
+"tags": PackedStringArray(),
+"text": "I know a caterpillar when I see one.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "I know a caterpillar when I see one.",
+"type": &"dialogue"
+},
+"15": {
+&"id": "15",
+"is_snippet": false,
+&"next_id": "end",
+"type": &"goto"
+},
+"2": {
+"character": "Marlow",
+"character_replacements": Array[Dictionary]([]),
+&"id": "2",
+&"next_id": "3",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "[[Good to see you again|There you are|Welcome back]].",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "[[Good to see you again|There you are|Welcome back]].",
+"type": &"dialogue"
+},
+"3": {
+"character": "Marlow",
+"character_replacements": Array[Dictionary]([]),
+&"id": "3",
+&"next_id": "4",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "This is the third island. Same soil, same seed. Different trouble.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "This is the third island. Same soil, same seed. Different trouble.",
+"type": &"dialogue"
+},
+"4": {
+"character": "Marlow",
+"character_replacements": Array[Dictionary]([]),
+&"id": "4",
+&"next_id": "5",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "Here is your kit. The spray is new, so take that as well.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Here is your kit. The spray is new, so take that as well.",
+"type": &"dialogue"
+},
+"5": {
+&"id": "5",
+"mutation": {
+&"expression": Array[Dictionary]([{
+&"type": &"variable",
+&"value": "GameDialogueManager"
+}, {
+&"type": &"dot"
+}, {
+&"function": "action_give_crop_seeds",
+&"type": &"function",
+&"value": Array[Array]([])
+}]),
+&"is_blocking": true
+},
+&"next_id": "6",
+"type": &"mutation"
+},
+"6": {
+"character": "Marlow",
+"character_replacements": Array[Dictionary]([]),
+&"id": "6",
+&"next_id": "7",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "Caterpillars. They find a crop within a few days, and they will not leave on their own.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Caterpillars. They find a crop within a few days, and they will not leave on their own.",
+"type": &"dialogue"
+},
+"7": {
+"character": "",
+"character_replacements": Array[Dictionary]([]),
+&"id": "7",
+&"next_id": "8",
+"next_id_after": "15",
+"notes": "",
+"responses": PackedStringArray("7", "13"),
+"tags": PackedStringArray(),
+"text": "How do I get rid of them?",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "How do I get rid of them?",
+"type": &"response"
+},
+"8": {
+"character": "Marlow",
+"character_replacements": Array[Dictionary]([]),
+&"id": "8",
+&"next_id": "9",
+"notes": "",
+"parent_id": "7",
+"tags": PackedStringArray(),
+"text": "You will see one sitting on the plant. That is your warning.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "You will see one sitting on the plant. That is your warning.",
+"type": &"dialogue"
+},
+"9": {
+"character": "Marlow",
+"character_replacements": Array[Dictionary]([]),
+&"id": "9",
+&"next_id": "10",
+"notes": "",
+"parent_id": "7",
+"tags": PackedStringArray(),
+"text": "Take the spray, click the plant, and it is gone. One click.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Take the spray, click the plant, and it is gone. One click.",
+"type": &"dialogue"
+}
+}
+raw_text = "~ start
+Marlow: [[Good to see you again|There you are|Welcome back]].
+Marlow: This is the third island. Same soil, same seed. Different trouble.
+Marlow: Here is your kit. The spray is new, so take that as well.
+do GameDialogueManager.action_give_crop_seeds()
+Marlow: Caterpillars. They find a crop within a few days, and they will not leave on their own.
+- How do I get rid of them?
+	Marlow: You will see one sitting on the plant. That is your warning.
+	Marlow: Take the spray, click the plant, and it is gone. One click.
+	Marlow: Spraying costs you nothing. Leaving a pest there costs you weight at harvest.
+	Teemo: So check the plants, not the calendar.
+	Marlow: Now you are farming.
+- I have dealt with them before
+	Teemo: I know a caterpillar when I see one.
+=> END
+"
+metadata/dialogue_manager_version = "2.44.0"

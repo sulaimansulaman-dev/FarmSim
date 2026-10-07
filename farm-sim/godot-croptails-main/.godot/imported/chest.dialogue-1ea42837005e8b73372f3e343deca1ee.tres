@@ -1,0 +1,251 @@
+[gd_resource type="Resource" script_class="DialogueResource" format=3]
+
+[ext_resource type="Script" uid="uid://re5mu20y4a8v" path="res://addons/dialogue_manager/dialogue_resource.gd" id="1_nm8td"]
+
+[resource]
+script = ExtResource("1_nm8td")
+using_states = PackedStringArray()
+titles = {
+"start_chicken_pasture_box": "12",
+"start_cow_pasture_box": "2"
+}
+character_names = PackedStringArray("Pasture Box", "Teemo")
+first_title = "2"
+lines = {
+"1": {
+&"id": "1",
+&"next_id": "2",
+"text": "start_cow_pasture_box",
+"type": &"title"
+},
+"11": {
+&"id": "11",
+&"next_id": "12",
+"text": "start_chicken_pasture_box",
+"type": &"title"
+},
+"12": {
+"character": "Pasture Box",
+"character_replacements": Array[Dictionary]([]),
+&"id": "12",
+&"next_id": "13",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "[[Hi|Hello|Howdy]], your animals are hungry.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "[[Hi|Hello|Howdy]], your animals are hungry.",
+"type": &"dialogue"
+},
+"13": {
+"character": "Pasture Box",
+"character_replacements": Array[Dictionary]([]),
+&"id": "13",
+&"next_id": "14",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "Would you like to feed your chickens?",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Would you like to feed your chickens?",
+"type": &"dialogue"
+},
+"14": {
+"character": "",
+"character_replacements": Array[Dictionary]([]),
+&"id": "14",
+&"next_id": "15",
+"next_id_after": "19",
+"notes": "",
+"responses": PackedStringArray("14", "17"),
+"tags": PackedStringArray(),
+"text": "Yes",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Yes",
+"type": &"response"
+},
+"15": {
+"character": "Teemo",
+"character_replacements": Array[Dictionary]([]),
+&"id": "15",
+&"next_id": "16",
+"notes": "",
+"parent_id": "14",
+"tags": PackedStringArray(),
+"text": "Yeah! Let's feed my chickens.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Yeah! Let's feed my chickens.",
+"type": &"dialogue"
+},
+"16": {
+&"id": "16",
+"mutation": {
+&"expression": Array[Dictionary]([{
+&"type": &"variable",
+&"value": "GameDialogueManager"
+}, {
+&"type": &"dot"
+}, {
+&"function": "action_feed_animals",
+&"type": &"function",
+&"value": Array[Array]([])
+}]),
+&"is_blocking": true
+},
+&"next_id": "19",
+"parent_id": "14",
+"type": &"mutation"
+},
+"17": {
+"character": "",
+"character_replacements": Array[Dictionary]([]),
+&"id": "17",
+&"next_id": "18",
+"next_id_after": "19",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "No",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "No",
+"type": &"response"
+},
+"18": {
+"character": "Teemo",
+"character_replacements": Array[Dictionary]([]),
+&"id": "18",
+&"next_id": "19",
+"notes": "",
+"parent_id": "17",
+"tags": PackedStringArray(),
+"text": "No, I don't neet feed them now. I have enough eggs.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "No, I don't neet feed them now. I have enough eggs.",
+"type": &"dialogue"
+},
+"19": {
+&"id": "19",
+"is_snippet": false,
+&"next_id": "end",
+"type": &"goto"
+},
+"2": {
+"character": "Pasture Box",
+"character_replacements": Array[Dictionary]([]),
+&"id": "2",
+&"next_id": "3",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "[[Hi|Hello|Howdy]], your animals are hungry.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "[[Hi|Hello|Howdy]], your animals are hungry.",
+"type": &"dialogue"
+},
+"3": {
+"character": "Pasture Box",
+"character_replacements": Array[Dictionary]([]),
+&"id": "3",
+&"next_id": "4",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "Would you like to feed your cows?",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Would you like to feed your cows?",
+"type": &"dialogue"
+},
+"4": {
+"character": "",
+"character_replacements": Array[Dictionary]([]),
+&"id": "4",
+&"next_id": "5",
+"next_id_after": "9",
+"notes": "",
+"responses": PackedStringArray("4", "7"),
+"tags": PackedStringArray(),
+"text": "Yes",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Yes",
+"type": &"response"
+},
+"5": {
+"character": "Teemo",
+"character_replacements": Array[Dictionary]([]),
+&"id": "5",
+&"next_id": "6",
+"notes": "",
+"parent_id": "4",
+"tags": PackedStringArray(),
+"text": "Yeah! Let's feed my cows.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "Yeah! Let's feed my cows.",
+"type": &"dialogue"
+},
+"6": {
+&"id": "6",
+"mutation": {
+&"expression": Array[Dictionary]([{
+&"type": &"variable",
+&"value": "GameDialogueManager"
+}, {
+&"type": &"dot"
+}, {
+&"function": "action_feed_animals",
+&"type": &"function",
+&"value": Array[Array]([])
+}]),
+&"is_blocking": true
+},
+&"next_id": "9",
+"parent_id": "4",
+"type": &"mutation"
+},
+"7": {
+"character": "",
+"character_replacements": Array[Dictionary]([]),
+&"id": "7",
+&"next_id": "8",
+"next_id_after": "9",
+"notes": "",
+"tags": PackedStringArray(),
+"text": "No",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "No",
+"type": &"response"
+},
+"8": {
+"character": "Teemo",
+"character_replacements": Array[Dictionary]([]),
+&"id": "8",
+&"next_id": "9",
+"notes": "",
+"parent_id": "7",
+"tags": PackedStringArray(),
+"text": "No, I don't neet feed them now. I have enough milk.",
+"text_replacements": Array[Dictionary]([]),
+"translation_key": "No, I don't neet feed them now. I have enough milk.",
+"type": &"dialogue"
+},
+"9": {
+&"id": "9",
+"is_snippet": false,
+&"next_id": "end",
+"type": &"goto"
+}
+}
+raw_text = "~ start_cow_pasture_box
+Pasture Box: [[Hi|Hello|Howdy]], your animals are hungry.
+Pasture Box: Would you like to feed your cows?
+- Yes
+	Teemo: Yeah! Let's feed my cows.
+	do GameDialogueManager.action_feed_animals()
+- No
+	Teemo: No, I don't neet feed them now. I have enough milk.
+=> END
+
+~ start_chicken_pasture_box
+Pasture Box: [[Hi|Hello|Howdy]], your animals are hungry.
+Pasture Box: Would you like to feed your chickens?
+- Yes
+	Teemo: Yeah! Let's feed my chickens.
+	do GameDialogueManager.action_feed_animals()
+- No
+	Teemo: No, I don't neet feed them now. I have enough eggs.
+=> END"
+metadata/dialogue_manager_version = "2.44.0"
