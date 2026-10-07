@@ -1,252 +1,252 @@
 {
   "_comment": "Stage goals, the 3-star formula and the bridge-keeper quizzes for Stages 1 to 5 (FR-EVA-001, FR-EVA-002). Tuning a stage means editing this file, not GDScript. Objective types are counted by StageSession from FarmEvents: plant, water, harvest, collect_crop, till, sell_earned, buy_supply, treat_pest, grade_a, plant_tree, collect_fruit, chop_tree, harvest_seasons, sow_in_season.",
   "evaluation": {
-    "_comment": "score = time * weight_time + crops * weight_crops + quiz * weight_quiz. Each part is 0..1. time = par / actual (capped at 1), crops = harvested / target (capped at 1), quiz = correct / asked on the winning attempt. The bridge opens once every objective is done, which is what earns the first star.",
-    "weight_time": 0.3,
-    "weight_crops": 0.3,
-    "weight_quiz": 0.4,
-    "two_stars_at": 0.6,
-    "three_stars_at": 0.85
+	"_comment": "score = time * weight_time + crops * weight_crops + quiz * weight_quiz. Each part is 0..1. time = par / actual (capped at 1), crops = harvested / target (capped at 1), quiz = correct / asked on the winning attempt. The bridge opens once every objective is done, which is what earns the first star.",
+	"weight_time": 0.3,
+	"weight_crops": 0.3,
+	"weight_quiz": 0.4,
+	"two_stars_at": 0.6,
+	"three_stars_at": 0.85
   },
   "order": ["Stage1", "Stage2", "Stage3", "Stage4", "Stage5"],
   "stages": {
-    "Stage1": {
-      "area_id": "area_1",
-      "next": "Stage2",
-      "par_time_sec": 480,
-      "harvest_target": 1,
-      "extra_tools": [],
-      "objectives": [
-        {"type": "plant", "target": 1, "label": "Sow a seed"},
-        {"type": "water", "target": 1, "label": "Water the seedling"},
-        {"type": "harvest", "target": 1, "label": "Harvest a crop"},
-        {"type": "collect_crop", "target": 1, "label": "Pick up the produce"},
-        {"type": "till", "target": 1, "label": "Dig new ground"}
-      ],
-      "keeper": {
-        "name": "Keeper Thandi",
-        "intro": "Hold it! Nobody crosses my bridge without showing they know the basics.",
-        "win": "Well grown! The market island is all yours.",
-        "lose": "Not yet. Go look after a few more crops and come back."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "The soil around your seedling dries out. What does that cost you?",
-            "options": ["Nothing at all", "Weight at harvest", "The seed is refunded", "It grows faster"],
-            "answer": 1,
-            "explain": "Dry soil stresses the plant, and every stressed day takes weight off the harvest."
-          },
-          {
-            "q": "What must you do to grass before you can sow seed in it?",
-            "options": ["Water it", "Spray it", "Dig it with the hoe", "Wait for winter"],
-            "answer": 2,
-            "explain": "Seed needs loose, turned soil. The hoe opens a bed you can plant in."
-          },
-          {
-            "q": "When is a cabbage ready to cut?",
-            "options": ["When the head feels firm", "As soon as it sprouts", "When the leaves turn yellow", "After it has frozen"],
-            "answer": 0,
-            "explain": "Cut when the head is firm. Left standing too long, cabbage heads split."
-          },
-          {
-            "q": "Can you give a crop too much water?",
-            "options": ["No, more is always better", "Only in summer", "Yes, soaked soil damages the roots", "Only if it is maize"],
-            "answer": 2,
-            "explain": "Waterlogged soil starves roots of air. Aim for moist, not soaked."
-          }
-        ]
-      }
-    },
-    "Stage2": {
-      "area_id": "area_2",
-      "next": "Stage3",
-      "par_time_sec": 720,
-      "harvest_target": 3,
-      "extra_tools": [],
-      "objectives": [
-        {"type": "plant", "target": 3, "label": "Sow 3 crops"},
-        {"type": "buy_supply", "target": 1, "label": "Buy something at the market"},
-        {"type": "harvest", "target": 2, "label": "Harvest 2 crops"},
-        {"type": "sell_earned", "target": 60, "label": "Earn R60 from sales"}
-      ],
-      "keeper": {
-        "name": "Keeper Bongani",
-        "intro": "A farm is a business too. Let's see if you can count your rand.",
-        "win": "Sharp! You'll need that head for numbers where pests live.",
-        "lose": "Check the market prices again, then try me once more."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "Cabbage seed costs R9 and the harvest sells for R64. What is your profit on one plant?",
-            "options": ["R64", "R55", "R73", "R9"],
-            "answer": 1,
-            "explain": "Profit is what you earn minus what you spent: R64 - R9 = R55."
-          },
-          {
-            "q": "What does a bag of fertiliser do for a crop you sow?",
-            "options": ["Keeps pests away", "Doubles the selling price", "Grows faster and starts in damper soil", "Means you never water again"],
-            "answer": 2,
-            "explain": "Fertiliser speeds development and gives the seedling moister soil to start in."
-          },
-          {
-            "q": "What decides how much money a harvest brings in?",
-            "options": ["Its weight and its grade", "The time of day you sell", "Which tool you used", "How far you walked"],
-            "answer": 0,
-            "explain": "The market pays per kilogram, and Grade A pays more than Grade B."
-          },
-          {
-            "q": "You have R20. Maize seed costs R18 and cabbage seed costs R9. What can you afford to sow?",
-            "options": ["Two maize", "One maize and one cabbage", "Two cabbage", "Nothing"],
-            "answer": 2,
-            "explain": "Two cabbage cost R18. Two maize (R36) or maize plus cabbage (R27) are over budget."
-          }
-        ]
-      }
-    },
-    "Stage3": {
-      "area_id": "area_3",
-      "next": "Stage4",
-      "par_time_sec": 900,
-      "harvest_target": 4,
-      "extra_tools": ["organic"],
-      "objectives": [
-        {"type": "treat_pest", "target": 2, "label": "Clear 2 pest outbreaks"},
-        {"type": "harvest", "target": 3, "label": "Harvest 3 crops"},
-        {"type": "grade_a", "target": 2, "label": "Bring in 2 Grade A crops"}
-      ],
-      "keeper": {
-        "name": "Keeper Lerato",
-        "intro": "Pests don't wait for you, and neither do I. Answer quickly!",
-        "win": "Your crops are in good hands. The orchard is next.",
-        "lose": "The bugs won that round. Watch your plants closely and return."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "A caterpillar is sitting on your cabbage. What should you do?",
-            "options": ["Wait until harvest", "Water it more", "Treat it as soon as you can", "Sell the plant"],
-            "answer": 2,
-            "explain": "Every day a pest feeds untreated takes weight off the crop."
-          },
-          {
-            "q": "What happens if you use a treatment on a healthy plant?",
-            "options": ["The treatment is wasted money", "The plant is protected forever", "The yield doubles", "It becomes Grade A"],
-            "answer": 0,
-            "explain": "Treat only what is infested. A spray on a clean plant is a purchase thrown away."
-          },
-          {
-            "q": "Pests fed on a crop for days before you cleared them. How will it most likely sell?",
-            "options": ["Grade A, it recovered", "Grade B, the lost weight stays lost", "It cannot be sold", "At double price"],
-            "answer": 1,
-            "explain": "Health can recover, but the damage already done is permanent and lowers the grade."
-          },
-          {
-            "q": "Birds keep landing on your crops. Which control works on them?",
-            "options": ["Chemical insecticide spray", "More water", "Organic control with bird-scare tape", "Fertiliser"],
-            "answer": 2,
-            "explain": "Insecticide is for insects. Birds are scared off, which the organic kit's scare tape does."
-          }
-        ]
-      }
-    },
-    "Stage4": {
-      "area_id": "area_4",
-      "next": "Stage5",
-      "par_time_sec": 720,
-      "harvest_target": 6,
-      "extra_tools": ["organic", "sapling"],
-      "objectives": [
-        {"type": "plant_tree", "target": 2, "label": "Plant 2 fruit tree saplings"},
-        {"type": "collect_fruit", "target": 4, "label": "Collect 4 fruit"},
-        {"type": "chop_tree", "target": 1, "label": "Chop down an old tree"}
-      ],
-      "keeper": {
-        "name": "Keeper Pieter",
-        "intro": "Trees take patience. Let's see if you have some.",
-        "win": "A true orchard keeper. The seasons are waiting for you.",
-        "lose": "Spend a little more time among the trees, then come back."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "How do you get the fruit off a mature, fruiting tree?",
-            "options": ["Chop it down", "Shake it with the hoe", "Water it", "Spray it"],
-            "answer": 1,
-            "explain": "Shaking brings the fruit down and leaves the tree standing to fruit again."
-          },
-          {
-            "q": "You have just picked a tree clean. What happens next?",
-            "options": ["It never fruits again", "It must be replanted", "It regrows fruit after a few days", "It fruits again at once"],
-            "answer": 2,
-            "explain": "Fruit trees are perennial. Picked trees grow fresh fruit after a few days."
-          },
-          {
-            "q": "Why chop down an old tree that no longer fruits?",
-            "options": ["For timber and to free up space", "To make it fruit faster", "To scare pests", "There is no reason"],
-            "answer": 0,
-            "explain": "Old timber is useful and clearing it makes room for young, productive trees."
-          },
-          {
-            "q": "You plant a sapling today. When will it bear fruit?",
-            "options": ["Tomorrow morning", "Immediately", "Never", "Once it has grown through its stages over several days"],
-            "answer": 3,
-            "explain": "A sapling grows through young and growing stages before it is mature enough to fruit."
-          }
-        ]
-      }
-    },
-    "Stage5": {
-      "area_id": "area_5",
-      "next": "",
-      "par_time_sec": 1200,
-      "harvest_target": 4,
-      "extra_tools": ["organic"],
-      "objectives": [
-        {"type": "sow_in_season", "target": 3, "label": "Sow 3 crops that suit the season"},
-        {"type": "harvest", "target": 3, "label": "Harvest 3 crops"},
-        {"type": "harvest_seasons", "target": 2, "label": "Harvest in 2 different seasons"}
-      ],
-      "keeper": {
-        "name": "Keeper Nomsa",
-        "intro": "Every season has its crop. Show me you know which is which.",
-        "win": "You read the seasons like a real farmer. Well done!",
-        "lose": "The weather got the better of you. Watch the calendar and try again."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "Maize needs at least 10 degrees to grow. Winter here is 6 degrees. What happens to maize sown in winter?",
-            "options": ["It grows faster", "It stops developing", "It turns into beans", "It needs more fertiliser"],
-            "answer": 1,
-            "explain": "Below its minimum growth temperature a crop simply stops developing."
-          },
-          {
-            "q": "In which season does the soil dry out fastest?",
-            "options": ["Winter", "Autumn", "Spring", "Summer"],
-            "answer": 3,
-            "explain": "Summer heat makes soil lose water about half again as fast, so water more often."
-          },
-          {
-            "q": "Which crop still does well in autumn?",
-            "options": ["Cabbage", "Maize", "None", "All crops equally"],
-            "answer": 0,
-            "explain": "Cabbage is a cool-season crop. Maize slows to a crawl as it cools down."
-          },
-          {
-            "q": "A warning says winter is coming. What is the best move?",
-            "options": ["Sow maize now", "Stop watering everything", "Harvest what is standing before it arrives", "Buy more seed"],
-            "answer": 2,
-            "explain": "Nothing develops in winter, so bring in ready crops before the cold stalls them."
-          }
-        ]
-      }
-    }
+	"Stage1": {
+	  "area_id": "area_1",
+	  "next": "Stage2",
+	  "par_time_sec": 480,
+	  "harvest_target": 1,
+	  "extra_tools": [],
+	  "objectives": [
+		{"type": "plant", "target": 1, "label": "Sow a seed"},
+		{"type": "water", "target": 1, "label": "Water the seedling"},
+		{"type": "harvest", "target": 1, "label": "Harvest a crop"},
+		{"type": "collect_crop", "target": 1, "label": "Pick up the produce"},
+		{"type": "till", "target": 1, "label": "Dig new ground"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Thandi",
+		"intro": "Hold it! Nobody crosses my bridge without showing they know the basics.",
+		"win": "Well grown! The market island is all yours.",
+		"lose": "Not yet. Go look after a few more crops and come back."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "The soil around your seedling dries out. What does that cost you?",
+			"options": ["Nothing at all", "Weight at harvest", "The seed is refunded", "It grows faster"],
+			"answer": 1,
+			"explain": "Dry soil stresses the plant, and every stressed day takes weight off the harvest."
+		  },
+		  {
+			"q": "What must you do to grass before you can sow seed in it?",
+			"options": ["Water it", "Spray it", "Dig it with the hoe", "Wait for winter"],
+			"answer": 2,
+			"explain": "Seed needs loose, turned soil. The hoe opens a bed you can plant in."
+		  },
+		  {
+			"q": "When is a cabbage ready to cut?",
+			"options": ["When the head feels firm", "As soon as it sprouts", "When the leaves turn yellow", "After it has frozen"],
+			"answer": 0,
+			"explain": "Cut when the head is firm. Left standing too long, cabbage heads split."
+		  },
+		  {
+			"q": "Can you give a crop too much water?",
+			"options": ["No, more is always better", "Only in summer", "Yes, soaked soil damages the roots", "Only if it is maize"],
+			"answer": 2,
+			"explain": "Waterlogged soil starves roots of air. Aim for moist, not soaked."
+		  }
+		]
+	  }
+	},
+	"Stage2": {
+	  "area_id": "area_2",
+	  "next": "Stage3",
+	  "par_time_sec": 720,
+	  "harvest_target": 3,
+	  "extra_tools": [],
+	  "objectives": [
+		{"type": "plant", "target": 3, "label": "Sow 3 crops"},
+		{"type": "buy_supply", "target": 1, "label": "Buy something at the market"},
+		{"type": "harvest", "target": 2, "label": "Harvest 2 crops"},
+		{"type": "sell_earned", "target": 60, "label": "Earn R60 from sales"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Bongani",
+		"intro": "A farm is a business too. Let's see if you can count your rand.",
+		"win": "Sharp! You'll need that head for numbers where pests live.",
+		"lose": "Check the market prices again, then try me once more."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "Cabbage seed costs R9 and the harvest sells for R64. What is your profit on one plant?",
+			"options": ["R64", "R55", "R73", "R9"],
+			"answer": 1,
+			"explain": "Profit is what you earn minus what you spent: R64 - R9 = R55."
+		  },
+		  {
+			"q": "What does a bag of fertiliser do for a crop you sow?",
+			"options": ["Keeps pests away", "Doubles the selling price", "Grows faster and starts in damper soil", "Means you never water again"],
+			"answer": 2,
+			"explain": "Fertiliser speeds development and gives the seedling moister soil to start in."
+		  },
+		  {
+			"q": "What decides how much money a harvest brings in?",
+			"options": ["Its weight and its grade", "The time of day you sell", "Which tool you used", "How far you walked"],
+			"answer": 0,
+			"explain": "The market pays per kilogram, and Grade A pays more than Grade B."
+		  },
+		  {
+			"q": "You have R20. Maize seed costs R18 and cabbage seed costs R9. What can you afford to sow?",
+			"options": ["Two maize", "One maize and one cabbage", "Two cabbage", "Nothing"],
+			"answer": 2,
+			"explain": "Two cabbage cost R18. Two maize (R36) or maize plus cabbage (R27) are over budget."
+		  }
+		]
+	  }
+	},
+	"Stage3": {
+	  "area_id": "area_3",
+	  "next": "Stage4",
+	  "par_time_sec": 900,
+	  "harvest_target": 4,
+	  "extra_tools": ["organic"],
+	  "objectives": [
+		{"type": "treat_pest", "target": 2, "label": "Clear 2 pest outbreaks"},
+		{"type": "harvest", "target": 3, "label": "Harvest 3 crops"},
+		{"type": "grade_a", "target": 2, "label": "Bring in 2 Grade A crops"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Lerato",
+		"intro": "Pests don't wait for you, and neither do I. Answer quickly!",
+		"win": "Your crops are in good hands. The orchard is next.",
+		"lose": "The bugs won that round. Watch your plants closely and return."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "A caterpillar is sitting on your cabbage. What should you do?",
+			"options": ["Wait until harvest", "Water it more", "Treat it as soon as you can", "Sell the plant"],
+			"answer": 2,
+			"explain": "Every day a pest feeds untreated takes weight off the crop."
+		  },
+		  {
+			"q": "What happens if you use a treatment on a healthy plant?",
+			"options": ["The treatment is wasted money", "The plant is protected forever", "The yield doubles", "It becomes Grade A"],
+			"answer": 0,
+			"explain": "Treat only what is infested. A spray on a clean plant is a purchase thrown away."
+		  },
+		  {
+			"q": "Pests fed on a crop for days before you cleared them. How will it most likely sell?",
+			"options": ["Grade A, it recovered", "Grade B, the lost weight stays lost", "It cannot be sold", "At double price"],
+			"answer": 1,
+			"explain": "Health can recover, but the damage already done is permanent and lowers the grade."
+		  },
+		  {
+			"q": "Birds keep landing on your crops. Which control works on them?",
+			"options": ["Chemical insecticide spray", "More water", "Organic control with bird-scare tape", "Fertiliser"],
+			"answer": 2,
+			"explain": "Insecticide is for insects. Birds are scared off, which the organic kit's scare tape does."
+		  }
+		]
+	  }
+	},
+	"Stage4": {
+	  "area_id": "area_4",
+	  "next": "Stage5",
+	  "par_time_sec": 720,
+	  "harvest_target": 6,
+	  "extra_tools": ["organic", "sapling"],
+	  "objectives": [
+		{"type": "plant_tree", "target": 2, "label": "Plant 2 fruit tree saplings"},
+		{"type": "collect_fruit", "target": 4, "label": "Collect 4 fruit"},
+		{"type": "chop_tree", "target": 1, "label": "Chop down an old tree"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Pieter",
+		"intro": "Trees take patience. Let's see if you have some.",
+		"win": "A true orchard keeper. The seasons are waiting for you.",
+		"lose": "Spend a little more time among the trees, then come back."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "How do you get the fruit off a mature, fruiting tree?",
+			"options": ["Chop it down", "Shake it with the hoe", "Water it", "Spray it"],
+			"answer": 1,
+			"explain": "Shaking brings the fruit down and leaves the tree standing to fruit again."
+		  },
+		  {
+			"q": "You have just picked a tree clean. What happens next?",
+			"options": ["It never fruits again", "It must be replanted", "It regrows fruit after a few days", "It fruits again at once"],
+			"answer": 2,
+			"explain": "Fruit trees are perennial. Picked trees grow fresh fruit after a few days."
+		  },
+		  {
+			"q": "Why chop down an old tree that no longer fruits?",
+			"options": ["For timber and to free up space", "To make it fruit faster", "To scare pests", "There is no reason"],
+			"answer": 0,
+			"explain": "Old timber is useful and clearing it makes room for young, productive trees."
+		  },
+		  {
+			"q": "You plant a sapling today. When will it bear fruit?",
+			"options": ["Tomorrow morning", "Immediately", "Never", "Once it has grown through its stages over several days"],
+			"answer": 3,
+			"explain": "A sapling grows through young and growing stages before it is mature enough to fruit."
+		  }
+		]
+	  }
+	},
+	"Stage5": {
+	  "area_id": "area_5",
+	  "next": "",
+	  "par_time_sec": 1200,
+	  "harvest_target": 4,
+	  "extra_tools": ["organic"],
+	  "objectives": [
+		{"type": "sow_in_season", "target": 3, "label": "Sow 3 crops that suit the season"},
+		{"type": "harvest", "target": 3, "label": "Harvest 3 crops"},
+		{"type": "harvest_seasons", "target": 2, "label": "Harvest in 2 different seasons"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Nomsa",
+		"intro": "Every season has its crop. Show me you know which is which.",
+		"win": "You read the seasons like a real farmer. Well done!",
+		"lose": "The weather got the better of you. Watch the calendar and try again."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "Maize needs at least 10 degrees to grow. Winter here is 6 degrees. What happens to maize sown in winter?",
+			"options": ["It grows faster", "It stops developing", "It turns into beans", "It needs more fertiliser"],
+			"answer": 1,
+			"explain": "Below its minimum growth temperature a crop simply stops developing."
+		  },
+		  {
+			"q": "In which season does the soil dry out fastest?",
+			"options": ["Winter", "Autumn", "Spring", "Summer"],
+			"answer": 3,
+			"explain": "Summer heat makes soil lose water about half again as fast, so water more often."
+		  },
+		  {
+			"q": "Which crop still does well in autumn?",
+			"options": ["Cabbage", "Maize", "None", "All crops equally"],
+			"answer": 0,
+			"explain": "Cabbage is a cool-season crop. Maize slows to a crawl as it cools down."
+		  },
+		  {
+			"q": "A warning says winter is coming. What is the best move?",
+			"options": ["Sow maize now", "Stop watering everything", "Harvest what is standing before it arrives", "Buy more seed"],
+			"answer": 2,
+			"explain": "Nothing develops in winter, so bring in ready crops before the cold stalls them."
+		  }
+		]
+	  }
+	}
   }
 }
