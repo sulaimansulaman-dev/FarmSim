@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dxo7n2wvq4tsr"]
+
+[ext_resource type="Texture2D" path="res://assets/game/objects/items/orange_item.png" id="1_orange"]
+[ext_resource type="PackedScene" uid="uid://b24cjlu8o71d8" path="res://scenes/components/collectable_component.tscn" id="2_collect"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_orange"]
+radius = 7.0
+
+[node name="OrangeHarvest" type="Sprite2D"]
+y_sort_enabled = true
+texture = ExtResource("1_orange")
+
+[node name="CollectableComponent" parent="." instance=ExtResource("2_collect")]
+collision_layer = 160
+collectable_name = "orange"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollectableComponent"]
+shape = SubResource("CircleShape2D_orange")

@@ -1,0 +1,15 @@
+~ start
+Marlow: [[Good to see you again|There you are|Welcome back]].
+Marlow: This is the third island. Same soil, same seed. Different trouble.
+Marlow: Here is your kit. The spray is new, so take that as well.
+do GameDialogueManager.action_give_crop_seeds()
+Marlow: Caterpillars. They find a crop within a few days, and they will not leave on their own.
+- How do I get rid of them?
+	Marlow: You will see one sitting on the plant. That is your warning.
+	Marlow: Take the spray, click the plant, and it is gone. One click.
+	Marlow: Spraying costs you nothing. Leaving a pest there costs you weight at harvest.
+	Teemo: So check the plants, not the calendar.
+	Marlow: Now you are farming.
+- I have dealt with them before
+	Teemo: I know a caterpillar when I see one.
+=> END
