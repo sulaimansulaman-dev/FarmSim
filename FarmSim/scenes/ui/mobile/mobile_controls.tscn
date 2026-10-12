@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://dex3iessfo03b"]
+
+[ext_resource type="Script" uid="uid://bquqphuy2j0vf" path="res://scenes/ui/mobile/mobile_controls.gd" id="1_ctrl"]
+[ext_resource type="Script" uid="uid://d0deqbp2nnpah" path="res://scenes/ui/mobile/touch_joystick.gd" id="2_joy"]
+[ext_resource type="Script" uid="uid://dytfqqpka6rnj" path="res://scenes/ui/mobile/touch_action_button.gd" id="3_btn"]
+[ext_resource type="Theme" uid="uid://bnp65kle34ngr" path="res://scenes/ui/game_ui_theme.tres" id="4_theme"]
+
+[node name="MobileControls" type="Control" unique_id=1132684859]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("4_theme")
+script = ExtResource("1_ctrl")
+
+[node name="Joystick" type="Control" parent="." unique_id=2137478656]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -230.0
+offset_right = 190.0
+grow_vertical = 0
+script = ExtResource("2_joy")
+
+[node name="InteractButton" type="Control" parent="." unique_id=1012729683]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -112.0
+offset_top = -112.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("3_btn")
+
+[node name="MenuButton" type="Control" parent="." unique_id=1006480110]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
+offset_top = 86.0
+offset_right = -6.0
+offset_bottom = 108.0
+grow_horizontal = 0
+script = ExtResource("3_btn")
+glyph = "MENU"
+pill = true

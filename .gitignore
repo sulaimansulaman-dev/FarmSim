@@ -1,0 +1,13 @@
+# Godot generated cache. Rebuilt by the editor on first open, never commit it.
+.godot/
+**/.godot/
+
+# Godot / OS / editor noise
+*.translation
+export_presets.cfg
+.mono/
+data_*/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

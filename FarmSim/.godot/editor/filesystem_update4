@@ -1,5 +1,7 @@
 res://scenes/objects/market/market_stall.tscn
+res://scenes/ui/mobile/mobile_controls.tscn
 res://scenes/ui/game_ui_theme.tres
 res://tilesets/house_tile_set.tres
 res://tilesets/game_tile_set.tres
 res://dialogue/dialogue_balloon_theme.tres
+res://scenes/ui/mobile/mobile_controls.gd

@@ -37,7 +37,7 @@ func get_cell_under_mouse() -> bool:
 	if player == null:
 		return false
 
-	mouse_position = grass_tilemap_layer.get_local_mouse_position()
+	mouse_position = MobileInput.local_pointer(grass_tilemap_layer)
 	cell_position = grass_tilemap_layer.local_to_map(mouse_position)
 	cell_source_id = grass_tilemap_layer.get_cell_source_id(cell_position)
 	local_cell_position = grass_tilemap_layer.map_to_local(cell_position)

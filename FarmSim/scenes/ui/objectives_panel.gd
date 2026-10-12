@@ -1,13 +1,15 @@
 extends VBoxContainer
 
-## The stage checklist and live star rating, bottom-left of the HUD.
+## The stage checklist and live star rating, top-left of the HUD beside the inventory.
 ##
 ## Reads everything from StageSession, which does the counting. Hidden on any
 ## level that is not one of the five stages.
 ##
-## Sits above the level label rather than on top of it: the spacer at the
-## bottom of this box is the label's height, so the two stack without either
-## needing to know where the other is.
+## Shares an HBoxContainer with the inventory column, which is what keeps the two
+## apart. They used to be anchored independently to the top and bottom of the
+## same left edge, so a full inventory and a tall goal list grew into each other.
+## Stacking them in one column instead does not fit either: at 360px high it runs
+## off the bottom of the screen and pushes the whole HUD with it.
 
 const UI_SHEET := preload("res://assets/ui/basic_ui_sprites.png")
 const STAR_FULL := Rect2(531, 68, 10, 8)
@@ -17,8 +19,6 @@ const COLOUR_TEXT := Color("f4ead6")
 const COLOUR_DONE := Color("a5d6a7")
 const COLOUR_TODO := Color("d8cbb0")
 const COLOUR_GOLD := Color("f2c94c")
-
-const LABEL_CLEARANCE := 30.0
 
 var _panel: PanelContainer
 var _rows: VBoxContainer
@@ -94,11 +94,6 @@ func _build() -> void:
 	_bridge_label = _label("", COLOUR_GOLD)
 	_bridge_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(_bridge_label)
-
-	var spacer := Control.new()
-	spacer.custom_minimum_size.y = LABEL_CLEARANCE
-	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(spacer)
 
 
 func _refresh() -> void:

@@ -77,7 +77,7 @@ func get_cell_under_mouse() -> bool:
 	if player == null:
 		return false
 
-	mouse_position = tilled_soil_tilemap_layer.get_local_mouse_position()
+	mouse_position = MobileInput.local_pointer(tilled_soil_tilemap_layer)
 	cell_position = tilled_soil_tilemap_layer.local_to_map(mouse_position)
 	cell_source_id = tilled_soil_tilemap_layer.get_cell_source_id(cell_position)
 	local_cell_position = tilled_soil_tilemap_layer.map_to_local(cell_position)
@@ -120,6 +120,12 @@ func add_crop() -> void:
 		FarmEvents.advisory.emit(warning)
 
 	var fertilised := EconomyManager.consume_fertiliser_if_held()
+	if fertilised:
+		# Said out loud, because a bag costs money and the plant it went into
+		# looks exactly like one sown without it.
+		FarmEvents.advisory.emit("A bag of fertiliser went in with this %s. It will develop faster." % [
+			CropManager.library.get_definition(crop_id).get("display_name", crop_id)
+		])
 	_send("plant", cell_position, {"crop_id": crop_id, "fertilised": fertilised})
 
 
