@@ -370,14 +370,14 @@ func _build() -> void:
 	_root.add_child(field)
 
 	_add_platform(Vector2(398, 148), Vector2(190, 34))
-	_add_platform(Vector2(40, 232), Vector2(210, 38))
+	_add_platform(Vector2(40, 212), Vector2(210, 38))
 
 	_keeper_sprite = _character_rect(_keeper_frame(), Vector2(421, 58), 3.0)
 	if keeper_texture_source != null and keeper_texture_source.material != null:
 		_keeper_sprite.material = keeper_texture_source.material
 	_root.add_child(_keeper_sprite)
 
-	_player_sprite = _character_rect(_player_frame(), Vector2(73, 138), 3.0)
+	_player_sprite = _character_rect(_player_frame(), Vector2(73, 118), 3.0)
 	_root.add_child(_player_sprite)
 
 	# Keeper's plate, top left.
@@ -419,7 +419,7 @@ func _build() -> void:
 	box.anchor_bottom = 1.0
 	box.offset_left = 6
 	box.offset_right = -6
-	box.offset_top = -86
+	box.offset_top = -128
 	box.offset_bottom = -6
 	_root.add_child(box)
 
@@ -446,8 +446,8 @@ func _build() -> void:
 	_message.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	message_row.add_child(_message)
 
-	_next_button = _make_button("NEXT  (Space)")
-	_next_button.custom_minimum_size = Vector2(110, 20)
+	_next_button = _make_button("NEXT" if MobileInput.enabled else "NEXT  (Space)")
+	_next_button.custom_minimum_size = Vector2(110, 32)
 	_next_button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	_next_button.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_next_button.visible = false
@@ -533,8 +533,9 @@ func _make_button(text: String) -> Button:
 	button.text = text
 	button.focus_mode = Control.FOCUS_NONE
 	button.theme_type_variation = &"GameMenuButton"
-	button.add_theme_font_size_override("font_size", 8)
-	button.custom_minimum_size = Vector2(300, 20)
+	# Sized for a thumb, not a mouse pointer.
+	button.add_theme_font_size_override("font_size", 10)
+	button.custom_minimum_size = Vector2(300, 32)
 	button.clip_text = true
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	return button

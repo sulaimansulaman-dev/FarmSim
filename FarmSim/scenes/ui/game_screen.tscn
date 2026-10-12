@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://jvoydca08yda" path="res://scenes/ui/status_panel.gd" id="7_status"]
 [ext_resource type="Script" uid="uid://dolvmp5waumfa" path="res://scenes/ui/day_night_panel.gd" id="9_4gsc8"]
 [ext_resource type="Script" uid="uid://csll5uk6uge0i" path="res://scenes/ui/objectives_panel.gd" id="13_4pji1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/mobile/mobile_controls.tscn" id="14_mobile"]
 
 [node name="GameScreen" type="CanvasLayer" unique_id=1573129863]
 
@@ -91,3 +92,5 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 mouse_filter = 2
 script = ExtResource("13_4pji1")
+
+[node name="MobileControls" parent="." unique_id=1928374651 instance=ExtResource("14_mobile")]

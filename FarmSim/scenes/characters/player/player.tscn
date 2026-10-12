@@ -480,7 +480,7 @@ radius = 4.0
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1786180792]
 enabled = false
-zoom = Vector2(1.3, 1.3)
+zoom = Vector2(1.6, 1.6)
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=2132713831]
 replication_config = SubResource("SceneReplicationConfig_mp01")
