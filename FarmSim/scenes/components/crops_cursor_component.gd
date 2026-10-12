@@ -101,11 +101,16 @@ func add_crop() -> void:
 		return
 
 	var crop_id: String = TOOL_CROPS[ToolManager.selected_tool]
+	var seed_item_id := crop_id+"_seed"
 
-	# Paid for before anything is built, so a refused sale leaves no half-planted
-	# node behind. Returns true untouched when the economy is off.
-	if not EconomyManager.charge_for_seed(crop_id):
+	# Check if the player actually has this seed in inventory before planting
+	var held_seeds: int = int(InventoryManager.inventory.get(seed_item_id, 0))
+	if held_seeds <= 0:
+		FarmEvents.advisory.emit("You don't have any %s seeds! Buy some at the market." % crop_id)
 		return
+
+	# Remove 1 seed from inventory upon planting
+	InventoryManager.remove_collectable(seed_item_id, 1)
 
 	# Seed viability, checked at the moment of sowing. This reports and lets the
 	# player go ahead: being allowed to plant maize in winter and then watching

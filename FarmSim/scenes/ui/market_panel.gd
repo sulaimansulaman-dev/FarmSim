@@ -77,6 +77,13 @@ func _build() -> void:
 	title.add_theme_color_override("font_color", Color("f2c94c"))
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
+	
+	# 1. Create the TextureRect
+	var money_icon := TextureRect.new()
+	var coin_atlas := AtlasTexture.new()
+	coin_atlas.atlas = preload("res://assets/ui/basic_ui_sprites.png") 
+	coin_atlas.region = Rect2(628, 115, 7, 10)
+	
 
 	_balance_label = Label.new()
 	_balance_label.add_theme_font_size_override("font_size", 10)
@@ -208,9 +215,6 @@ func _add_seed_row(parent: Node, crop_id: String) -> void:
 	row.add_child(_crop_icon(crop_id))
 
 	var text := Label.new()
-	# "Pays up to" is the best case on purpose - a clean Grade A crop at full
-	# weight. The distance between it and what the player actually banks is the
-	# whole argument for watering on time and treating pests.
 	text.text = "%-8s  seed %-5s  %2d days  pays up to %s" % [
 		definition.get("display_name", crop_id),
 		EconomyManager.format_money(cost),
@@ -221,15 +225,17 @@ func _add_seed_row(parent: Node, crop_id: String) -> void:
 	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(text)
 
-	# Seed is charged for as it goes into the ground, not bought in advance.
-	# One fewer stock to manage, and it keeps the cost attached to the decision
-	# that incurs it.
-	var note := Label.new()
-	note.text = "charged when sown"
-	note.add_theme_font_size_override("font_size", 8)
-	note.add_theme_color_override("font_color", Color("8a8a7a"))
-	row.add_child(note)
-
+	# --- ADD THE BUY BUTTON FOR SEEDS ---
+	var buy := Button.new()
+	buy.text = "BUY"
+	buy.focus_mode = Control.FOCUS_NONE
+	buy.theme_type_variation = &"GameMenuButton"
+	buy.custom_minimum_size = Vector2(54, 20)
+	
+	buy.pressed.connect(func():
+		EconomyManager.buy_seed(crop_id)
+	)
+	row.add_child(buy)
 
 func _add_supply_row(parent: Node, supply_id: String) -> void:
 	var row := HBoxContainer.new()

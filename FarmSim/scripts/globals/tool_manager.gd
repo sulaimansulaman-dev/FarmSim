@@ -7,9 +7,9 @@ var selected_tool: DataTypes.Tools = DataTypes.Tools.None
 
 
 func enable_tool(tool: DataTypes.Tools) -> void:
-    tool_enabled.emit(tool)
+	tool_enabled.emit(tool)
 
 
 func select_tool(tool: DataTypes.Tools) -> void:
-    selected_tool = tool
-    tool_selected.emit(tool)
+	selected_tool = tool
+	tool_selected.emit(tool)

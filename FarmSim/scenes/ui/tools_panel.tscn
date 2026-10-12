@@ -57,6 +57,7 @@ custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 theme_type_variation = &"ToolButton"
 icon = SubResource("AtlasTexture_ymvyd")
+alignment = 2
 icon_alignment = 1
 
 [node name="ToolTilling" type="Button" parent="MarginContainer/HBoxContainer" unique_id=412850005]

@@ -7,15 +7,15 @@ extends NodeState
 
 
 func _on_next_transitions() -> void:
-    if timer.is_stopped():
-        transition.emit('walk')
+	if timer.is_stopped():
+		transition.emit('walk')
 
 
 func _on_enter() -> void:
-    animated_sprite_2d.play('idle')
-    timer.start()
+	animated_sprite_2d.play('idle')
+	timer.start()
 
 
 func _on_exit() -> void:
-    timer.stop()
-    animated_sprite_2d.stop()
+	timer.stop()
+	animated_sprite_2d.stop()
