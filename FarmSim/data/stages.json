@@ -33,28 +33,34 @@
         "pass_correct": 3,
         "questions": [
           {
-            "q": "The soil around your seedling dries out. What does that cost you?",
-            "options": ["Nothing at all", "Weight at harvest", "The seed is refunded", "It grows faster"],
+            "q": "If a plant needs water to survive, what should you do to the seed right after planting it?",
+            "options": ["Apply fertiliser", "Water the seed", "Harvest the plot", "Till the soil"],
             "answer": 1,
-            "explain": "Dry soil stresses the plant, and every stressed day takes weight off the harvest."
+            "explain": "A new seed needs moist soil to start growing. Water it as soon as it is in the ground."
           },
           {
-            "q": "What must you do to grass before you can sow seed in it?",
-            "options": ["Water it", "Spray it", "Dig it with the hoe", "Wait for winter"],
-            "answer": 2,
-            "explain": "Seed needs loose, turned soil. The hoe opens a bed you can plant in."
-          },
-          {
-            "q": "When is a cabbage ready to cut?",
-            "options": ["When the head feels firm", "As soon as it sprouts", "When the leaves turn yellow", "After it has frozen"],
+            "q": "Before you can plant a seed in hard ground, you must prepare the dirt. What is prepared dirt called?",
+            "options": ["Tilled soil", "Raw land", "Harvestable crop", "Sprout"],
             "answer": 0,
-            "explain": "Cut when the head is firm. Left standing too long, cabbage heads split."
+            "explain": "Tilled soil is ground that has been dug and loosened, so seeds and roots can get in."
           },
           {
-            "q": "Can you give a crop too much water?",
-            "options": ["No, more is always better", "Only in summer", "Yes, soaked soil damages the roots", "Only if it is maize"],
+            "q": "When a crop is finished growing and ready to be picked, what do you do?",
+            "options": ["Water it again", "Apply pest control", "Harvest the crop", "Chop it down"],
             "answer": 2,
-            "explain": "Waterlogged soil starves roots of air. Aim for moist, not soaked."
+            "explain": "A ripe crop is harvested. Leave it too long and you risk losing it."
+          },
+          {
+            "q": "Which farming tool is used to prepare the dirt before planting?",
+            "options": ["A watering can", "A sprinkler system", "A hoe", "A mechanical harvester"],
+            "answer": 2,
+            "explain": "The hoe digs and loosens the ground, turning grass into a bed you can plant in."
+          },
+          {
+            "q": "You plant a seed but never water it. What happens?",
+            "options": ["It grows normally - water does not matter", "It gets stressed, gives a smaller harvest and can die", "It grows faster to find water", "It turns back into a seed"],
+            "answer": 1,
+            "explain": "Dry soil stresses the plant. Every stressed day takes weight off the harvest, and a crop left dry long enough dies."
           }
         ]
       }
@@ -81,28 +87,28 @@
         "pass_correct": 3,
         "questions": [
           {
-            "q": "Cabbage seed costs R9 and the harvest sells for R64. What is your profit on one plant?",
-            "options": ["R64", "R55", "R73", "R9"],
+            "q": "When you want to sell your harvested crops to earn money, where do you go?",
+            "options": ["The storage shed", "The orchard", "The weather app", "The market"],
+            "answer": 3,
+            "explain": "The market buys your produce. Better quality crops fetch a better price."
+          },
+          {
+            "q": "What can you add to the soil to help a plant grow faster and healthier?",
+            "options": ["Pest control spray", "Fertiliser", "Extra seeds", "Raw land soil"],
             "answer": 1,
-            "explain": "Profit is what you earn minus what you spent: R64 - R9 = R55."
+            "explain": "Fertiliser feeds the soil, so the crop grows faster and starts out stronger."
           },
           {
-            "q": "What does a bag of fertiliser do for a crop you sow?",
-            "options": ["Keeps pests away", "Doubles the selling price", "Grows faster and starts in damper soil", "Means you never water again"],
-            "answer": 2,
-            "explain": "Fertiliser speeds development and gives the seedling moister soil to start in."
+            "q": "What must a farmer buy from the market to start growing a brand-new crop?",
+            "options": ["Animal feed", "Seeds", "Sprinklers", "Fruit trees"],
+            "answer": 1,
+            "explain": "Every crop starts from seed. Seeds cost money, so plan what you plant."
           },
           {
-            "q": "What decides how much money a harvest brings in?",
-            "options": ["Its weight and its grade", "The time of day you sell", "Which tool you used", "How far you walked"],
+            "q": "Why do farmers need to earn and save money?",
+            "options": ["To buy supplies like seeds and pest treatments", "To stop the seasons from changing", "To change the weather", "To unlock multiplayer mode"],
             "answer": 0,
-            "explain": "The market pays per kilogram, and Grade A pays more than Grade B."
-          },
-          {
-            "q": "You have R20. Maize seed costs R18 and cabbage seed costs R9. What can you afford to sow?",
-            "options": ["Two maize", "One maize and one cabbage", "Two cabbage", "Nothing"],
-            "answer": 2,
-            "explain": "Two cabbage cost R18. Two maize (R36) or maize plus cabbage (R27) are over budget."
+            "explain": "A farm is a business. Money from one harvest pays for the seeds and supplies for the next."
           }
         ]
       }
@@ -128,28 +134,34 @@
         "pass_correct": 3,
         "questions": [
           {
-            "q": "A caterpillar is sitting on your cabbage. What should you do?",
-            "options": ["Wait until harvest", "Water it more", "Treat it as soon as you can", "Sell the plant"],
-            "answer": 2,
-            "explain": "Every day a pest feeds untreated takes weight off the crop."
+            "q": "Harmful bugs and insects are eating your crops. What is this called?",
+            "options": ["A seasonal constraint", "Crop rotation", "A weather event", "A pest infestation"],
+            "answer": 3,
+            "explain": "Pests like caterpillars and worms feed on your plants. Many of them together is an infestation."
           },
           {
-            "q": "What happens if you use a treatment on a healthy plant?",
-            "options": ["The treatment is wasted money", "The plant is protected forever", "The yield doubles", "It becomes Grade A"],
+            "q": "You see worms or caterpillars damaging your plants. What should you treat them with?",
+            "options": ["Fertiliser", "Water", "A pest control treatment that targets them", "Mulch"],
+            "answer": 2,
+            "explain": "Use a treatment that works on that pest. The crop info panel tells you which ones clear it."
+          },
+          {
+            "q": "What happens if you let the bugs keep eating your plant?",
+            "options": ["A smaller harvest, or the crop is destroyed", "The plant grows faster to survive", "The bugs leave on their own", "The crop grade improves"],
             "answer": 0,
-            "explain": "Treat only what is infested. A spray on a clean plant is a purchase thrown away."
+            "explain": "Pests do damage every day they stay. Treat them early to save your harvest."
           },
           {
-            "q": "Pests fed on a crop for days before you cleared them. How will it most likely sell?",
-            "options": ["Grade A, it recovered", "Grade B, the lost weight stays lost", "It cannot be sold", "At double price"],
+            "q": "A crop that would have been Grade A is badly damaged by pests. What happens to its quality?",
+            "options": ["It becomes Grade A+", "It turns back into a seed", "It stays Grade A but stops growing", "It drops to Grade B"],
+            "answer": 3,
+            "explain": "Damaged produce is lower quality. A crop that loses too much to pests sells as Grade B, for less money."
+          },
+          {
+            "q": "Which of these is a common pest that damages crops?",
+            "options": ["Frogs", "Worms", "Snakes", "Spiders"],
             "answer": 1,
-            "explain": "Health can recover, but the damage already done is permanent and lowers the grade."
-          },
-          {
-            "q": "Birds keep landing on your crops. Which control works on them?",
-            "options": ["Chemical insecticide spray", "More water", "Organic control with bird-scare tape", "Fertiliser"],
-            "answer": 2,
-            "explain": "Insecticide is for insects. Birds are scared off, which the organic kit's scare tape does."
+            "explain": "Worms and caterpillars eat leaves and roots. Frogs and spiders actually eat pests."
           }
         ]
       }
@@ -175,28 +187,34 @@
         "pass_correct": 3,
         "questions": [
           {
-            "q": "How do you get the fruit off a mature, fruiting tree?",
-            "options": ["Chop it down", "Shake it with the hoe", "Water it", "Spray it"],
+            "q": "Apples and oranges grow on tall plants with wooden trunks. What are these called?",
+            "options": ["Sprout crops", "Fruit trees", "Raw land", "Seasonal seeds"],
             "answer": 1,
-            "explain": "Shaking brings the fruit down and leaves the tree standing to fruit again."
+            "explain": "Fruit trees are planted once as a sapling and grow into a tree that bears fruit."
           },
           {
-            "q": "You have just picked a tree clean. What happens next?",
-            "options": ["It never fruits again", "It must be replanted", "It regrows fruit after a few days", "It fruits again at once"],
+            "q": "An old tree is dead and blocking your farm. What removes it?",
+            "options": ["Shaking the tree", "Watering the roots", "Chopping it down with an axe", "Applying fertiliser"],
             "answer": 2,
-            "explain": "Fruit trees are perennial. Picked trees grow fresh fruit after a few days."
+            "explain": "The axe chops a tree down and clears the space for something new."
           },
           {
-            "q": "Why chop down an old tree that no longer fruits?",
-            "options": ["For timber and to free up space", "To make it fruit faster", "To scare pests", "There is no reason"],
+            "q": "How do you know a fruit tree is ready to pick?",
+            "options": ["You can see fruit in its leaves", "It turns brown", "It is winter", "The day you plant the sapling"],
             "answer": 0,
-            "explain": "Old timber is useful and clearing it makes room for young, productive trees."
+            "explain": "A grown tree is bare for a while, then fruit appears in its leaves. That is when you pick it."
           },
           {
-            "q": "You plant a sapling today. When will it bear fruit?",
-            "options": ["Tomorrow morning", "Immediately", "Never", "Once it has grown through its stages over several days"],
-            "answer": 3,
-            "explain": "A sapling grows through young and growing stages before it is mature enough to fruit."
+            "q": "Do fruit trees need to be replanted every time you pick their fruit?",
+            "options": ["No, they give fruit again and again", "Yes, they die after one harvest", "Yes, unless you use fertiliser", "No, but they only fruit once ever"],
+            "answer": 0,
+            "explain": "A tree keeps growing new fruit after each picking. Plant it once and it keeps giving."
+          },
+          {
+            "q": "What is one disadvantage of planting a tree instead of a small ground crop?",
+            "options": ["It needs ten times more water", "It takes up the space until you chop it down", "It cannot get pests", "It lowers the value of other crops"],
+            "answer": 1,
+            "explain": "A tree stays where you plant it for good. Think about where it goes before you plant it."
           }
         ]
       }
@@ -222,28 +240,34 @@
         "pass_correct": 3,
         "questions": [
           {
-            "q": "Maize needs at least 10 degrees to grow. Winter here is 6 degrees. What happens to maize sown in winter?",
-            "options": ["It grows faster", "It stops developing", "It turns into beans", "It needs more fertiliser"],
-            "answer": 1,
-            "explain": "Below its minimum growth temperature a crop simply stops developing."
-          },
-          {
-            "q": "In which season does the soil dry out fastest?",
-            "options": ["Winter", "Autumn", "Spring", "Summer"],
-            "answer": 3,
-            "explain": "Summer heat makes soil lose water about half again as fast, so water more often."
-          },
-          {
-            "q": "Which crop still does well in autumn?",
-            "options": ["Cabbage", "Maize", "None", "All crops equally"],
-            "answer": 0,
-            "explain": "Cabbage is a cool-season crop. Maize slows to a crawl as it cools down."
-          },
-          {
-            "q": "A warning says winter is coming. What is the best move?",
-            "options": ["Sow maize now", "Stop watering everything", "Harvest what is standing before it arrives", "Buy more seed"],
+            "q": "Winter, spring, summer and autumn are all examples of what?",
+            "options": ["Weather apps", "Crop rotations", "Seasons", "Pest infestations"],
             "answer": 2,
-            "explain": "Nothing develops in winter, so bring in ready crops before the cold stalls them."
+            "explain": "The year turns through four seasons, and each one suits different crops."
+          },
+          {
+            "q": "A crop that needs summer heat is planted in freezing winter. What happens?",
+            "options": ["It grows normally", "It sits in the ground and does not grow, and the cold damages it", "It needs double the fertiliser but grows fine", "It grows twice as fast"],
+            "answer": 1,
+            "explain": "You are allowed to plant it, but below its minimum temperature a crop stops growing and the cold hurts it. Check the season first."
+          },
+          {
+            "q": "Planting different crops in a field over time to keep the soil healthy is called what?",
+            "options": ["Crop rotation", "Inventory management", "Mulching", "Irrigation"],
+            "answer": 0,
+            "explain": "Crop rotation keeps soil healthy. Beans, for example, put back nitrogen that maize uses up."
+          },
+          {
+            "q": "How does a farmer know the season is about to change?",
+            "options": ["The market closes", "They get a warning before the season changes", "Their crops instantly die", "Pests stop appearing"],
+            "answer": 1,
+            "explain": "A warning comes a day before each new season, so you have time to plan what to plant or harvest."
+          },
+          {
+            "q": "Crops struggle in the cold. What should a farmer do before winter arrives?",
+            "options": ["Sell all their land", "Chop down all their fruit trees", "Use double the pest spray", "Harvest their crops before the cold sets in"],
+            "answer": 3,
+            "explain": "Winter is too cold for these crops. Bring the harvest in before it arrives, then plan for spring."
           }
         ]
       }
