@@ -19,6 +19,8 @@ const COLOUR_WARN := Color("f0932b")
 const COLOUR_BAD := Color("eb4d4b")
 const COLOUR_WATER := Color("5fa8d3")
 
+var _touch_layout_applied := false
+
 var _name_label: Label
 var _stage_label: Label
 var _health_bar: ProgressBar
@@ -59,10 +61,22 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	_apply_touch_layout()
 	var plant := _crop_under_mouse()
 	visible = plant != null
 	if plant != null:
 		_refresh(plant.crop_sim.crop, plant.fertilised)
+
+
+## The touch controls sit in the bottom-right corner, which is where this panel
+## lives. Move it to the middle of the right edge once they are switched on. The
+## controls decide that in their own _ready, which runs after this panel's, so
+## it is applied here rather than there.
+func _apply_touch_layout() -> void:
+	if _touch_layout_applied or not MobileInput.enabled:
+		return
+	_touch_layout_applied = true
+	size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 
 ## The nearest crop to the mouse, or null.
@@ -74,6 +88,11 @@ func _crop_under_mouse() -> CropPlant:
 		get_viewport().get_canvas_transform().affine_inverse()
 		* get_viewport().get_mouse_position()
 	)
+
+	# On a touch build there is no mouse to hover with. Inspect the tile in
+	# front of the player instead, which is also the tile the highlight marks.
+	if MobileInput.enabled:
+		world_mouse = MobileInput.front_position if MobileInput.has_front else MobileInput.OFF_MAP
 
 	var closest: CropPlant = null
 	var closest_distance := HOVER_RADIUS

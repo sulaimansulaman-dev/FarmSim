@@ -1,276 +1,276 @@
 {
   "_comment": "Stage goals, the 3-star formula and the bridge-keeper quizzes for Stages 1 to 5 (FR-EVA-001, FR-EVA-002). Tuning a stage means editing this file, not GDScript. Objective types are counted by StageSession from FarmEvents: plant, water, harvest, collect_crop, till, sell_earned, buy_supply, treat_pest, grade_a, plant_tree, collect_fruit, chop_tree, harvest_seasons, sow_in_season.",
   "evaluation": {
-    "_comment": "score = time * weight_time + crops * weight_crops + quiz * weight_quiz. Each part is 0..1. time = par / actual (capped at 1), crops = harvested / target (capped at 1), quiz = correct / asked on the winning attempt. The bridge opens once every objective is done, which is what earns the first star.",
-    "weight_time": 0.3,
-    "weight_crops": 0.3,
-    "weight_quiz": 0.4,
-    "two_stars_at": 0.6,
-    "three_stars_at": 0.85
+	"_comment": "score = time * weight_time + crops * weight_crops + quiz * weight_quiz. Each part is 0..1. time = par / actual (capped at 1), crops = harvested / target (capped at 1), quiz = correct / asked on the winning attempt. The bridge opens once every objective is done, which is what earns the first star.",
+	"weight_time": 0.3,
+	"weight_crops": 0.3,
+	"weight_quiz": 0.4,
+	"two_stars_at": 0.6,
+	"three_stars_at": 0.85
   },
   "order": ["Stage1", "Stage2", "Stage3", "Stage4", "Stage5"],
   "stages": {
-    "Stage1": {
-      "area_id": "area_1",
-      "next": "Stage2",
-      "par_time_sec": 480,
-      "harvest_target": 1,
-      "extra_tools": [],
-      "objectives": [
-        {"type": "plant", "target": 1, "label": "Sow a seed"},
-        {"type": "water", "target": 1, "label": "Water the seedling"},
-        {"type": "harvest", "target": 1, "label": "Harvest a crop"},
-        {"type": "collect_crop", "target": 1, "label": "Pick up the produce"},
-        {"type": "till", "target": 1, "label": "Dig new ground"}
-      ],
-      "keeper": {
-        "name": "Keeper Thandi",
-        "intro": "Hold it! Nobody crosses my bridge without showing they know the basics.",
-        "win": "Well grown! The market island is all yours.",
-        "lose": "Not yet. Go look after a few more crops and come back."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "If a plant needs water to survive, what should you do to the seed right after planting it?",
-            "options": ["Apply fertiliser", "Water the seed", "Harvest the plot", "Till the soil"],
-            "answer": 1,
-            "explain": "A new seed needs moist soil to start growing. Water it as soon as it is in the ground."
-          },
-          {
-            "q": "Before you can plant a seed in hard ground, you must prepare the dirt. What is prepared dirt called?",
-            "options": ["Tilled soil", "Raw land", "Harvestable crop", "Sprout"],
-            "answer": 0,
-            "explain": "Tilled soil is ground that has been dug and loosened, so seeds and roots can get in."
-          },
-          {
-            "q": "When a crop is finished growing and ready to be picked, what do you do?",
-            "options": ["Water it again", "Apply pest control", "Harvest the crop", "Chop it down"],
-            "answer": 2,
-            "explain": "A ripe crop is harvested. Leave it too long and you risk losing it."
-          },
-          {
-            "q": "Which farming tool is used to prepare the dirt before planting?",
-            "options": ["A watering can", "A sprinkler system", "A hoe", "A mechanical harvester"],
-            "answer": 2,
-            "explain": "The hoe digs and loosens the ground, turning grass into a bed you can plant in."
-          },
-          {
-            "q": "You plant a seed but never water it. What happens?",
-            "options": ["It grows normally - water does not matter", "It gets stressed, gives a smaller harvest and can die", "It grows faster to find water", "It turns back into a seed"],
-            "answer": 1,
-            "explain": "Dry soil stresses the plant. Every stressed day takes weight off the harvest, and a crop left dry long enough dies."
-          }
-        ]
-      }
-    },
-    "Stage2": {
-      "area_id": "area_2",
-      "next": "Stage3",
-      "par_time_sec": 720,
-      "harvest_target": 3,
-      "extra_tools": [],
-      "objectives": [
-        {"type": "plant", "target": 3, "label": "Sow 3 crops"},
-        {"type": "buy_supply", "target": 1, "label": "Buy something at the market"},
-        {"type": "harvest", "target": 2, "label": "Harvest 2 crops"},
-        {"type": "sell_earned", "target": 60, "label": "Earn R60 from sales"}
-      ],
-      "keeper": {
-        "name": "Keeper Bongani",
-        "intro": "A farm is a business too. Let's see if you can count your rand.",
-        "win": "Sharp! You'll need that head for numbers where pests live.",
-        "lose": "Check the market prices again, then try me once more."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "When you want to sell your harvested crops to earn money, where do you go?",
-            "options": ["The storage shed", "The orchard", "The weather app", "The market"],
-            "answer": 3,
-            "explain": "The market buys your produce. Better quality crops fetch a better price."
-          },
-          {
-            "q": "What can you add to the soil to help a plant grow faster and healthier?",
-            "options": ["Pest control spray", "Fertiliser", "Extra seeds", "Raw land soil"],
-            "answer": 1,
-            "explain": "Fertiliser feeds the soil, so the crop grows faster and starts out stronger."
-          },
-          {
-            "q": "What must a farmer buy from the market to start growing a brand-new crop?",
-            "options": ["Animal feed", "Seeds", "Sprinklers", "Fruit trees"],
-            "answer": 1,
-            "explain": "Every crop starts from seed. Seeds cost money, so plan what you plant."
-          },
-          {
-            "q": "Why do farmers need to earn and save money?",
-            "options": ["To buy supplies like seeds and pest treatments", "To stop the seasons from changing", "To change the weather", "To unlock multiplayer mode"],
-            "answer": 0,
-            "explain": "A farm is a business. Money from one harvest pays for the seeds and supplies for the next."
-          }
-        ]
-      }
-    },
-    "Stage3": {
-      "area_id": "area_3",
-      "next": "Stage4",
-      "par_time_sec": 900,
-      "harvest_target": 4,
-      "extra_tools": ["organic"],
-      "objectives": [
-        {"type": "treat_pest", "target": 2, "label": "Clear 2 pest outbreaks"},
-        {"type": "harvest", "target": 3, "label": "Harvest 3 crops"},
-        {"type": "grade_a", "target": 2, "label": "Bring in 2 Grade A crops"}
-      ],
-      "keeper": {
-        "name": "Keeper Lerato",
-        "intro": "Pests don't wait for you, and neither do I. Answer quickly!",
-        "win": "Your crops are in good hands. The orchard is next.",
-        "lose": "The bugs won that round. Watch your plants closely and return."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "Harmful bugs and insects are eating your crops. What is this called?",
-            "options": ["A seasonal constraint", "Crop rotation", "A weather event", "A pest infestation"],
-            "answer": 3,
-            "explain": "Pests like caterpillars and worms feed on your plants. Many of them together is an infestation."
-          },
-          {
-            "q": "You see worms or caterpillars damaging your plants. What should you treat them with?",
-            "options": ["Fertiliser", "Water", "A pest control treatment that targets them", "Mulch"],
-            "answer": 2,
-            "explain": "Use a treatment that works on that pest. The crop info panel tells you which ones clear it."
-          },
-          {
-            "q": "What happens if you let the bugs keep eating your plant?",
-            "options": ["A smaller harvest, or the crop is destroyed", "The plant grows faster to survive", "The bugs leave on their own", "The crop grade improves"],
-            "answer": 0,
-            "explain": "Pests do damage every day they stay. Treat them early to save your harvest."
-          },
-          {
-            "q": "A crop that would have been Grade A is badly damaged by pests. What happens to its quality?",
-            "options": ["It becomes Grade A+", "It turns back into a seed", "It stays Grade A but stops growing", "It drops to Grade B"],
-            "answer": 3,
-            "explain": "Damaged produce is lower quality. A crop that loses too much to pests sells as Grade B, for less money."
-          },
-          {
-            "q": "Which of these is a common pest that damages crops?",
-            "options": ["Frogs", "Worms", "Snakes", "Spiders"],
-            "answer": 1,
-            "explain": "Worms and caterpillars eat leaves and roots. Frogs and spiders actually eat pests."
-          }
-        ]
-      }
-    },
-    "Stage4": {
-      "area_id": "area_4",
-      "next": "Stage5",
-      "par_time_sec": 720,
-      "harvest_target": 6,
-      "extra_tools": ["organic", "sapling"],
-      "objectives": [
-        {"type": "plant_tree", "target": 2, "label": "Plant 2 fruit tree saplings"},
-        {"type": "collect_fruit", "target": 4, "label": "Collect 4 fruit"},
-        {"type": "chop_tree", "target": 1, "label": "Chop down an old tree"}
-      ],
-      "keeper": {
-        "name": "Keeper Pieter",
-        "intro": "Trees take patience. Let's see if you have some.",
-        "win": "A true orchard keeper. The seasons are waiting for you.",
-        "lose": "Spend a little more time among the trees, then come back."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "Apples and oranges grow on tall plants with wooden trunks. What are these called?",
-            "options": ["Sprout crops", "Fruit trees", "Raw land", "Seasonal seeds"],
-            "answer": 1,
-            "explain": "Fruit trees are planted once as a sapling and grow into a tree that bears fruit."
-          },
-          {
-            "q": "An old tree is dead and blocking your farm. What removes it?",
-            "options": ["Shaking the tree", "Watering the roots", "Chopping it down with an axe", "Applying fertiliser"],
-            "answer": 2,
-            "explain": "The axe chops a tree down and clears the space for something new."
-          },
-          {
-            "q": "How do you know a fruit tree is ready to pick?",
-            "options": ["You can see fruit in its leaves", "It turns brown", "It is winter", "The day you plant the sapling"],
-            "answer": 0,
-            "explain": "A grown tree is bare for a while, then fruit appears in its leaves. That is when you pick it."
-          },
-          {
-            "q": "Do fruit trees need to be replanted every time you pick their fruit?",
-            "options": ["No, they give fruit again and again", "Yes, they die after one harvest", "Yes, unless you use fertiliser", "No, but they only fruit once ever"],
-            "answer": 0,
-            "explain": "A tree keeps growing new fruit after each picking. Plant it once and it keeps giving."
-          },
-          {
-            "q": "What is one disadvantage of planting a tree instead of a small ground crop?",
-            "options": ["It needs ten times more water", "It takes up the space until you chop it down", "It cannot get pests", "It lowers the value of other crops"],
-            "answer": 1,
-            "explain": "A tree stays where you plant it for good. Think about where it goes before you plant it."
-          }
-        ]
-      }
-    },
-    "Stage5": {
-      "area_id": "area_5",
-      "next": "",
-      "par_time_sec": 1200,
-      "harvest_target": 4,
-      "extra_tools": ["organic"],
-      "objectives": [
-        {"type": "sow_in_season", "target": 3, "label": "Sow 3 crops that suit the season"},
-        {"type": "harvest", "target": 3, "label": "Harvest 3 crops"},
-        {"type": "harvest_seasons", "target": 2, "label": "Harvest in 2 different seasons"}
-      ],
-      "keeper": {
-        "name": "Keeper Nomsa",
-        "intro": "Every season has its crop. Show me you know which is which.",
-        "win": "You read the seasons like a real farmer. Well done!",
-        "lose": "The weather got the better of you. Watch the calendar and try again."
-      },
-      "quiz": {
-        "pass_correct": 3,
-        "questions": [
-          {
-            "q": "Winter, spring, summer and autumn are all examples of what?",
-            "options": ["Weather apps", "Crop rotations", "Seasons", "Pest infestations"],
-            "answer": 2,
-            "explain": "The year turns through four seasons, and each one suits different crops."
-          },
-          {
-            "q": "A crop that needs summer heat is planted in freezing winter. What happens?",
-            "options": ["It grows normally", "It sits in the ground and does not grow, and the cold damages it", "It needs double the fertiliser but grows fine", "It grows twice as fast"],
-            "answer": 1,
-            "explain": "You are allowed to plant it, but below its minimum temperature a crop stops growing and the cold hurts it. Check the season first."
-          },
-          {
-            "q": "Planting different crops in a field over time to keep the soil healthy is called what?",
-            "options": ["Crop rotation", "Inventory management", "Mulching", "Irrigation"],
-            "answer": 0,
-            "explain": "Crop rotation keeps soil healthy. Beans, for example, put back nitrogen that maize uses up."
-          },
-          {
-            "q": "How does a farmer know the season is about to change?",
-            "options": ["The market closes", "They get a warning before the season changes", "Their crops instantly die", "Pests stop appearing"],
-            "answer": 1,
-            "explain": "A warning comes a day before each new season, so you have time to plan what to plant or harvest."
-          },
-          {
-            "q": "Crops struggle in the cold. What should a farmer do before winter arrives?",
-            "options": ["Sell all their land", "Chop down all their fruit trees", "Use double the pest spray", "Harvest their crops before the cold sets in"],
-            "answer": 3,
-            "explain": "Winter is too cold for these crops. Bring the harvest in before it arrives, then plan for spring."
-          }
-        ]
-      }
-    }
+	"Stage1": {
+	  "area_id": "area_1",
+	  "next": "Stage2",
+	  "par_time_sec": 480,
+	  "harvest_target": 1,
+	  "extra_tools": [],
+	  "objectives": [
+		{"type": "plant", "target": 1, "label": "Sow a seed"},
+		{"type": "water", "target": 1, "label": "Water the seedling"},
+		{"type": "harvest", "target": 1, "label": "Harvest a crop"},
+		{"type": "collect_crop", "target": 1, "label": "Pick up the produce"},
+		{"type": "till", "target": 1, "label": "Dig new ground"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Thandi",
+		"intro": "Hold it! Nobody crosses my bridge without showing they know the basics.",
+		"win": "Well grown! The market island is all yours.",
+		"lose": "Not yet. Go look after a few more crops and come back."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "If a plant needs water to survive, what should you do to the seed right after planting it?",
+			"options": ["Apply fertiliser", "Water the seed", "Harvest the plot", "Till the soil"],
+			"answer": 1,
+			"explain": "A new seed needs moist soil to start growing. Water it as soon as it is in the ground."
+		  },
+		  {
+			"q": "Before you can plant a seed in hard ground, you must prepare the dirt. What is prepared dirt called?",
+			"options": ["Tilled soil", "Raw land", "Harvestable crop", "Sprout"],
+			"answer": 0,
+			"explain": "Tilled soil is ground that has been dug and loosened, so seeds and roots can get in."
+		  },
+		  {
+			"q": "When a crop is finished growing and ready to be picked, what do you do?",
+			"options": ["Water it again", "Apply pest control", "Harvest the crop", "Chop it down"],
+			"answer": 2,
+			"explain": "A ripe crop is harvested. Leave it too long and you risk losing it."
+		  },
+		  {
+			"q": "Which farming tool is used to prepare the dirt before planting?",
+			"options": ["A watering can", "A sprinkler system", "A hoe", "A mechanical harvester"],
+			"answer": 2,
+			"explain": "The hoe digs and loosens the ground, turning grass into a bed you can plant in."
+		  },
+		  {
+			"q": "You plant a seed but never water it. What happens?",
+			"options": ["It grows normally - water does not matter", "It gets stressed, gives a smaller harvest and can die", "It grows faster to find water", "It turns back into a seed"],
+			"answer": 1,
+			"explain": "Dry soil stresses the plant. Every stressed day takes weight off the harvest, and a crop left dry long enough dies."
+		  }
+		]
+	  }
+	},
+	"Stage2": {
+	  "area_id": "area_2",
+	  "next": "Stage3",
+	  "par_time_sec": 720,
+	  "harvest_target": 3,
+	  "extra_tools": [],
+	  "objectives": [
+		{"type": "plant", "target": 3, "label": "Sow 3 crops"},
+		{"type": "buy_supply", "target": 1, "label": "Buy something at the market"},
+		{"type": "harvest", "target": 2, "label": "Harvest 2 crops"},
+		{"type": "sell_earned", "target": 60, "label": "Earn R60 from sales"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Bongani",
+		"intro": "A farm is a business too. Let's see if you can count your rand.",
+		"win": "Sharp! You'll need that head for numbers where pests live.",
+		"lose": "Check the market prices again, then try me once more."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "When you want to sell your harvested crops to earn money, where do you go?",
+			"options": ["The storage shed", "The orchard", "The weather app", "The market"],
+			"answer": 3,
+			"explain": "The market buys your produce. Better quality crops fetch a better price."
+		  },
+		  {
+			"q": "What can you add to the soil to help a plant grow faster and healthier?",
+			"options": ["Pest control spray", "Fertiliser", "Extra seeds", "Raw land soil"],
+			"answer": 1,
+			"explain": "Fertiliser feeds the soil, so the crop grows faster and starts out stronger."
+		  },
+		  {
+			"q": "What must a farmer buy from the market to start growing a brand-new crop?",
+			"options": ["Animal feed", "Seeds", "Sprinklers", "Fruit trees"],
+			"answer": 1,
+			"explain": "Every crop starts from seed. Seeds cost money, so plan what you plant."
+		  },
+		  {
+			"q": "Why do farmers need to earn and save money?",
+			"options": ["To buy supplies like seeds and pest treatments", "To stop the seasons from changing", "To change the weather", "To unlock multiplayer mode"],
+			"answer": 0,
+			"explain": "A farm is a business. Money from one harvest pays for the seeds and supplies for the next."
+		  }
+		]
+	  }
+	},
+	"Stage3": {
+	  "area_id": "area_3",
+	  "next": "Stage4",
+	  "par_time_sec": 900,
+	  "harvest_target": 4,
+	  "extra_tools": ["organic"],
+	  "objectives": [
+		{"type": "treat_pest", "target": 2, "label": "Clear 2 pest outbreaks"},
+		{"type": "harvest", "target": 3, "label": "Harvest 3 crops"},
+		{"type": "grade_a", "target": 2, "label": "Bring in 2 Grade A crops"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Lerato",
+		"intro": "Pests don't wait for you, and neither do I. Answer quickly!",
+		"win": "Your crops are in good hands. The orchard is next.",
+		"lose": "The bugs won that round. Watch your plants closely and return."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "Harmful bugs and insects are eating your crops. What is this called?",
+			"options": ["A seasonal constraint", "Crop rotation", "A weather event", "A pest infestation"],
+			"answer": 3,
+			"explain": "Pests like caterpillars and worms feed on your plants. Many of them together is an infestation."
+		  },
+		  {
+			"q": "You see worms or caterpillars damaging your plants. What should you treat them with?",
+			"options": ["Fertiliser", "Water", "A pest control treatment that targets them", "Mulch"],
+			"answer": 2,
+			"explain": "Use a treatment that works on that pest. The crop info panel tells you which ones clear it."
+		  },
+		  {
+			"q": "What happens if you let the bugs keep eating your plant?",
+			"options": ["A smaller harvest, or the crop is destroyed", "The plant grows faster to survive", "The bugs leave on their own", "The crop grade improves"],
+			"answer": 0,
+			"explain": "Pests do damage every day they stay. Treat them early to save your harvest."
+		  },
+		  {
+			"q": "A crop that would have been Grade A is badly damaged by pests. What happens to its quality?",
+			"options": ["It becomes Grade A+", "It turns back into a seed", "It stays Grade A but stops growing", "It drops to Grade B"],
+			"answer": 3,
+			"explain": "Damaged produce is lower quality. A crop that loses too much to pests sells as Grade B, for less money."
+		  },
+		  {
+			"q": "Which of these is a common pest that damages crops?",
+			"options": ["Frogs", "Worms", "Snakes", "Spiders"],
+			"answer": 1,
+			"explain": "Worms and caterpillars eat leaves and roots. Frogs and spiders actually eat pests."
+		  }
+		]
+	  }
+	},
+	"Stage4": {
+	  "area_id": "area_4",
+	  "next": "Stage5",
+	  "par_time_sec": 720,
+	  "harvest_target": 6,
+	  "extra_tools": ["organic", "sapling"],
+	  "objectives": [
+		{"type": "plant_tree", "target": 2, "label": "Plant 2 fruit tree saplings"},
+		{"type": "collect_fruit", "target": 4, "label": "Collect 4 fruit"},
+		{"type": "chop_tree", "target": 1, "label": "Chop down an old tree"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Pieter",
+		"intro": "Trees take patience. Let's see if you have some.",
+		"win": "A true orchard keeper. The seasons are waiting for you.",
+		"lose": "Spend a little more time among the trees, then come back."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "Apples and oranges grow on tall plants with wooden trunks. What are these called?",
+			"options": ["Sprout crops", "Fruit trees", "Raw land", "Seasonal seeds"],
+			"answer": 1,
+			"explain": "Fruit trees are planted once as a sapling and grow into a tree that bears fruit."
+		  },
+		  {
+			"q": "An old tree is dead and blocking your farm. What removes it?",
+			"options": ["Shaking the tree", "Watering the roots", "Chopping it down with an axe", "Applying fertiliser"],
+			"answer": 2,
+			"explain": "The axe chops a tree down and clears the space for something new."
+		  },
+		  {
+			"q": "How do you know a fruit tree is ready to pick?",
+			"options": ["You can see fruit in its leaves", "It turns brown", "It is winter", "The day you plant the sapling"],
+			"answer": 0,
+			"explain": "A grown tree is bare for a while, then fruit appears in its leaves. That is when you pick it."
+		  },
+		  {
+			"q": "Do fruit trees need to be replanted every time you pick their fruit?",
+			"options": ["No, they give fruit again and again", "Yes, they die after one harvest", "Yes, unless you use fertiliser", "No, but they only fruit once ever"],
+			"answer": 0,
+			"explain": "A tree keeps growing new fruit after each picking. Plant it once and it keeps giving."
+		  },
+		  {
+			"q": "What is one disadvantage of planting a tree instead of a small ground crop?",
+			"options": ["It needs ten times more water", "It takes up the space until you chop it down", "It cannot get pests", "It lowers the value of other crops"],
+			"answer": 1,
+			"explain": "A tree stays where you plant it for good. Think about where it goes before you plant it."
+		  }
+		]
+	  }
+	},
+	"Stage5": {
+	  "area_id": "area_5",
+	  "next": "",
+	  "par_time_sec": 1200,
+	  "harvest_target": 4,
+	  "extra_tools": ["organic"],
+	  "objectives": [
+		{"type": "sow_in_season", "target": 3, "label": "Sow 3 crops that suit the season"},
+		{"type": "harvest", "target": 3, "label": "Harvest 3 crops"},
+		{"type": "harvest_seasons", "target": 2, "label": "Harvest in 2 different seasons"}
+	  ],
+	  "keeper": {
+		"name": "Keeper Nomsa",
+		"intro": "Every season has its crop. Show me you know which is which.",
+		"win": "You read the seasons like a real farmer. Well done!",
+		"lose": "The weather got the better of you. Watch the calendar and try again."
+	  },
+	  "quiz": {
+		"pass_correct": 3,
+		"questions": [
+		  {
+			"q": "Winter, spring, summer and autumn are all examples of what?",
+			"options": ["Weather apps", "Crop rotations", "Seasons", "Pest infestations"],
+			"answer": 2,
+			"explain": "The year turns through four seasons, and each one suits different crops."
+		  },
+		  {
+			"q": "A crop that needs summer heat is planted in freezing winter. What happens?",
+			"options": ["It grows normally", "It stops growing, and the cold damages it", "It needs double the fertiliser but grows fine", "It grows twice as fast"],
+			"answer": 1,
+			"explain": "You are allowed to plant it, but below its minimum temperature a crop stops growing and the cold hurts it. Check the season first."
+		  },
+		  {
+			"q": "Planting different crops in a field over time to keep the soil healthy is called what?",
+			"options": ["Crop rotation", "Inventory management", "Mulching", "Irrigation"],
+			"answer": 0,
+			"explain": "Crop rotation keeps soil healthy. Beans, for example, put back nitrogen that maize uses up."
+		  },
+		  {
+			"q": "How does a farmer know the season is about to change?",
+			"options": ["The market closes", "They get a warning before the season changes", "Their crops instantly die", "Pests stop appearing"],
+			"answer": 1,
+			"explain": "A warning comes a day before each new season, so you have time to plan what to plant or harvest."
+		  },
+		  {
+			"q": "Crops struggle in the cold. What should a farmer do before winter arrives?",
+			"options": ["Sell all their land", "Chop down all their fruit trees", "Use double the pest spray", "Harvest their crops before the cold sets in"],
+			"answer": 3,
+			"explain": "Winter is too cold for these crops. Bring the harvest in before it arrives, then plan for spring."
+		  }
+		]
+	  }
+	}
   }
 }
