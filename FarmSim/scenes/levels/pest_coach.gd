@@ -24,7 +24,17 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	super._process(delta)
 
-	if not _taught or _plant == null or not is_instance_valid(_plant):
+	if not _taught or _plant == null:
+		return
+
+	# The plant being taught on can leave before it is ever treated: harvested,
+	# dug up with Ctrl + click, or dead and cleared. Bailing out without tidying
+	# up froze the arrow over an empty tile and left the banner on screen for
+	# the rest of the session, since _taught never resets.
+	if not is_instance_valid(_plant):
+		_plant = null
+		stop_pointing()
+		clear()
 		return
 
 	# The spray first, because you cannot act on the plant without it.
@@ -40,11 +50,23 @@ func _on_pest_appeared(plant: CropPlant) -> void:
 
 	_taught = true
 	_plant = plant
-	say("Marlow: There is your first one. Take the spray and click that plant - it costs you nothing, and every day it sits there costs you weight at harvest.")
+	# Two islands run this coach and they do not sell the same thing. Island 3
+	# hands out one free spray; Stage 3 charges for two treatments that work on
+	# different pests, so promising a free click there is simply untrue.
+	if EconomyManager.enabled:
+		say("Marlow: There is your first one. Take a treatment and click that plant - insects go down to the spray, birds only to the organic kit. Every day it sits there costs you weight at harvest.")
+	else:
+		say("Marlow: There is your first one. Take the spray and click that plant - it costs you nothing, and every day it sits there costs you weight at harvest.")
 
 
-func _on_pest_treated(_treated: CropPlant) -> void:
+func _on_pest_treated(treated: CropPlant) -> void:
 	if not _taught or _plant == null:
+		return
+
+	# Only the plant being taught on counts. Two outbreaks at once are routine,
+	# and clearing the other one used to end the lesson with the taught plant
+	# still infested and still losing yield.
+	if treated != _plant:
 		return
 
 	_plant = null

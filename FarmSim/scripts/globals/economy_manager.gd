@@ -88,6 +88,9 @@ func _load() -> bool:
 ## it switched off rather than hidden, so nothing charges behind the scenes.
 func configure(economy_enabled: bool, reset_balance: bool = true) -> void:
 	enabled = economy_enabled
+	# An autoload outlives the level, so a bag left armed on one stage would
+	# still be armed on the next one.
+	fertiliser_armed = false
 	if reset_balance:
 		balance = starting_balance
 	balance_changed.emit(balance)
@@ -137,6 +140,18 @@ func treatment_ids() -> Array:
 		if _supplies[supply_id].has("treats"):
 			ids.append(supply_id)
 	return ids
+
+
+## Treatments that clear this pest, by display name, in market order.
+##
+## The crop info panel names them, so a player who has just met birds is told
+## what to buy rather than left to find out by wasting a can on them.
+func treatments_for(pest_type: String) -> PackedStringArray:
+	var names := PackedStringArray()
+	for supply_id in treatment_ids():
+		if treatment_works_on(str(supply_id), pest_type):
+			names.append(supply_name(str(supply_id)))
+	return names
 
 
 func fertiliser_growth_multiplier() -> float:
@@ -211,18 +226,47 @@ func consume_supply(supply_id: String) -> bool:
 	return true
 
 
-## Spends a bag of fertiliser on the crop about to go in, if the player has one.
+## Whether the next seed sown gets a bag of fertiliser worked in with it.
+##
+## Armed by clicking the fertiliser slot and cleared as soon as a bag is spent,
+## so one click buys one plant. It used to be automatic - holding a bag meant
+## the next seed silently ate it, whichever crop that happened to be, with
+## nothing on screen to say so. A bag costs money, so spending it is the
+## player's decision to make.
+var fertiliser_armed: bool = false
+
+
+## Turns the next-sowing fertiliser on or off. Returns the new state.
+func toggle_fertiliser() -> bool:
+	if not enabled or int(InventoryManager.inventory.get("fertiliser", 0)) <= 0:
+		fertiliser_armed = false
+		FarmEvents.advisory.emit("No fertiliser left. The market stall sells it by the bag.")
+		return false
+
+	fertiliser_armed = not fertiliser_armed
+	if fertiliser_armed:
+		FarmEvents.advisory.emit("Fertiliser ready - the next seed you sow gets a bag worked in with it.")
+	else:
+		FarmEvents.advisory.emit("Fertiliser put away. Seeds go in on their own.")
+	return fertiliser_armed
+
+
+## Spends a bag of fertiliser on the crop about to go in, if one is armed.
 ##
 ## Unlike a spray, fertiliser is never demanded - sowing without it is allowed
 ## and normal. So this reports whether a bag was used rather than whether the
 ## action may proceed, and with the economy off it is always false: an island
 ## with no market has no fertiliser to spend.
 func consume_fertiliser_if_held() -> bool:
-	if not enabled:
+	if not enabled or not fertiliser_armed:
 		return false
 	if int(InventoryManager.inventory.get("fertiliser", 0)) <= 0:
+		fertiliser_armed = false
 		return false
 	InventoryManager.remove_collectable("fertiliser", 1)
+	# Disarmed every time, so each bag spent is its own decision rather than a
+	# setting left on that quietly drains the stack.
+	fertiliser_armed = false
 	return true
 
 

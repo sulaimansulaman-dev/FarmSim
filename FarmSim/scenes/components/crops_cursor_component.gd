@@ -115,6 +115,12 @@ func add_crop() -> void:
 		FarmEvents.advisory.emit(warning)
 
 	var fertilised := EconomyManager.consume_fertiliser_if_held()
+	if fertilised:
+		# Said out loud, because a bag costs money and the plant it went into
+		# looks exactly like one sown without it.
+		FarmEvents.advisory.emit("A bag of fertiliser went in with this %s. It will develop faster." % [
+			CropManager.library.get_definition(crop_id).get("display_name", crop_id)
+		])
 	_send("plant", cell_position, {"crop_id": crop_id, "fertilised": fertilised})
 
 
