@@ -419,7 +419,7 @@ func _build() -> void:
 	box.anchor_bottom = 1.0
 	box.offset_left = 6
 	box.offset_right = -6
-	box.offset_top = -86
+	box.offset_top = -104
 	box.offset_bottom = -6
 	_root.add_child(box)
 
