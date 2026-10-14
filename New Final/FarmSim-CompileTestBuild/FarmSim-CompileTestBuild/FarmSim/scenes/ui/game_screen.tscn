@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://cfjgitj25txq8"]
+
+[ext_resource type="Theme" uid="uid://bnp65kle34ngr" path="res://scenes/ui/game_ui_theme.tres" id="1_dg8vg"]
+[ext_resource type="PackedScene" uid="uid://b8dokajwro750" path="res://scenes/ui/emotes_panel.tscn" id="2_jx5nb"]
+[ext_resource type="PackedScene" uid="uid://1b8ym5vxucda" path="res://scenes/ui/tools_panel.tscn" id="2_q6j6c"]
+[ext_resource type="PackedScene" uid="uid://g7mwcje7ep6a" path="res://scenes/ui/inventory_panel.tscn" id="3_jpqn2"]
+[ext_resource type="Script" uid="uid://qd5ot0ry1qt1" path="res://scenes/ui/emotes_panel.gd" id="3_wwq64"]
+[ext_resource type="PackedScene" uid="uid://cffksp8uaiebw" path="res://scenes/ui/day_night_panel.tscn" id="4_0moy6"]
+[ext_resource type="Script" uid="uid://drl1x1i3g6k3k" path="res://scenes/ui/crop_info_panel.gd" id="5_cinfo"]
+[ext_resource type="Script" uid="uid://c4ioawbemb3yo" path="res://scenes/ui/inventory_panel.gd" id="5_ywp2c"]
+[ext_resource type="Script" uid="uid://bawe0rcrpeokv" path="res://scenes/ui/level_label.gd" id="6_lvlbl"]
+[ext_resource type="Script" uid="uid://c878hx0u1i4rb" path="res://scenes/ui/tools_panel.gd" id="7_pwika"]
+[ext_resource type="Script" uid="uid://jvoydca08yda" path="res://scenes/ui/status_panel.gd" id="7_status"]
+[ext_resource type="Script" uid="uid://dolvmp5waumfa" path="res://scenes/ui/day_night_panel.gd" id="9_4gsc8"]
+[ext_resource type="Script" uid="uid://csll5uk6uge0i" path="res://scenes/ui/objectives_panel.gd" id="13_4pji1"]
+
+[node name="GameScreen" type="CanvasLayer" unique_id=1573129863]
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2095730596]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_dg8vg")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=644317364]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="EmotesPanel" type="Panel" parent="MarginContainer/VBoxContainer" unique_id=2143495511 instance=ExtResource("2_jx5nb")]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme = ExtResource("1_dg8vg")
+theme_type_variation = &"DarkWoodPanel"
+script = ExtResource("3_wwq64")
+
+[node name="InventoryPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1040144013 instance=ExtResource("3_jpqn2")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("1_dg8vg")
+theme_type_variation = &"DarkWoodPanel"
+script = ExtResource("5_ywp2c")
+
+[node name="ToolsPanel" type="PanelContainer" parent="MarginContainer" unique_id=1356660173 instance=ExtResource("2_q6j6c")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme = ExtResource("1_dg8vg")
+theme_type_variation = &"DarkWoodPanel"
+script = ExtResource("7_pwika")
+
+[node name="DayNightPanel" type="Control" parent="MarginContainer" unique_id=853568936 instance=ExtResource("4_0moy6")]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme = ExtResource("1_dg8vg")
+script = ExtResource("9_4gsc8")
+
+[node name="CropInfoPanel" type="PanelContainer" parent="MarginContainer" unique_id=1782400453]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+script = ExtResource("5_cinfo")
+
+[node name="LevelLabel" type="PanelContainer" parent="MarginContainer" unique_id=317370254]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+script = ExtResource("6_lvlbl")
+
+[node name="StatusPanel" type="PanelContainer" parent="MarginContainer" unique_id=1721943538]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+script = ExtResource("7_status")
+
+[node name="ObjectivesPanel" type="VBoxContainer" parent="MarginContainer" unique_id=186500777]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+mouse_filter = 2
+script = ExtResource("13_4pji1")

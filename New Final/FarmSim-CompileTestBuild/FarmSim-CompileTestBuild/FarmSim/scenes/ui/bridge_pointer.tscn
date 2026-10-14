@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://covikx2naderg"]
+
+[ext_resource type="Texture2D" uid="uid://bhmgphij465kv" path="res://assets/ui/mouse_icon.png" id="1_rkky3"]
+[ext_resource type="Script" uid="uid://dg1dcv6iyqpf1" path="res://scenes/ui/pointer.gd" id="1_s2x6v"]
+
+[node name="BridgePointer" type="CanvasLayer" unique_id=1492346353]
+
+[node name="Pointer" type="Control" parent="." unique_id=1617957716]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_s2x6v")
+
+[node name="Sprite2D" type="Sprite2D" parent="Pointer" unique_id=1535981199]
+rotation = 2.0943952
+texture = ExtResource("1_rkky3")

@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cxn5a6ymdflap"]
+
+[ext_resource type="Script" uid="uid://el65mg1nkxgc" path="res://scenes/test/stage_flow_test.gd" id="1_thk20"]
+
+[node name="StageFlowTest" type="Node" unique_id=1058865836]
+process_mode = 3
+script = ExtResource("1_thk20")

@@ -1,0 +1,15 @@
+[remap]
+
+importer="dialogue_manager_compiler_13"
+type="Resource"
+uid="uid://vi6by221cf4m"
+path="res://.godot/imported/guide_island_3.dialogue-da03934bb41ccb6cb6718d74d2083d17.tres"
+
+[deps]
+
+source_file="res://dialogue/conversations/guide_island_3.dialogue"
+dest_files=["res://.godot/imported/guide_island_3.dialogue-da03934bb41ccb6cb6718d74d2083d17.tres"]
+
+[params]
+
+defaults=true

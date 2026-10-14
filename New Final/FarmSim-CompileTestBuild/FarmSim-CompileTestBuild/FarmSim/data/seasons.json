@@ -1,0 +1,50 @@
+{
+  "_comment": "The seasonal calendar for Stage 5. Temperatures are what SeasonManager hands the crop simulation, and crops.json already holds each crop's min_growth_temp_c - so a crop planted in a season below its minimum simply stops developing. That is the lesson, and it is data, not code.",
+  "days_per_season": 4,
+  "seasons": [
+    {
+      "id": "spring",
+      "display_name": "Spring",
+      "temperature_c": 18.0,
+      "evaporation_multiplier": 1.0,
+      "suits_crops": [
+        "cabbage",
+        "beans"
+      ],
+      "teaching_note": "Mild and damp. Good for leafy crops and beans; maize wants more heat than this.",
+      "warning": "Spring is coming. Cabbage and beans do well now - hold maize back until summer."
+    },
+    {
+      "id": "summer",
+      "display_name": "Summer",
+      "temperature_c": 27.0,
+      "evaporation_multiplier": 1.5,
+      "suits_crops": [
+        "maize",
+        "beans"
+      ],
+      "teaching_note": "Hot and dry. Everything grows fast, but the soil dries out fast too - water more often.",
+      "warning": "Summer is coming. Maize thrives, but soil dries out half again as quickly. Plan to water more."
+    },
+    {
+      "id": "autumn",
+      "display_name": "Autumn",
+      "temperature_c": 16.0,
+      "evaporation_multiplier": 0.9,
+      "suits_crops": [
+        "cabbage"
+      ],
+      "teaching_note": "Cooling off. Cabbage still does well; maize slows to a crawl as the nights draw in.",
+      "warning": "Autumn is coming. Cabbage is still safe. Maize planted now will not finish before the cold."
+    },
+    {
+      "id": "winter",
+      "display_name": "Winter",
+      "temperature_c": 6.0,
+      "evaporation_multiplier": 0.6,
+      "suits_crops": [],
+      "teaching_note": "Too cold for anything in the seed box. Nothing sown now will develop - the ground is for resting.",
+      "warning": "Winter is coming. Every crop you have is below its minimum growth temperature. Harvest what is standing before it arrives."
+    }
+  ]
+}

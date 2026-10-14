@@ -1,0 +1,12 @@
+~ start
+Marlow: [[Hi|Hello|Howdy]], nice to meet you!
+Marlow: Welcome to your farm. Small, but the soil is good.
+Marlow: I have turned over a patch for you already. The rest is up to you.
+Marlow: Start with cabbage. It grows quickly and it forgives a beginner.
+- Take the seeds
+	Teemo: Thank you. Where do I start?
+	Marlow: I will walk you through it. Watch the top of the screen and do as I say.
+	do GameDialogueManager.action_give_crop_seeds()
+- Not yet
+	Teemo: I am not ready to start farming yet.
+=> END
