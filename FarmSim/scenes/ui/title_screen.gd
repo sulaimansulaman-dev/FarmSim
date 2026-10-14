@@ -117,6 +117,23 @@ var title_banner_base_set: bool = false
 var time_passed: float = 0.0
 var parallax_clouds: Array = []
 
+# --- animated pixel-art scene (built by _setup_pixel_scene) -----------------
+# The images live in MENU_ART_DIR. If bg_static.png is missing the original
+# gradient background is used instead, so the menu never breaks without them.
+const MENU_ART_DIR := "res://assets/ui/menu/"
+const SCENE_SIZE := Vector2(640, 360)
+const BLADE_FRAMES := 12
+const BLADE_FRAME_SIZE := 64
+const BLADE_HUB := Vector2(555, 208)
+var _scene_root: Control = null
+var _scene_title: TextureRect = null
+var _scene_sun: TextureRect = null
+var _scene_blades: TextureRect = null
+var _blade_frames: Array[AtlasTexture] = []
+var _scene_clouds: Array = []
+var _scene_birds: Array = []
+var _scene_actors: Array = []
+
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -159,6 +176,11 @@ func _ready() -> void:
 
 
 func _setup_background() -> void:
+	if ResourceLoader.exists(MENU_ART_DIR + "bg_static.png"):
+		_setup_pixel_scene()
+		_setup_ambient_particles()
+		return
+
 	var bg = TextureRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var gradient = Gradient.new()
@@ -178,6 +200,186 @@ func _setup_background() -> void:
 	_setup_vignette()
 	_setup_parallax_clouds()
 	_setup_ambient_particles()
+
+
+# --- animated pixel-art scene -----------------------------------------------
+
+## The scene is laid out in a fixed 640x360 space and that whole space is scaled
+## to cover the window, so the animals, windmill and clouds stay lined up with
+## the painted background at any window size.
+func _setup_pixel_scene() -> void:
+	_scene_root = Control.new()
+	_scene_root.size = SCENE_SIZE
+	_scene_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_scene_root.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_child(_scene_root)
+
+	# Back to front: painted background, sky extras, windmill, animals, title.
+	_scene_sprite("bg_static.png", Vector2.ZERO)
+
+	_scene_sun = _scene_sprite("sun.png", Vector2(565, 10))
+	if _scene_sun:
+		_scene_sun.pivot_offset = _scene_sun.size / 2.0
+
+	var cloud_files := ["cloud_a.png", "cloud_b.png", "cloud_c.png", "cloud_a.png", "cloud_b.png", "cloud_c.png"]
+	for file_name in cloud_files:
+		var cloud := _scene_sprite(file_name, Vector2(randf_range(-40.0, SCENE_SIZE.x), randf_range(10.0, 110.0)))
+		if cloud:
+			cloud.set_meta("speed", randf_range(2.0, 5.0))
+			_scene_clouds.append(cloud)
+
+	var bird_frames: Array[Texture2D] = []
+	for file_name in ["bird_a.png", "bird_b.png"]:
+		var bird_tex := _scene_texture(file_name)
+		if bird_tex:
+			bird_frames.append(bird_tex)
+	if bird_frames.size() == 2:
+		for _i in range(2):
+			var bird := _scene_sprite_from(bird_frames[0], Vector2(randf_range(0.0, SCENE_SIZE.x), randf_range(36.0, 90.0)))
+			bird.set_meta("frames", bird_frames)
+			bird.set_meta("speed", randf_range(14.0, 22.0))
+			bird.set_meta("base_y", bird.position.y)
+			_scene_birds.append(bird)
+
+	var blade_sheet := _scene_texture("windmill_blades_sheet.png")
+	if blade_sheet:
+		for i in range(BLADE_FRAMES):
+			var frame := AtlasTexture.new()
+			frame.atlas = blade_sheet
+			frame.region = Rect2(i * BLADE_FRAME_SIZE, 0, BLADE_FRAME_SIZE, BLADE_FRAME_SIZE)
+			_blade_frames.append(frame)
+		var blade_pos := BLADE_HUB - Vector2(BLADE_FRAME_SIZE, BLADE_FRAME_SIZE) / 2.0
+		_scene_blades = _scene_sprite_from(_blade_frames[0], blade_pos)
+
+	# file, y, leftmost x, rightmost x, walking speed (px/s), hop height (px)
+	var herd := [
+		["cow.png", 280.0, 64.0, 112.0, 5.0, 1.0],
+		["sheep.png", 281.0, 146.0, 178.0, 6.0, 1.0],
+		["pig.png", 283.0, 462.0, 496.0, 8.0, 1.0],
+		["cow.png", 279.0, 508.0, 546.0, 5.0, 1.0],
+		["sheep.png", 281.0, 552.0, 586.0, 6.0, 1.0],
+		["chicken.png", 322.0, 10.0, 90.0, 20.0, 2.0],
+		["chicken.png", 328.0, 96.0, 170.0, 18.0, 2.0],
+		["chicken.png", 324.0, 226.0, 320.0, 20.0, 2.0],
+		["chicken.png", 330.0, 336.0, 428.0, 18.0, 2.0],
+		["chicken.png", 325.0, 470.0, 540.0, 20.0, 2.0],
+		["chicken.png", 329.0, 556.0, 618.0, 18.0, 2.0],
+	]
+	for entry in herd:
+		_add_animal(entry[0], entry[1], entry[2], entry[3], entry[4], entry[5])
+
+	_scene_title = _scene_sprite("title.png", Vector2.ZERO)
+
+	_fit_scene()
+
+
+func _scene_texture(file_name: String) -> Texture2D:
+	var path: String = MENU_ART_DIR + file_name
+	if ResourceLoader.exists(path):
+		return load(path) as Texture2D
+	push_warning("Menu art missing: " + path)
+	return null
+
+
+func _scene_sprite(file_name: String, pos: Vector2) -> TextureRect:
+	var tex := _scene_texture(file_name)
+	if tex == null:
+		return null
+	return _scene_sprite_from(tex, pos)
+
+
+func _scene_sprite_from(tex: Texture2D, pos: Vector2) -> TextureRect:
+	var rect := TextureRect.new()
+	rect.texture = tex
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rect.position = pos
+	_scene_root.add_child(rect)
+	rect.size = tex.get_size()
+	return rect
+
+
+func _add_animal(file_name: String, y: float, min_x: float, max_x: float, speed: float, hop: float) -> void:
+	var node := _scene_sprite(file_name, Vector2(randf_range(min_x, max_x), y))
+	if node == null:
+		return
+	_scene_actors.append({
+		"node": node,
+		"base_y": y,
+		"min_x": min_x,
+		"max_x": max_x,
+		"speed": speed,
+		"hop": hop,
+		"target": randf_range(min_x, max_x),
+		"wait": randf_range(0.0, 3.0),
+	})
+
+
+## Scales the 640x360 scene to cover the window. A little more of the bottom
+## than the top is cropped on very wide windows, which keeps the title in view.
+func _fit_scene() -> void:
+	if _scene_root == null or size.x <= 0.0 or size.y <= 0.0:
+		return
+	var fit: float = maxf(size.x / SCENE_SIZE.x, size.y / SCENE_SIZE.y)
+	_scene_root.scale = Vector2(fit, fit)
+	var spare: Vector2 = size - SCENE_SIZE * fit
+	_scene_root.position = Vector2(spare.x * 0.5, spare.y * 0.35)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_fit_scene()
+		_fit_splash_scene()
+
+
+## Runs every frame from _process, so it pauses by itself while a level is
+## running (_hide_for_level turns processing off).
+func _animate_scene(delta: float) -> void:
+	if _scene_title:
+		_scene_title.position.y = sin(time_passed * 1.6) * 1.5
+
+	if _scene_sun:
+		var pulse := 1.0 + sin(time_passed * 1.2) * 0.04
+		_scene_sun.scale = Vector2(pulse, pulse)
+
+	if _scene_blades and not _blade_frames.is_empty():
+		_scene_blades.texture = _blade_frames[int(time_passed * 10.0) % _blade_frames.size()]
+
+	for cloud: TextureRect in _scene_clouds:
+		cloud.position.x += float(cloud.get_meta("speed")) * delta
+		if cloud.position.x > SCENE_SIZE.x + 10.0:
+			cloud.position.x = -cloud.size.x - randf_range(0.0, 80.0)
+
+	var flap := int(time_passed * 7.0) % 2
+	for bird: TextureRect in _scene_birds:
+		var frames: Array = bird.get_meta("frames")
+		bird.texture = frames[flap]
+		bird.position.x += float(bird.get_meta("speed")) * delta
+		bird.position.y = float(bird.get_meta("base_y")) + sin(time_passed * 2.0 + bird.position.x * 0.05) * 3.0
+		if bird.position.x > SCENE_SIZE.x + 12.0:
+			bird.position.x = -20.0
+			bird.set_meta("base_y", randf_range(36.0, 90.0))
+
+	for actor: Dictionary in _scene_actors:
+		var node: TextureRect = actor["node"]
+		var base_y: float = actor["base_y"]
+		var wait: float = actor["wait"]
+		if wait > 0.0:
+			actor["wait"] = wait - delta
+			node.position.y = base_y
+			continue
+		var target: float = actor["target"]
+		var step: float = float(actor["speed"]) * delta
+		var dist: float = target - node.position.x
+		if absf(dist) <= step:
+			node.position.x = target
+			node.position.y = base_y
+			actor["wait"] = randf_range(1.5, 5.0)
+			actor["target"] = randf_range(float(actor["min_x"]), float(actor["max_x"]))
+		else:
+			var dir: float = signf(dist)
+			node.position.x += dir * step
+			node.flip_h = dir < 0.0
+			node.position.y = base_y - absf(sin(time_passed * 9.0)) * float(actor["hop"])
 
 
 # --- returning from a level -------------------------------------------------
@@ -210,6 +412,12 @@ func _hide_for_level() -> void:
 
 func _process(delta: float) -> void:
 	time_passed += delta
+
+	if _scene_root:
+		_animate_scene(delta)
+
+	if _splash_scene:
+		_animate_splash(delta)
 
 	if title_banner_ref and title_banner_ref.is_inside_tree():
 		title_banner_ref.pivot_offset = title_banner_ref.size / 2
@@ -713,62 +921,348 @@ func _apply_slider_style(slider: HSlider) -> void:
 
 # --- splash -----------------------------------------------------------------
 
+const SPLASH_GREEN := Color("#c9efc0")       # soft light green wash
+const SPLASH_TITLE_COLOR := Color("#2f6b3a") # dark green so it reads on white
+const SPLASH_SUB_COLOR := Color("#6aa56f")
+const SPLASH_LEAF_COUNT := 14
+const SPLASH_LEAF_COLORS := [
+	Color("#7bc96f"), Color("#a5d6a7"), Color("#f2c14e"),
+	Color("#e9a23b"), Color("#d9773b"),
+]
+
+var _splash_tween: Tween
+
+# Animated scene behind the splash text. Uses the same 640x360 layout space
+# and the same art as the main menu, so the two feel like one world.
+var _splash_scene: Control = null
+var _splash_sun: TextureRect = null
+var _splash_blades: TextureRect = null
+var _splash_blade_frames: Array[AtlasTexture] = []
+var _splash_clouds: Array = []
+var _splash_birds: Array = []
+var _splash_leaves: Array = []
+
+
 func _build_splash_screen() -> void:
 	splash_screen = Control.new()
 	splash_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	splash_screen.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(splash_screen)
 
+	# White base.
 	var bg = ColorRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color("#0a0a0a")
+	bg.color = Color.WHITE
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	splash_screen.add_child(bg)
+
+	# Light green that fades in over the white: clear in the middle, green
+	# toward the edges, so the text always sits on a clean, bright area.
+	var gradient = Gradient.new()
+	gradient.offsets = PackedFloat32Array([0.15, 1.0])
+	gradient.colors = PackedColorArray([
+		Color(SPLASH_GREEN, 0.0),
+		Color(SPLASH_GREEN, 1.0)
+	])
+	var wash_tex = GradientTexture2D.new()
+	wash_tex.gradient = gradient
+	wash_tex.fill = GradientTexture2D.FILL_RADIAL
+	wash_tex.fill_from = Vector2(0.5, 0.5)
+	wash_tex.fill_to = Vector2(1.0, 0.5)
+	wash_tex.width = 256
+	wash_tex.height = 256
+
+	var wash = TextureRect.new()
+	wash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	wash.texture = wash_tex
+	wash.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	wash.stretch_mode = TextureRect.STRETCH_SCALE
+	wash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	wash.modulate.a = 0.0
+	splash_screen.add_child(wash)
+
+	# Sun, clouds, birds, hills, windmill and falling leaves.
+	_build_splash_scene()
 
 	var center_container = CenterContainer.new()
 	center_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	center_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	splash_screen.add_child(center_container)
 
 	var box = VBoxContainer.new()
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
-	box.add_theme_constant_override("separation", 10)
+	box.add_theme_constant_override("separation", 6)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	center_container.add_child(box)
 
-	var studio_lbl = Label.new()
-	studio_lbl.text = "A TEAM PROJECT"
-	studio_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	studio_lbl.add_theme_font_size_override("font_size", FONT_BODY)
-	studio_lbl.add_theme_color_override("font_color", Color("#7a7a7a"))
-	box.add_child(studio_lbl)
+	var title_lbl = Label.new()
+	title_lbl.text = "The FarmSim team"
+	title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_lbl.add_theme_font_size_override("font_size", FONT_TITLE)
+	title_lbl.add_theme_color_override("font_color", SPLASH_TITLE_COLOR)
+	title_lbl.visible_characters = 0
+	title_lbl.modulate.a = 0.0
+	box.add_child(title_lbl)
 
-	_create_big_farm_title(box, "FARMSIM")
+	var presents_lbl = Label.new()
+	presents_lbl.text = "presents"
+	presents_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	presents_lbl.add_theme_font_size_override("font_size", FONT_SMALL)
+	presents_lbl.add_theme_color_override("font_color", SPLASH_SUB_COLOR)
+	presents_lbl.visible_characters = 0
+	presents_lbl.modulate.a = 0.0
+	box.add_child(presents_lbl)
 
-	var tap_lbl = Label.new()
-	tap_lbl.text = "Click anywhere to continue"
-	tap_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	tap_lbl.add_theme_font_size_override("font_size", FONT_SMALL)
-	tap_lbl.add_theme_color_override("font_color", Color("#a88f6f"))
-	box.add_child(tap_lbl)
+	# Sequence: green + scene fade in (sun rises) -> title types in ->
+	# "presents" types in -> hold -> everything fades out as the next screen
+	# fades in.
+	_splash_tween = create_tween()
+	_splash_tween.tween_property(wash, "modulate:a", 1.0, 1.2)
+	_splash_tween.parallel().tween_property(_splash_scene, "modulate:a", 1.0, 1.2)
+	if _splash_sun:
+		_splash_tween.parallel().tween_property(_splash_sun, "position:y", 10.0, 1.8) \
+			.from(60.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_splash_tween.tween_interval(0.2)
 
-	var pulse_tween = create_tween().set_loops()
-	pulse_tween.tween_property(tap_lbl, "modulate:a", 0.3, 0.8)
-	pulse_tween.tween_property(tap_lbl, "modulate:a", 1.0, 0.8)
+	_splash_tween.tween_property(title_lbl, "modulate:a", 1.0, 0.4)
+	_splash_tween.parallel().tween_property(
+		title_lbl, "visible_characters", title_lbl.text.length(), 1.2)
+	_splash_tween.tween_interval(0.25)
 
+	_splash_tween.tween_property(presents_lbl, "modulate:a", 1.0, 0.3)
+	_splash_tween.parallel().tween_property(
+		presents_lbl, "visible_characters", presents_lbl.text.length(), 0.6)
+
+	_splash_tween.tween_interval(1.6)
+	_splash_tween.tween_callback(_finish_splash)
+
+	# Click / tap skips straight to the fade-out.
 	splash_screen.gui_input.connect(func(event):
-		if event is InputEventScreenTouch and event.pressed:
-			_finish_splash()
-		elif event is InputEventMouseButton and event.pressed:
+		if (event is InputEventScreenTouch or event is InputEventMouseButton) and event.pressed:
 			_finish_splash()
 	)
-
-	var timer = get_tree().create_timer(5.0)
-	timer.timeout.connect(_finish_splash)
 
 
 func _finish_splash() -> void:
 	if is_splash_done:
 		return
 	is_splash_done = true
-	_switch_screen(splash_screen, login_screen)
+	if _splash_tween and _splash_tween.is_valid():
+		_splash_tween.kill()
+	splash_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	# Crossfade: the whole splash (text and scene included) fades out while
+	# the next screen fades in underneath it.
+	login_screen.modulate.a = 0.0
+	login_screen.visible = true
+	_active_screen = login_screen
+	if username_input:
+		username_input.grab_focus()
+
+	var fade = create_tween().set_parallel(true)
+	fade.tween_property(splash_screen, "modulate:a", 0.0, 0.9)
+	fade.tween_property(login_screen, "modulate:a", 1.0, 0.9)
+	await fade.finished
+
+	splash_screen.visible = false
+	splash_screen.modulate.a = 1.0
+
+	# The splash only plays once, so stop animating and free its scene.
+	if _splash_scene:
+		_splash_scene.queue_free()
+		_splash_scene = null
+		_splash_sun = null
+		_splash_blades = null
+		_splash_clouds.clear()
+		_splash_birds.clear()
+		_splash_leaves.clear()
+
+
+# --- splash scene -----------------------------------------------------------
+
+func _build_splash_scene() -> void:
+	_splash_scene = Control.new()
+	_splash_scene.size = SCENE_SIZE
+	_splash_scene.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_splash_scene.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_splash_scene.modulate.a = 0.0
+	splash_screen.add_child(_splash_scene)
+
+	# Back to front: sun, clouds, birds, far hill, windmill, near hill,
+	# leaves.
+	_splash_sun = _splash_sprite("sun.png", Vector2(565, 10))
+	if _splash_sun:
+		_splash_sun.pivot_offset = _splash_sun.size / 2.0
+
+	for file_name in ["cloud_a.png", "cloud_b.png", "cloud_c.png", "cloud_a.png"]:
+		var cloud := _splash_sprite(file_name, Vector2(randf_range(-40.0, SCENE_SIZE.x), randf_range(14.0, 90.0)))
+		if cloud:
+			cloud.set_meta("speed", randf_range(3.0, 6.0))
+			_splash_clouds.append(cloud)
+
+	var bird_frames: Array[Texture2D] = []
+	for file_name in ["bird_a.png", "bird_b.png"]:
+		var bird_tex := _scene_texture(file_name)
+		if bird_tex:
+			bird_frames.append(bird_tex)
+	if bird_frames.size() == 2:
+		for _i in range(2):
+			var bird := _splash_sprite_from(bird_frames[0], Vector2(randf_range(0.0, SCENE_SIZE.x), randf_range(36.0, 90.0)))
+			bird.set_meta("frames", bird_frames)
+			bird.set_meta("speed", randf_range(14.0, 22.0))
+			bird.set_meta("base_y", bird.position.y)
+			_splash_birds.append(bird)
+
+	_splash_scene.add_child(_make_hill(300.0, 6.0, 0.012, 1.0, Color("#b5e6a6")))
+	_build_splash_windmill()
+	_splash_scene.add_child(_make_hill(316.0, 5.0, 0.02, 0.0, Color("#8fd35c")))
+
+	for _i in range(SPLASH_LEAF_COUNT):
+		_add_splash_leaf()
+
+	_fit_splash_scene()
+
+
+func _splash_sprite(file_name: String, pos: Vector2) -> TextureRect:
+	var tex := _scene_texture(file_name)
+	if tex == null:
+		return null
+	return _splash_sprite_from(tex, pos)
+
+
+func _splash_sprite_from(tex: Texture2D, pos: Vector2) -> TextureRect:
+	var rect := TextureRect.new()
+	rect.texture = tex
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rect.position = pos
+	_splash_scene.add_child(rect)
+	rect.size = tex.get_size()
+	return rect
+
+
+## A rolling hill: a sine-wave ridge snapped to whole pixels (so it keeps the
+## pixel-art look) filled down to the bottom of the scene.
+func _make_hill(base_y: float, amp: float, freq: float, phase: float, color: Color) -> Polygon2D:
+	var points := PackedVector2Array()
+	var x := 0.0
+	while x <= SCENE_SIZE.x:
+		points.append(Vector2(x, roundf(base_y + sin(x * freq + phase) * amp)))
+		x += 8.0
+	points.append(Vector2(SCENE_SIZE.x, SCENE_SIZE.y))
+	points.append(Vector2(0.0, SCENE_SIZE.y))
+	var hill := Polygon2D.new()
+	hill.polygon = points
+	hill.color = color
+	return hill
+
+
+## The tower is drawn from simple shapes; the spinning blades are the same
+## windmill_blades_sheet.png the main menu uses.
+func _build_splash_windmill() -> void:
+	var hub := Vector2(520.0, 236.0)
+
+	var tower := Polygon2D.new()
+	tower.polygon = PackedVector2Array([
+		Vector2(512, 240), Vector2(528, 240), Vector2(537, 336), Vector2(503, 336)])
+	tower.color = Color("#efe3c4")
+	_splash_scene.add_child(tower)
+
+	var shade := Polygon2D.new()
+	shade.polygon = PackedVector2Array([
+		Vector2(520, 240), Vector2(528, 240), Vector2(537, 336), Vector2(520, 336)])
+	shade.color = Color("#d9c9a0")
+	_splash_scene.add_child(shade)
+
+	var window := Polygon2D.new()
+	window.polygon = PackedVector2Array([
+		Vector2(517, 264), Vector2(523, 264), Vector2(523, 272), Vector2(517, 272)])
+	window.color = Color("#7a5a3a")
+	_splash_scene.add_child(window)
+
+	var roof := Polygon2D.new()
+	roof.polygon = PackedVector2Array([
+		Vector2(509, 242), Vector2(531, 242), Vector2(520, 224)])
+	roof.color = Color("#b9553f")
+	_splash_scene.add_child(roof)
+
+	var blade_sheet := _scene_texture("windmill_blades_sheet.png")
+	if blade_sheet:
+		for i in range(BLADE_FRAMES):
+			var frame := AtlasTexture.new()
+			frame.atlas = blade_sheet
+			frame.region = Rect2(i * BLADE_FRAME_SIZE, 0, BLADE_FRAME_SIZE, BLADE_FRAME_SIZE)
+			_splash_blade_frames.append(frame)
+		_splash_blades = _splash_sprite_from(
+			_splash_blade_frames[0], hub - Vector2(BLADE_FRAME_SIZE, BLADE_FRAME_SIZE) / 2.0)
+
+
+func _add_splash_leaf() -> void:
+	var leaf := Polygon2D.new()
+	leaf.polygon = PackedVector2Array([
+		Vector2(0, -4), Vector2(3, -1), Vector2(2, 3),
+		Vector2(0, 5), Vector2(-2, 3), Vector2(-3, -1)])
+	var s := randf_range(0.8, 1.5)
+	leaf.scale = Vector2(s, s)
+	leaf.color = SPLASH_LEAF_COLORS[randi() % SPLASH_LEAF_COLORS.size()]
+	leaf.rotation = randf_range(0.0, TAU)
+	leaf.position = Vector2(randf_range(0.0, SCENE_SIZE.x), randf_range(-20.0, SCENE_SIZE.y))
+	_splash_scene.add_child(leaf)
+	_splash_leaves.append({
+		"node": leaf,
+		"base_x": leaf.position.x,
+		"fall": randf_range(18.0, 34.0),
+		"drift": randf_range(4.0, 10.0),
+		"sway": randf_range(6.0, 16.0),
+		"sway_speed": randf_range(0.8, 1.8),
+		"phase": randf_range(0.0, TAU),
+		"spin": randf_range(-2.0, 2.0),
+	})
+
+
+func _animate_splash(delta: float) -> void:
+	if _splash_sun:
+		var pulse := 1.0 + sin(time_passed * 1.2) * 0.04
+		_splash_sun.scale = Vector2(pulse, pulse)
+
+	if _splash_blades and not _splash_blade_frames.is_empty():
+		_splash_blades.texture = _splash_blade_frames[int(time_passed * 10.0) % _splash_blade_frames.size()]
+
+	for cloud: TextureRect in _splash_clouds:
+		cloud.position.x += float(cloud.get_meta("speed")) * delta
+		if cloud.position.x > SCENE_SIZE.x + 10.0:
+			cloud.position.x = -cloud.size.x - randf_range(0.0, 80.0)
+
+	var flap := int(time_passed * 7.0) % 2
+	for bird: TextureRect in _splash_birds:
+		var frames: Array = bird.get_meta("frames")
+		bird.texture = frames[flap]
+		bird.position.x += float(bird.get_meta("speed")) * delta
+		bird.position.y = float(bird.get_meta("base_y")) + sin(time_passed * 2.0 + bird.position.x * 0.05) * 3.0
+		if bird.position.x > SCENE_SIZE.x + 12.0:
+			bird.position.x = -20.0
+			bird.set_meta("base_y", randf_range(36.0, 90.0))
+
+	for leaf: Dictionary in _splash_leaves:
+		var node: Polygon2D = leaf["node"]
+		leaf["base_x"] = float(leaf["base_x"]) + float(leaf["drift"]) * delta
+		node.position.x = float(leaf["base_x"]) + sin(time_passed * float(leaf["sway_speed"]) + float(leaf["phase"])) * float(leaf["sway"])
+		node.position.y += float(leaf["fall"]) * delta
+		node.rotation += float(leaf["spin"]) * delta
+		if node.position.y > SCENE_SIZE.y + 12.0:
+			node.position.y = -12.0
+			leaf["base_x"] = randf_range(-20.0, SCENE_SIZE.x)
+		elif float(leaf["base_x"]) > SCENE_SIZE.x + 20.0:
+			leaf["base_x"] = -20.0
+
+
+## Same scale-to-cover maths as the main menu scene, centred vertically.
+func _fit_splash_scene() -> void:
+	if _splash_scene == null or size.x <= 0.0 or size.y <= 0.0:
+		return
+	var fit: float = maxf(size.x / SCENE_SIZE.x, size.y / SCENE_SIZE.y)
+	_splash_scene.scale = Vector2(fit, fit)
+	var spare: Vector2 = size - SCENE_SIZE * fit
+	_splash_scene.position = spare * 0.5
 
 
 # --- login ------------------------------------------------------------------
@@ -791,7 +1285,7 @@ func _build_login_screen() -> void:
 	box.add_theme_constant_override("separation", 8)
 	card.add_child(box)
 
-	_create_big_farm_title(box, "FARMSIM")
+	# The FARMSIM title is painted into the menu background now.
 
 	auth_prompt_lbl = Label.new()
 	auth_prompt_lbl.text = "Enter Username:"
