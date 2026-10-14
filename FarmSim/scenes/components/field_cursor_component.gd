@@ -20,6 +20,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventAction:
+		print("[DBG] FC got action ", event.action, " tool=", ToolManager.selected_tool)
 	if ToolManager.selected_tool != DataTypes.Tools.TillGround:
 		return
 
@@ -42,6 +44,7 @@ func get_cell_under_mouse() -> bool:
 	cell_source_id = grass_tilemap_layer.get_cell_source_id(cell_position)
 	local_cell_position = grass_tilemap_layer.map_to_local(cell_position)
 	distance = player.global_position.distance_to(local_cell_position)
+	print("[DBG] FC cell ", cell_position, " src=", cell_source_id, " dist=", distance, " has_target=", MobileInput.has_target)
 	return true
 
 

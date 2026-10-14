@@ -43,14 +43,17 @@ script = ExtResource("3_btn")
 
 [node name="MenuButton" type="Control" parent="." unique_id=1006480110]
 layout_mode = 1
-anchors_preset = 1
+anchors_preset = 3
 anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = -50.0
-offset_top = 86.0
+offset_top = -140.0
 offset_right = -6.0
-offset_bottom = 108.0
+offset_bottom = -118.0
 grow_horizontal = 0
+grow_vertical = 0
 script = ExtResource("3_btn")
 glyph = "MENU"
 pill = true

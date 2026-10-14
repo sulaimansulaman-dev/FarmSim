@@ -90,6 +90,7 @@ static func local_pointer(layer: TileMapLayer) -> Vector2:
 ## Presses an action for a moment and lets go. Goes through the input pipeline
 ## as a real event, so _unhandled_input listeners see it as well as polling.
 static func tap(owner: Node, action: StringName) -> void:
+	print("[DBG] tap ", action, " tool=", ToolManager.selected_tool)
 	var tree := owner.get_tree()
 	_send(action, true)
 	# Process-always, so the release still arrives if the game is paused.

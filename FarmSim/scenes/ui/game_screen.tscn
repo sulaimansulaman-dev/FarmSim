@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://bawe0rcrpeokv" path="res://scenes/ui/level_label.gd" id="6_lvlbl"]
 [ext_resource type="Script" uid="uid://jvoydca08yda" path="res://scenes/ui/status_panel.gd" id="7_status"]
 [ext_resource type="Script" uid="uid://csll5uk6uge0i" path="res://scenes/ui/objectives_panel.gd" id="13_4pji1"]
-[ext_resource type="PackedScene" path="res://scenes/ui/mobile/mobile_controls.tscn" id="14_mobile"]
+[ext_resource type="PackedScene" uid="uid://dex3iessfo03b" path="res://scenes/ui/mobile/mobile_controls.tscn" id="14_mobile"]
 
 [node name="GameScreen" type="CanvasLayer" unique_id=1573129863]
 
@@ -32,15 +32,21 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="EmotesPanel" type="Panel" parent="MarginContainer/TopLeft/VBoxContainer" unique_id=2143495511 instance=ExtResource("2_jx5nb")]
-custom_minimum_size = Vector2(50, 50)
+[node name="EmotesPanel" parent="MarginContainer/TopLeft/VBoxContainer" unique_id=2143495511 instance=ExtResource("2_jx5nb")]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="InventoryPanel" type="PanelContainer" parent="MarginContainer/TopLeft/VBoxContainer" unique_id=1040144013 instance=ExtResource("3_jpqn2")]
+[node name="InventoryPanel" parent="MarginContainer/TopLeft/VBoxContainer" unique_id=1040144013 instance=ExtResource("3_jpqn2")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+
+[node name="ObjectivesPanel" type="VBoxContainer" parent="MarginContainer/TopLeft" unique_id=186500777]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 2
+script = ExtResource("13_4pji1")
 
 [node name="ToolsPanel" parent="MarginContainer" unique_id=1356660173 instance=ExtResource("2_q6j6c")]
 layout_mode = 2
@@ -76,17 +82,10 @@ size_flags_horizontal = 0
 size_flags_vertical = 8
 script = ExtResource("6_lvlbl")
 
-[node name="StatusPanel" type="PanelContainer" parent="MarginContainer" unique_id=1721943538]
+[node name="StatusPanel" type="PanelContainer" parent="MarginContainer" unique_id=1842330627]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 script = ExtResource("7_status")
-
-[node name="ObjectivesPanel" type="VBoxContainer" parent="MarginContainer/TopLeft" unique_id=186500777]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-mouse_filter = 2
-script = ExtResource("13_4pji1")
 
 [node name="MobileControls" parent="." unique_id=1928374651 instance=ExtResource("14_mobile")]

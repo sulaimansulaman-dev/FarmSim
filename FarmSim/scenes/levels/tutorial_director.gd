@@ -297,7 +297,8 @@ func _build_banner() -> void:
 	_label = Label.new()
 	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_label.custom_minimum_size.x = 280
+	_label.custom_minimum_size.x = 240
+	_label.add_theme_font_size_override("font_size", 8)
 	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pad.add_child(_label)
 	
