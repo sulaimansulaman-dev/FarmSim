@@ -100,7 +100,7 @@ script = ExtResource("23_coach")
 [node name="StageDirector" type="CanvasLayer" parent="." unique_id=1988615272]
 script = ExtResource("20_stgdir")
 stage_title = "STAGE 3 - PEST CONTROL & QUALITY"
-stage_brief = "Pests now appear on growing crops. Buy spray at the market and clear them - each can treats one outbreak and is used up. Produce is graded: a clean crop sells as Grade A, a chewed one as Grade B for a fraction of the price."
+stage_brief = "Pests now appear on growing crops. Spray clears caterpillars, worms and ants, but birds only go to the organic control. Each treatment is used up. Produce is graded: a clean crop sells as Grade A, a chewed one as Grade B for a fraction of the price."
 give_spray = true
 economy_enabled = true
 
