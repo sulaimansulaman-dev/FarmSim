@@ -1,7 +1,5 @@
-res://scenes/ui/game_screen.tscn
+res://scenes/test/test_scene_objects.tscn
 res://scenes/ui/game_ui_theme.tres
 res://tilesets/house_tile_set.tres
 res://tilesets/game_tile_set.tres
 res://dialogue/dialogue_balloon_theme.tres
-res://data/crops.json
-res://drafts/data/crops.json

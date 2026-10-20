@@ -28,9 +28,9 @@ tile_set = ExtResource("1_icodn")
 
 [node name="Player" parent="." unique_id=1296367391 instance=ExtResource("2_53p4p")]
 position = Vector2(211, 179)
-current_tool = 2
+current_tool = 1
 
-[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1973615328]
+[node name="Camera2D2" type="Camera2D" parent="Player" unique_id=1973615328]
 
 [node name="AppleTree" parent="." unique_id=114421387 instance=ExtResource("3_2p8ds")]
 position = Vector2(414, 170)
