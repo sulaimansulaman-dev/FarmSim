@@ -82,10 +82,4 @@ size_flags_horizontal = 0
 size_flags_vertical = 8
 script = ExtResource("6_lvlbl")
 
-[node name="StatusPanel" type="PanelContainer" parent="MarginContainer" unique_id=1842330627]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-script = ExtResource("7_status")
-
 [node name="MobileControls" parent="." unique_id=1928374651 instance=ExtResource("14_mobile")]

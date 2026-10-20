@@ -70,63 +70,7 @@
 	  ],
 	  "sprite_row": 0
 	},
-	{
-	  "id": "beans",
-	  "damage_scale": 1.9,
-	  "display_name": "Beans",
-	  "local_name": "Boontjies",
-	  "base_yield_kg": 60.0,
-	  "daily_water_use": 0.11,
-	  "wilting_point": 0.22,
-	  "waterlogged_point": 0.85,
-	  "pest_susceptibility": 1.4,
-	  "min_growth_temp_c": 10,
-	  "optimal_temp_c": 25,
-	  "cold_damage_per_day": 2.0,
-	  "stages": [
-		{
-		  "id": "germination",
-		  "display_name": "Germination",
-		  "days": 2,
-		  "water_sensitivity": 1.2,
-		  "teaching_note": "Beans rot easily in waterlogged soil at planting. Moist, not soaked.",
-		  "sprite_col": 1
-		},
-		{
-		  "id": "vegetative",
-		  "display_name": "Vegetative",
-		  "days": 3,
-		  "water_sensitivity": 0.7,
-		  "teaching_note": "Beans fix their own nitrogen, which is why they are a good rotation partner for maize.",
-		  "sprite_col": 2
-		},
-		{
-		  "id": "flowering",
-		  "display_name": "Flowering",
-		  "days": 2,
-		  "water_sensitivity": 1.8,
-		  "teaching_note": "Water stress at flowering makes the plant drop its flowers, and a dropped flower is a pod you will never harvest.",
-		  "sprite_col": 3
-		},
-		{
-		  "id": "pod_fill",
-		  "display_name": "Pod Fill",
-		  "days": 3,
-		  "water_sensitivity": 1.4,
-		  "teaching_note": "Pods are filling out. Steady moisture now decides how many beans are in each pod.",
-		  "sprite_col": 3
-		},
-		{
-		  "id": "mature",
-		  "display_name": "Mature",
-		  "days": 1,
-		  "water_sensitivity": 0.3,
-		  "teaching_note": "Pods are drying. Hold off on watering to avoid mould.",
-		  "sprite_col": 4
-		}
-	  ],
-	  "sprite_row": 1
-	},
+	
 	{
 	  "id": "cabbage",
 	  "damage_scale": 2.0,
